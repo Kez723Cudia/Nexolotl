@@ -1,0 +1,13 @@
+# Django database
+db.sqlite3
+
+# Python cache
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+
+# IDE/editor settings
+.vscode/
+.idea/
