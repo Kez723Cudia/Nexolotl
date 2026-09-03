@@ -1,15 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Post</title>
+    <title>Nexolotl - Home</title>
 </head>
 <body>
-    <h2>Create a New Post</h2>
 
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <h2>Create a Post</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Post</button>
     </form>
+
+    <hr>
+
+    <h2>Recent Posts</h2>
+    {% for post in posts %}
+        <div>
+            <p><strong>{{ post.author.username }}</strong> - <small>{{ post.created_at|date:"M d, Y H:i" }}</small></p>
+            <p>{{ post.content }}</p>
+            <a href="{% url 'post_detail' post.pk %}">View Details</a>
+        </div>
+    {% empty %}
+        <p>No posts yet. Be the first to post!</p>
+    {% endfor %}
+
 </body>
 </html>

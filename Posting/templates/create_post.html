@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Post</title>
+</head>
+<body>
+
+    <h1>Create a New Post</h1>
+
+    <div>
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <div>
+                    <button type="submit">
+                        PUBLISH POST
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+    <div>
+        <a href="{% url 'post_feed' %}">Back to Feed</a>
+    </div>
+
+</body>
+</html>
