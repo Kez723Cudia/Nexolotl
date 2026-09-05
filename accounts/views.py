@@ -1,4 +1,3 @@
-# accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -12,7 +11,7 @@ def register_view(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.save()
-            return redirect("login")  # after registration, go to login
+            return redirect("login")  
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
@@ -23,7 +22,6 @@ def login_view(request):
         identifier = request.POST.get("identifier")
         password = request.POST.get("password")
 
-        # Try to find user by email or phone
         user_obj = None
         try:
             user_obj = User.objects.get(email=identifier)
@@ -39,12 +37,10 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("home")   # later redirect to profile
+            return redirect("home")   
         else:
-            # Wrong credentials → show advisory
             return render(request, "accounts/login.html", {"error": "Invalid email or password"})
 
-    # GET request → clean login page, no error
     return render(request, "accounts/login.html")
 
 

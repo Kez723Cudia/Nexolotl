@@ -2,7 +2,6 @@ from django import forms
 from django.core.validators import RegexValidator
 from .models import User
 
-# ✅ Phone number validator: + followed by digits and spaces only
 phone_validator = RegexValidator(
     regex=r'^\+\d[\d\s]{7,20}$',
     message="Enter a valid phone number with country code, e.g. +63 917 123 4567."
@@ -40,15 +39,12 @@ class RegisterForm(forms.ModelForm):
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
 
-        # ✅ Require at least one identifier (email OR phone)
         if not email and not phone:
             raise forms.ValidationError("You must provide either an email or a phone number.")
 
-        # ✅ Normalize phone number (strip spaces)
         if phone:
             cleaned_data['phone_number'] = phone.replace(" ", "")
 
-        # ✅ Password confirmation check
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
 
