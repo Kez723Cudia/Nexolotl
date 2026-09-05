@@ -1,0 +1,33 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <h2>
+      Welcome, {{ user.first_name }}
+      {% if user.middle_name %} {{ user.middle_name }}{% endif %}
+      {{ user.last_name }}
+      {% if user.extension %} {{ user.extension }}{% endif %}
+      !
+    </h2>
+    <p>You are now logged in to Nexolotl.</p>
+
+    <a href="#" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      Logout
+    </a>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <p>Log out of your account?</p>
+            <div class="d-flex justify-content-between mt-3">
+              <button type="button" class="btn btn-link text-primary" data-bs-dismiss="modal">Cancel</button>
+              <a href="{% url 'logout' %}" class="btn btn-link text-danger">Log out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
