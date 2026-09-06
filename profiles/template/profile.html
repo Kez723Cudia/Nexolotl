@@ -1,0 +1,19 @@
+<h1>{{ profile.user.username }}'s Profile</h1>
+
+<p>
+    {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Avatar" width="100">
+    {% else %}
+        <em>No avatar set</em>
+    {% endif %}
+</p>
+
+<ul>
+    <li><strong>Username:</strong> {{ profile.user.username }}</li>
+    <li><strong>Bio:</strong> {{ profile.bio }}</li>
+    <li><strong>Interests:</strong> {{ profile.interests }}</li>
+</ul>
+
+{% if request.user == profile.user %}
+    <p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+{% endif %}
