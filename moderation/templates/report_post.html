@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container my-5" style="max-width: 600px;">
+    <div class="card p-4 shadow-sm">
+        <h1>Report this post?</h1>
+        <h3 class="text-muted mb-4">What's going on?</h3>
+
+        <form method="post" id="reportForm">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please select a reason for reporting before submitting.
+                </div>
+            {% endif %}
+
+            <input type="hidden" name="reason" id="selectedReason" required>
+
+            <div class="d-grid gap-2 mb-4" id="reasonButtons">
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="harassment">
+                    Harassment, bullying, or hate speech
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="misinformation">
+                    Misinformation
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="spam">
+                    Spam
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="scam">
+                    Scam or fraud
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="violent">
+                    Violent material
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="sexual">
+                    Sexual material
+                </button>
+                <button type="button" class="btn btn-outline-secondary text-start" data-value="other">
+                    Something else
+                </button>
+            </div>
+
+            <div class="mb-4">
+                {{ form.context }}
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+                <button type="submit" class="btn btn-danger btn-lg">Submit Report</button>
+            </div>
+        </form>
+
+        <hr class="my-3">
+
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-dark">Block user</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('#reasonButtons button');
+    const reasonInput = document.getElementById('selectedReason');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active', 'btn-primary'));
+            buttons.forEach(b => b.classList.add('btn-outline-secondary'));
+            
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('active', 'btn-primary');
+            
+            reasonInput.value = button.getAttribute('data-value');
+        });
+    });
+</script>
+
+</body>
+</html>
