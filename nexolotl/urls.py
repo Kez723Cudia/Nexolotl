@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('profiles/', include('profiles.urls')),
     path('testimonies/', include('testimonies.urls')),
+]    
 from django.contrib import admin
 from django.urls import path
 from Posting.views import post_feed_view
