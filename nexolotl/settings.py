@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'testimonies',
     'Posting',
     'accounts',
+    'userreport',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
