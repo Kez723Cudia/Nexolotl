@@ -1,0 +1,19 @@
+<div id="report-modal-post-{{ post.pk }}" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Report Post</h3>
+        <form method="POST" action="{% url 'submit_post_report' pk=post.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <div class="reason-list">
+                {{ post_report_form.reason }}
+            </div>
+            {{ post_report_form.context }}
+
+            <div class="modal-actions">
+                <button type="submit">Submit Report</button>
+                <button type="button" class="js-close-modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -2,11 +2,13 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import ProfileForm
+from userreport.forms import UserReportForm
 
 #to view a user's profile
 def profile_view(request, username):
     user_profile = get_object_or_404(Profile, user__username=username)
-    return render(request, 'profiles/profile.html', {'profile': user_profile})
+    context = {'profile': user_profile, 'user_report_form': UserReportForm}
+    return render(request, 'profiles/profile.html', {'profile': user_profile}, context)
 
 #to edit a own user's profile pero logged in user lang 
 @login_required

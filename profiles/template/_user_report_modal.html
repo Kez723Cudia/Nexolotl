@@ -1,0 +1,24 @@
+<div id="report-modal-user-{{ target_user.id }}" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Report User</h3>
+        <form method="POST" action="{% url 'submit_user_report' username=target_user.username %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <div class="reason-list">
+                {{ user_report_form.reason }}
+            </div>
+            {{ user_report_form.context }}
+
+            <div class="modal-actions">
+                <button type="submit">Submit Report</button>
+                <button type="button" class="js-close-modal">Cancel</button>
+            </div>
+        </form>
+
+        <hr>
+        <button type="button" class="btn-block-user" disabled title="Blocking isn't wired up yet">
+            Block User
+        </button>
+    </div>
+</div>
