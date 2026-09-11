@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ current_user.username }}'s Profile</title>
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .profile-info {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-info h2 {
+        margin-bottom: 10px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .stat {
+        background: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .top-friends {
+        margin-top: 30px;
+    }
+
+    .friend {
+        background: #fff4c2;
+        border: 2px solid #f1c40f;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 10px 15px;
+        background: #333;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+    }
+
+    .back-button:hover {
+        background: #555;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<div class="profile-info">
+
+    <h1> {{ current_user.username }}'s Profile</h1>
+
+    <p>
+        Currently viewing as:
+        <strong>{{ current_user.username }}</strong>
+    </p>
+
+</div>
+
+
+<!-- PROFILE STATISTICS -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <strong>
+            {{ friends_count }}
+        </strong>
+
+        Friends
+
+    </div>
+
+
+    <div class="stat">
+
+        <strong>
+            {{ close_friends_count }}
+        </strong>
+
+        Close Friends
+
+    </div>
+
+
+    <div class="stat">
+
+        <strong>
+            {{ top_friends_count }}
+        </strong>
+
+        Top Friends
+
+    </div>
+
+</div>
+
+
+<!-- TOP FRIENDS -->
+
+<div class="top-friends">
+
+    <h2> Top Friends</h2>
+
+    {% for friendship in top_friends %}
+
+        <div class="friend">
+
+             {{ friendship.friend.username }}
+
+            <br>
+
+             Top Friend
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            You haven't selected any Top Friends yet.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<a
+    href="{% url 'friends' %}"
+    class="back-button">
+
+    ← Back to Friends
+
+</a>
+
+</div>
+
+</body>
+
+</html>
