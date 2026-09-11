@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Details</title>
+</head>
+<body>
+
+    <a href="{% url 'post_feed' %}">Back to Feed</a>
+
+    <div>
+        <h3>Posted by: {{ post.author.username }}</h3>
+        <p><small>Published on {{ post.created_at|date:"F d, Y at h:i A" }}</small></p>
+        <hr>
+        <p>{{ post.content }}</p>
+    </div>
+
+</body>
+</html>
