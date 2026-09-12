@@ -1,17 +1,17 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 
 class Friendship(models.Model):
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="friendships"
     )
 
     friend = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="friend_of"
     )
@@ -44,13 +44,13 @@ class Friendship(models.Model):
 class FriendRequest(models.Model):
 
     sender = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="sent_friend_requests"
     )
 
     receiver = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="received_friend_requests"
     )
