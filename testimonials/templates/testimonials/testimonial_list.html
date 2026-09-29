@@ -1,0 +1,23 @@
+<h2>Testimonials</h2>
+
+{% if testimonials %}
+    <ul>
+        {% for testimonial in testimonials %}
+            <li>
+                "{{ testimonial.content }}"<br>
+                — Written by {{ testimonial.author.username }}
+                on {{ testimonial.created_at|date:"M d, Y" }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No testimonials yet.</p>
+{% endif %}
+
+{% if request.user.is_authenticated and request.user != profile.user %}
+    <p>
+        <a href="{% url 'testimonial_create' username=profile.user.username %}">
+            Write a Testimonial for {{ profile.user.username }}
+        </a>
+    </p>
+{% endif %}
