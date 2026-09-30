@@ -23,8 +23,16 @@
     <h2>Recent Posts</h2>
     {% for post in posts %}
         <div>
-            <p><strong>{{ post.author.username }}</strong> - <small>{{ post.created_at|date:"M d, Y H:i" }}</small></p>
+            <p>
+                <strong>{{ post.author.username }}</strong> 
+                - <small>{{ post.created_at|date:"M d, Y H:i" }}</small>
+            </p>
             <p>{{ post.content }}</p>
+
+            {% if post.post_type == 'flash' %}
+                <p><small>Expires in: {{ post.expires_at|timeuntil }}</small></p>
+            {% endif %}
+
             <a href="{% url 'post_detail' post.pk %}">View Details</a>
         </div>
     {% empty %}
