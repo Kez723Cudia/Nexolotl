@@ -10,3 +10,10 @@ urlpatterns = [
     path('post/add/', views.create_post, name='create_post'),
     path('posts/', views.PostListView.as_view(), name='post_list'),
 ]
+from django.urls import path, include 
+from django.shortcuts import redirect
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("", include("accounts.urls")),
+]
