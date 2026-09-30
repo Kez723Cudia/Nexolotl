@@ -32,6 +32,7 @@ def profile_view(request, username):
         "profile": user_profile,
         "testimonials": testimonials,
         "form": form,
+        "username": username
     })
 
 

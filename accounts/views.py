@@ -5,7 +5,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import User
-from profiles.signals import create_user_profile, save_user_profile
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -13,9 +12,6 @@ def register_view(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.save()
-            def create_user_profile(sender, instance, created, **kwargs):
-                if created:
-                    Profile.objects.create(user=instance)
             return redirect("login")  
     else:
         form = RegisterForm()

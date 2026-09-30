@@ -16,6 +16,11 @@ class TestimonialCreateView(LoginRequiredMixin, CreateView):
     form_class = testimonialForm
     template_name = 'testimonials/testimonial_form.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.kwargs['username']
+        return context
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         form.instance.recipient = get_object_or_404(User, username=self.kwargs['username'])
@@ -38,13 +43,14 @@ class TestimonialListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['recipient_user'] = self.recipient_user
+        context['profile'] = self.recipient_user.profile  # testimonial_list.html expects "profile"
         return context
 
 
 @login_required
 def approve_testimonial(request, testimonial_id):
-    testimonial = get_object_or_404(testimonial, id=testimonial_id)
-    if request.user == testimonial.recipient:
-        testimonial.is_approved = True
-        testimonial.save()
+    obj = get_object_or_404(testimonial, id=testimonial_id)
+    if request.user == obj.recipient:
+        obj.is_approved = True
+        obj.save()
     return redirect('profile', username=request.user.username)
