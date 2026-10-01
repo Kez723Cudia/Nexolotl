@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ current_user.username }}'s Friends</title>
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2 {
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        margin-top: 30px;
+    }
+
+
+    /* FRIEND LIST */
+
+    .friend-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .friend {
+        background: #f7f7f7;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+
+    /* TOP FRIEND */
+
+    .top-friend {
+        background: #fff4c2;
+        border: 2px solid #f1c40f;
+    }
+
+    .top-friend-label {
+        font-weight: bold;
+        color: #b8860b;
+    }
+
+
+    /* TOP FRIEND SELECTION */
+
+    .selection {
+        margin-top: 30px;
+    }
+
+    .checkbox {
+        margin: 10px 0;
+        padding: 10px;
+        background: #f7f7f7;
+        border-radius: 6px;
+    }
+
+
+    /* GENERAL BUTTON */
+
+    button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 6px;
+        background: #333;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #555;
+    }
+
+
+    /* CLOSE FRIEND BUTTON */
+
+    .close-button {
+        background: #e5b93f;
+    }
+
+    .close-button:hover {
+        background: #c9a12e;
+    }
+
+
+    /* REMOVE FRIEND BUTTON */
+
+    .remove-button {
+        background: #c94c4c;
+    }
+
+    .remove-button:hover {
+        background: #a83b3b;
+    }
+
+
+    /* ADD FRIEND BUTTON */
+
+    .add-button {
+        background: #4c9a5f;
+    }
+
+    .add-button:hover {
+        background: #397a48;
+    }
+
+
+    /* FRIEND ACTIONS */
+
+    .friend-actions {
+        margin-top: 10px;
+    }
+
+    .friend-actions a {
+        text-decoration: none;
+    }
+
+
+    /* FRIEND NAME LINK */
+
+    .friend-name {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .friend-name:hover {
+        text-decoration: underline;
+    }
+
+
+    /* ADD FRIEND */
+
+    .add-friend {
+        margin: 10px 0;
+        padding: 12px;
+        background: #f7f7f7;
+        border-radius: 8px;
+    }
+
+
+    /* FRIEND REQUESTS */
+
+    .friend-requests {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .friend-request {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        margin-top: 10px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .friend-request strong {
+        margin-right: auto;
+    }
+
+    .friend-request a {
+        text-decoration: none;
+    }
+
+    .accept-button {
+        background: #4c9a5f;
+    }
+
+    .accept-button:hover {
+        background: #397a48;
+    }
+
+    .decline-button {
+        background: #c94c4c;
+    }
+
+    .decline-button:hover {
+        background: #a83b3b;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>{{ current_user.username }}'s Friends</h1>
+
+<div style="text-align: center; margin-bottom: 20px;">
+
+    <a href="{% url 'profile' %}">
+        <button type="button">
+             My Profile
+        </button>
+    </a>
+
+</div>
+
+
+<!-- FRIEND REQUESTS -->
+
+<div class="friend-requests">
+
+    <h2> Friend Requests</h2>
+
+    {% for friend_request in incoming_requests %}
+
+        <div class="friend-request">
+
+            <strong>
+
+                <a
+                    href="{% url 'user_profile' friend_request.sender.id %}"
+                    class="friend-name"
+                >
+
+                     {{ friend_request.sender.username }}
+
+                </a>
+
+            </strong>
+
+
+            <!-- ACCEPT -->
+
+            <a href="{% url 'accept_friend_request' friend_request.id %}">
+
+                <button
+                    type="button"
+                    class="accept-button">
+
+                     Accept
+
+                </button>
+
+            </a>
+
+
+            <!-- DECLINE -->
+
+            <a href="{% url 'decline_friend_request' friend_request.id %}">
+
+                <button
+                    type="button"
+                    class="decline-button">
+
+                     Decline
+
+                </button>
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            You don't have any pending friend requests.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- SENT FRIEND REQUESTS -->
+
+<div class="friend-requests">
+
+    <h2> Sent Friend Requests</h2>
+
+    {% for friend_request in sent_requests %}
+
+    <div class="friend-request">
+
+        <strong>
+
+            <a
+                href="{% url 'user_profile' friend_request.receiver.id %}"
+                class="friend-name"
+            >
+
+                 {{ friend_request.receiver.username }}
+
+            </a>
+
+        </strong>
+
+        <span>
+            Request Sent
+        </span>
+
+    </div>
+
+    {% empty %}
+
+    <p>
+        You haven't sent any friend requests.
+    </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- FRIENDS -->
+
+<h2> Friends</h2>
+
+<div class="friend-list">
+
+    {% for friendship in friends %}
+
+        <div class="friend">
+
+            <strong>
+
+                <a
+                    href="{% url 'user_profile' friendship.friend.id %}"
+                    class="friend-name"
+                >
+
+                     {{ friendship.friend.username }}
+
+                </a>
+
+            </strong>
+
+            <div class="friend-actions">
+
+
+                <!-- CLOSE FRIEND BUTTON -->
+
+                {% if friendship.is_close_friend %}
+
+                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+
+                        <button
+                            type="button"
+                            class="close-button">
+
+                             Remove from Close Friends
+
+                        </button>
+
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+
+                        <button
+                            type="button"
+                            class="close-button">
+
+                             Add to Close Friends
+
+                        </button>
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- REMOVE FRIEND BUTTON -->
+
+                <a href="{% url 'remove_friend' friendship.friend.id %}">
+
+                    <button
+                        type="button"
+                        class="remove-button">
+
+                        Remove Friend
+
+                    </button>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            You don't have any friends yet.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- CLOSE FRIENDS -->
+
+<h2> Close Friends</h2>
+
+<div class="friend-list">
+
+    {% for friendship in close_friends %}
+
+        <div class="friend">
+
+            <a
+                href="{% url 'user_profile' friendship.friend.id %}"
+                class="friend-name"
+            >
+
+                 {{ friendship.friend.username }}
+
+            </a>
+
+            <br>
+
+            <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+
+                <button
+                    type="button"
+                    class="close-button">
+
+                    Remove from Close Friends
+
+                </button>
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            You don't have any close friends yet.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- TOP FRIENDS -->
+
+<h2> Top Friends</h2>
+
+<div class="friend-list">
+
+    {% for friendship in top_friends %}
+
+        <div class="friend top-friend">
+
+            <div>
+
+                <a
+                    href="{% url 'user_profile' friendship.friend.id %}"
+                    class="friend-name"
+                >
+
+                     {{ friendship.friend.username }}
+
+                </a>
+
+            </div>
+
+            <div class="top-friend-label">
+                 Top Friend
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            You haven't selected any Top Friends yet.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- SELECT TOP FRIENDS -->
+
+<div class="selection">
+
+    <h2> Select Your Top Friends</h2>
+
+    <p>
+        You can select up to <strong>5 Top Friends.</strong>
+    </p>
+
+    <form method="POST" id="topFriendsForm">
+
+        {% csrf_token %}
+
+
+        {% for friendship in friends %}
+
+            <div class="checkbox">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        name="top_friends"
+                        value="{{ friendship.friend.id }}"
+                        class="top-friend-checkbox"
+
+                        {% if friendship.is_top_friend %}
+                            checked
+                        {% endif %}
+                    >
+
+                     {{ friendship.friend.username }}
+
+                </label>
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                You need to have friends before you can select Top Friends.
+            </p>
+
+        {% endfor %}
+
+
+        {% if friends %}
+
+            <button type="submit">
+                Save Top Friends
+            </button>
+
+        {% endif %}
+
+    </form>
+
+
+    <p
+        id="limitMessage"
+        style="display: none; color: #b8860b;">
+
+        You can only select 5 Top Friends.
+
+    </p>
+
+</div>
+
+
+    <!-- ADD FRIENDS -->
+
+    <hr>
+
+    <h2> Add Friends</h2>
+
+    {% for user in available_users %}
+
+        <div class="add-friend">
+
+            <strong>
+                 {{ user.username }}
+            </strong>
+
+            <a href="{% url 'send_friend_request' user.id %}">
+
+                <button
+                    type="button"
+                    class="add-button">
+
+                    Add Friend
+
+                </button>
+
+            </a>
+
+        </div>
+
+    {% empty %}
+
+        <p>
+            No users available to add.
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- TOP FRIEND LIMIT SCRIPT -->
+
+<script>
+
+    const checkboxes =
+        document.querySelectorAll(".top-friend-checkbox");
+
+    const limitMessage =
+        document.getElementById("limitMessage");
+
+
+    function updateTopFriendLimit() {
+
+        const selected =
+            document.querySelectorAll(
+                ".top-friend-checkbox:checked"
+            ).length;
+
+
+        if (selected >= 5) {
+
+            checkboxes.forEach(function(box) {
+
+                if (!box.checked) {
+                    box.disabled = true;
+                }
+
+            });
+
+            limitMessage.style.display = "block";
+
+        } else {
+
+            checkboxes.forEach(function(box) {
+
+                box.disabled = false;
+
+            });
+
+            limitMessage.style.display = "none";
+
+        }
+
+    }
+
+
+    checkboxes.forEach(function(checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            updateTopFriendLimit
+        );
+
+    });
+
+
+    updateTopFriendLimit();
+
+</script>
+
+</body>
+
+</html>

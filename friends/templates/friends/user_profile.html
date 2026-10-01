@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ profile_user.username }}'s Profile</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .profile {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* PROFILE HEADER */
+
+        .profile-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #eeeeee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+        }
+
+        .profile-header h1 {
+            margin-bottom: 10px;
+        }
+
+        .profile-header p {
+            color: #666;
+        }
+
+
+        /* PROFILE STATISTICS */
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+
+        /* TOP FRIENDS */
+
+        .top-friends {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        .top-friends h2 {
+            margin-bottom: 20px;
+        }
+
+        .top-friend-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+
+        /* TOP FRIEND CARD */
+
+        .top-friend {
+            background: #fff4c2;
+            border: 2px solid #f1c40f;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .top-friend:hover {
+            transform: translateY(-3px);
+        }
+
+        .star {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .top-friend strong {
+            display: block;
+            font-size: 16px;
+        }
+
+
+        /* EMPTY MESSAGE */
+
+        .empty-message {
+            color: #777;
+            font-style: italic;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+
+        /* NAVIGATION */
+
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .navigation a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .navigation a:hover {
+            background: #555;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="profile">
+
+
+    <!-- PROFILE HEADER -->
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+            
+        </div>
+
+        <h1>
+            {{ profile_user.username|upper }}
+        </h1>
+
+        <p>
+            Welcome to {{ profile_user.username }}'s Nexolotl profile!
+        </p>
+
+    </div>
+
+
+    <!-- PROFILE STATISTICS -->
+
+    <div class="stats">
+
+
+        <!-- FRIENDS -->
+
+        <div class="stat">
+
+            <div class="stat-number">
+                {{ friends_count }}
+            </div>
+
+            <div class="stat-label">
+                Friends
+            </div>
+
+        </div>
+
+
+        <!-- CLOSE FRIENDS -->
+
+        <div class="stat">
+
+            <div class="stat-number">
+                {{ close_friends_count }}
+            </div>
+
+            <div class="stat-label">
+                Close Friends
+            </div>
+
+        </div>
+
+
+        <!-- TOP FRIENDS -->
+
+        <div class="stat">
+
+            <div class="stat-number">
+                {{ top_friends_count }}
+            </div>
+
+            <div class="stat-label">
+                Top Friends
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- TOP FRIENDS -->
+
+    <div class="top-friends">
+
+        <h2>
+            {{ profile_user.username }}'s Top Friends
+        </h2>
+
+
+        <div class="top-friend-list">
+
+
+            {% for friendship in top_friends %}
+
+
+                <a
+                    href="{% url 'user_profile' friendship.friend.id %}"
+                    class="top-friend"
+                >
+
+                    <div class="star">
+                        
+                    </div>
+
+                    <strong>
+                        {{ friendship.friend.username }}
+                    </strong>
+
+                </a>
+
+
+            {% empty %}
+
+
+                <p class="empty-message">
+                    This user hasn't selected any Top Friends yet.
+                </p>
+
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="navigation">
+
+        <a href="{% url 'friends' %}">
+            Back to Friends
+        </a>
+
+        <a href="{% url 'profile' %}">
+            My Profile
+        </a>
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>
