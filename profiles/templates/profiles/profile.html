@@ -17,3 +17,10 @@
 {% if request.user == profile.user %}
     <p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
 {% endif %}
+
+<!-- TESTIMONIALS -->
+{% include "testimonials/testimonial_list.html" %}
+<!-- TESTIMONIAL FORM -->
+{% if request.user.is_authenticated and request.user != profile.user %}
+    {% include "testimonials/testimonial_form.html" %}
+{% endif %}

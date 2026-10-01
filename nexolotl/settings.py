@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 
     'friends',
     'profiles',
-    'testimonies',
+    'testimonials',
     'Posting',
     'accounts',
 ]

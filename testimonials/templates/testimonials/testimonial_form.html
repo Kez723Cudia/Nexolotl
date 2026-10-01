@@ -1,0 +1,9 @@
+<h2>Write a Testimonial</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Submit Testimonial</button>
+    <a href="{% url 'profile' username=username %}">Cancel</a>
+</form>
