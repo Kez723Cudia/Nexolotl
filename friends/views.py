@@ -1,7 +1,26 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+
 from .models import Friendship, FriendRequest
+from user_controls.models import Restriction
+
+User = get_user_model()
+
+
+def is_restricted_by(user, restricting_user):
+    """
+    Return True if restricting_user has restricted user.
+
+    Example:
+    is_restricted_by(asgdagshdgajd, khalia6)
+
+    Checks whether khalia6 has restricted asgdagshdgajd.
+    """
+    return Restriction.objects.filter(
+        user=restricting_user,
+        restricted_user=user
+    ).exists()
 
 
 @login_required
@@ -208,6 +227,12 @@ def send_friend_request(request, user_id):
         id=user_id
     )
 
+    # RESTRICT CHECK
+    # If the receiver has restricted the current user,
+    # prevent the current user from sending a friend request.
+    if is_restricted_by(current_user, receiver):
+        return redirect("friends")
+
     # Check if they are already friends
     already_friends = Friendship.objects.filter(
         user=current_user,
@@ -257,6 +282,13 @@ def accept_friend_request(request, request_id):
     )
 
     sender = friend_request.sender
+
+    # RESTRICT CHECK
+    # If the receiver has restricted the sender,
+    # do not allow the request to become a friendship.
+    if is_restricted_by(sender, current_user):
+        friend_request.delete()
+        return redirect("friends")
 
     # Create friendship from current user → sender
     Friendship.objects.get_or_create(

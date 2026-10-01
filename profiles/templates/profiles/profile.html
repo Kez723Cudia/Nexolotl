@@ -15,5 +15,11 @@
 </ul>
 
 {% if request.user == profile.user %}
-    <p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+    <p>
+        <a href="{% url 'profile_edit' %}">Edit Profile</a>
+    </p>
+{% else %}
+    {% with target_user=profile.user %}
+        {% include "user_controls/user_actions.html" %}
+    {% endwith %}
 {% endif %}

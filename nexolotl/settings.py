@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'testimonies',
     'Posting',
     'accounts',
+    'user_controls',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -137,3 +138,7 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Login settings
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home/'
