@@ -4,21 +4,17 @@ from django.contrib.auth import get_user_model
 from django.views.generic import ListView
 from .models import Post
 from .forms import PostForm
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
+@login_required
 def post_feed_view(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            
-            if request.user.is_authenticated:
-                post.author = request.user
-            else:
-                fallback_user = User.objects.filter(is_superuser=True).first() or User.objects.first()
-                post.author = fallback_user
-                
+            post.author = request.user
             post.save()
             messages.success(request, "Your post was published successfully!")
             return redirect('post_feed')
