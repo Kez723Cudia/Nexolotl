@@ -15,7 +15,6 @@ urlpatterns = [
     # Posting
     path('feed/', post_feed_view, name='post_feed'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
-    path('post/add/', views.create_post, name='create_post'),
 ]
 
 #lagi po ito nasa baba, wag po itaas. This makes sure that media files are served correctly during development
