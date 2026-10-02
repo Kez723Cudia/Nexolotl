@@ -2,8 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from Posting import views
-from Posting.views import post_feed_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,8 +11,7 @@ urlpatterns = [
     path('friends/', include('friends.urls')),
     path('testimonials/', include('testimonials.urls')),
     # Posting
-    path('feed/', post_feed_view, name='post_feed'),
-    path('post/<int:pk>/', views.post_detail, name='post_detail'),
+    path('', include('Posting.urls')),
 ]
 
 #lagi po ito nasa baba, wag po itaas. This makes sure that media files are served correctly during development
