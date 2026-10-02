@@ -7,11 +7,11 @@ from Posting.views import post_feed_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Accounts
-    path("", include("accounts.urls")),
+    path('', include('accounts.urls')),
     # User-related features
     path('profiles/', include('profiles.urls')),
     path('friends/', include('friends.urls')),
+    path('testimonials/', include('testimonials.urls')),
     # Posting
     path('', post_feed_view, name='post_feed'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
