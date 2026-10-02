@@ -10,11 +10,10 @@ class CustomAdminUser(UserAdmin):
         ('Personal info', {
             'fields': (
                 'first_name',
-                'middle_name',   # added here
+                'middle_name',   
                 'last_name',
-                'extension',     # added here
+                'extension',     
                 'email',
-                'phone_number',  # also here
             )
         }),
         ('Permissions', {
@@ -30,8 +29,11 @@ class CustomAdminUser(UserAdmin):
         'middle_name',
         'last_name',
         'extension',
-        'phone_number',
         'is_staff'
     )
 
-    search_fields = ('username', 'email', 'phone_number', 'middle_name', 'extension')
+    search_fields = (
+        'username', 
+        'email',
+        'middle_name', 
+        'extension')
