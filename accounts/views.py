@@ -1,9 +1,9 @@
-from profile import Profile
-
+from profile import Profile 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
 from .models import User
+
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -22,14 +22,10 @@ def login_view(request):
         identifier = request.POST.get("identifier")
         password = request.POST.get("password")
 
-        user_obj = None
         try:
-            user_obj = User.objects.get(email=identifier)
+            user_obj = User.objects.get(email__iexact=identifier)
         except User.DoesNotExist:
-            try:
-                user_obj = User.objects.get(phone_number=identifier)
-            except User.DoesNotExist:
-                pass
+                user_obj = None
 
         user = None
         if user_obj:
