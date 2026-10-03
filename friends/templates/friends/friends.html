@@ -366,31 +366,36 @@
 
                 {% if friendship.is_close_friend %}
 
-                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
-                        <button
-                            type="button"
-                            class="close-button">
+                    <button
+                        type="submit"
+                        class="close-button"
+                    >
+                        Remove from Close Friends
+                    </button>
+                </form>
 
-                             Remove from Close Friends
-
-                        </button>
-
-                    </a>
 
                 {% else %}
 
-                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
-                        <button
-                            type="button"
-                            class="close-button">
-
-                             Add to Close Friends
-
-                        </button>
-
-                    </a>
+                    <button
+                        type="submit"
+                        class="close-button"
+                    >
+                        Add to Close Friends
+                    </button>
+                </form>
 
                 {% endif %}
 
@@ -447,17 +452,20 @@
 
             <br>
 
-            <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+            <form
+                method="POST"
+                action="{% url 'toggle_close_friend' friendship.friend.id %}"
+            >
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="close-button">
-
+                    type="submit"
+                    class="close-button"
+                >
                     Remove from Close Friends
-
                 </button>
+            </form>
 
-            </a>
 
         </div>
 

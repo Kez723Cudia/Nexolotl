@@ -328,6 +328,7 @@ def remove_friend(request, user_id):
 
 
 @login_required
+@require_POST
 def toggle_close_friend(request, user_id):
 
     # The currently logged-in user
