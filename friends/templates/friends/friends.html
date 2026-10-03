@@ -397,17 +397,19 @@
 
                 <!-- REMOVE FRIEND BUTTON -->
 
-                <a href="{% url 'remove_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'remove_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
                     <button
-                        type="button"
-                        class="remove-button">
-
+                        type="submit"
+                        class="remove-button"
+                    >
                         Remove Friend
-
                     </button>
-
-                </a>
+                </form>
 
             </div>
 

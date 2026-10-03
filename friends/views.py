@@ -299,6 +299,7 @@ def decline_friend_request(request, request_id):
 
 
 @login_required
+@require_POST
 def remove_friend(request, user_id):
 
     # The currently logged-in user
