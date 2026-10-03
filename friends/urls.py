@@ -4,7 +4,6 @@ from .views import (
     friends_page,
     profile_page,
     user_profile,
-    add_friend,
     send_friend_request,
     remove_friend,
     toggle_close_friend,
@@ -31,12 +30,6 @@ urlpatterns = [
         "profile/<int:user_id>/",
         user_profile,
         name="user_profile"
-    ),
-
-    path(
-        "add/<int:user_id>/",
-        add_friend,
-        name="add_friend"
     ),
 
     path(

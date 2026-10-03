@@ -186,15 +186,6 @@ def user_profile(request, user_id):
 
 
 @login_required
-def add_friend(request, user_id):
-
-    return send_friend_request(
-        request,
-        user_id
-    )
-
-
-@login_required
 @require_POST
 def send_friend_request(request, user_id):
 
