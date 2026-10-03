@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -592,17 +590,19 @@
                  {{ user.username }}
             </strong>
 
-            <a href="{% url 'send_friend_request' user.id %}">
+            <form
+                method="POST"
+                action="{% url 'send_friend_request' user.id %}"
+            >
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="add-button">
-
+                    type="submit"
+                    class="add-button"
+                >
                     Add Friend
-
                 </button>
-
-            </a>
+            </form>
 
         </div>
 

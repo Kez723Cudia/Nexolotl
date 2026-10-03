@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from .models import Friendship, FriendRequest
+from django.views.decorators.http import require_POST
 
 User = get_user_model()
 
@@ -194,6 +195,7 @@ def add_friend(request, user_id):
 
 
 @login_required
+@require_POST
 def send_friend_request(request, user_id):
 
     # The currently logged-in user
