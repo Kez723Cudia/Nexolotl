@@ -16,7 +16,7 @@ def profile_view(request, username):
     )
 
     # Handle testimonial submission
-    if request.method == "POST" and request.user.is_authenticated:
+    if request.method == "POST" and request.user != user_profile.user:
         form = testimonialForm(request.POST)
         if form.is_valid():
             new_testimonial = form.save(commit=False)
