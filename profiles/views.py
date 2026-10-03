@@ -6,8 +6,7 @@ from .forms import ProfileForm
 from testimonials.models import testimonial
 from testimonials.forms import testimonialForm
 
-
-# View a user's profile and testimonials
+@login_required
 def profile_view(request, username):
     user_profile = get_object_or_404(Profile, user__username=username)
 
