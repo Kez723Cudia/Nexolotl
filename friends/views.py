@@ -248,6 +248,7 @@ def send_friend_request(request, user_id):
 
 
 @login_required
+@require_POST
 def accept_friend_request(request, request_id):
 
     # The currently logged-in user

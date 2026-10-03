@@ -253,17 +253,18 @@
 
             <!-- ACCEPT -->
 
-            <a href="{% url 'accept_friend_request' friend_request.id %}">
+            <form 
+            method="POST" 
+            action="{% url 'accept_friend_request' friend_request.id %}">
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="accept-button">
-
-                     Accept
-
+                    type="submit"
+                    class="accept-button"
+                >
+                    Accept
                 </button>
-
-            </a>
+            </form>
 
 
             <!-- DECLINE -->
