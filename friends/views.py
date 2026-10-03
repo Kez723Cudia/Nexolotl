@@ -281,6 +281,7 @@ def accept_friend_request(request, request_id):
 
 
 @login_required
+@require_POST
 def decline_friend_request(request, request_id):
 
     # The currently logged-in user

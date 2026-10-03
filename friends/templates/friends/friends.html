@@ -269,17 +269,19 @@
 
             <!-- DECLINE -->
 
-            <a href="{% url 'decline_friend_request' friend_request.id %}">
+            <form 
+            method="POST" 
+            action="{% url 'decline_friend_request' friend_request.id %}">
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="decline-button">
-
-                     Decline
-
+                    type="submit"
+                    class="decline-button"
+                >
+                    Decline
                 </button>
+            </form>
 
-            </a>
 
         </div>
 
