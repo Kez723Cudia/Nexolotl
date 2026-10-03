@@ -218,7 +218,7 @@
 
 <div style="text-align: center; margin-bottom: 20px;">
 
-    <a href="{% url 'profile' %}">
+    <a href="{% url 'profile' username=request.user.username %}">
         <button type="button">
              My Profile
         </button>
@@ -240,8 +240,7 @@
             <strong>
 
                 <a
-                    href="{% url 'user_profile' friend_request.sender.id %}"
-                    class="friend-name"
+                    href="{% url 'profile' username=friend_request.sender.username %}"
                 >
 
                      {{ friend_request.sender.username }}
@@ -309,7 +308,7 @@
         <strong>
 
             <a
-                href="{% url 'user_profile' friend_request.receiver.id %}"
+                href="{% url 'profile' username=friend_request.receiver.username %}"
                 class="friend-name"
             >
 
@@ -349,7 +348,7 @@
             <strong>
 
                 <a
-                    href="{% url 'user_profile' friendship.friend.id %}"
+                    href="{% url 'profile' username=friendship.friend.username %}"
                     class="friend-name"
                 >
 
@@ -442,7 +441,7 @@
         <div class="friend">
 
             <a
-                href="{% url 'user_profile' friendship.friend.id %}"
+                href="{% url 'profile' username=friendship.friend.username %}"
                 class="friend-name"
             >
 
@@ -493,7 +492,7 @@
             <div>
 
                 <a
-                    href="{% url 'user_profile' friendship.friend.id %}"
+                    href="{% url 'profile' username=friendship.friend.username %}"
                     class="friend-name"
                 >
 
