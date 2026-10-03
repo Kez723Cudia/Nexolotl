@@ -15,7 +15,75 @@
 </ul>
 
 {% if request.user == profile.user %}
-    <p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+    <p>
+        <a href="{% url 'profile_edit' %}">Edit Profile</a>
+    </p>
+{% endif %}
+
+<!-- FRIENDSHIP CONTROLS -->
+
+{% if not is_own_profile %}
+
+    {% if is_friend %}
+
+        <p>You are friends with {{ profile.user.username }}.</p>
+
+        <form
+        method="post"
+        action="{% url 'remove_friend' profile.user.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Remove Friend
+            </button>
+        </form>
+
+    {% elif sent_friend_request %}
+
+        <p>Friend request sent.</p>
+
+    {% elif received_friend_request %}
+
+        <p>
+            {{ profile.user.username }} sent you a friend request.
+        </p>
+
+        <form
+        method="post"
+        action="{% url 'accept_friend_request' received_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Accept Friend Request
+            </button>
+        </form>
+
+        
+        <form
+        method="post"
+        action="{% url 'decline_friend_request' received_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Decline Friend Request
+            </button>
+        </form>
+
+    {% else %}
+
+        <form
+        method="post"
+        action="{% url 'send_friend_request' profile.user.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Add Friend
+            </button>
+        </form>
+    </form>
+
+    {% endif %}
+
 {% endif %}
 
 <!-- TESTIMONIALS -->
