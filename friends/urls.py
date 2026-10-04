@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     friends_page,
     send_friend_request,
+    cancel_friend_request,
     remove_friend,
     toggle_close_friend,
     accept_friend_request,
@@ -22,6 +23,12 @@ urlpatterns = [
         "send-request/<int:user_id>/",
         send_friend_request,
         name="send_friend_request"
+    ),
+
+    path(
+        "friend-request/<int:request_id>/cancel/", 
+        cancel_friend_request,
+        name="cancel_friend_request"
     ),
 
     path(

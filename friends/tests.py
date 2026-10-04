@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Friendship
+from .models import FriendRequest, Friendship
 
 
 User = get_user_model()
@@ -124,4 +124,131 @@ class TopFriendsSecurityTests(TestCase):
 
         self.assertFalse(friendship.is_top_friend)
         self.assertTrue(friendship.is_close_friend)
+
+class CancelFriendRequestSecurityTests(TestCase):
+    def setUp(self):
+        self.sender = User.objects.create_user(
+            username="sender",
+            email="sender@example.com",
+            password="TestPassword123!",
+        )
+
+        self.receiver = User.objects.create_user(
+            username="receiver",
+            email="receiver@example.com",
+            password="TestPassword123!",
+        )
+
+        self.unrelated_user = User.objects.create_user(
+            username="unrelated_user",
+            email="unrelated@example.com",
+            password="TestPassword123!",
+        )
+
+        self.friend_request = FriendRequest.objects.create(
+            sender=self.sender,
+            receiver=self.receiver,
+        )
+
+        self.cancel_url = reverse(
+            "cancel_friend_request",
+            kwargs={
+                "request_id": self.friend_request.id,
+            },
+        )
+
+    def test_sender_can_cancel_friend_request(self):
+        self.client.force_login(self.sender)
+
+        response = self.client.post(self.cancel_url)
+
+        self.assertRedirects(
+            response,
+            reverse("friends"),
+        )
+
+        self.assertFalse(
+            FriendRequest.objects.filter(
+                id=self.friend_request.id,
+            ).exists()
+        )
+
+    def test_receiver_cannot_cancel_friend_request(self):
+        self.client.force_login(self.receiver)
+
+        response = self.client.post(self.cancel_url)
+
+        self.assertEqual(response.status_code, 404)
+
+        self.assertTrue(
+            FriendRequest.objects.filter(
+                id=self.friend_request.id,
+            ).exists()
+        )
+
+    def test_unrelated_user_cannot_cancel_friend_request(self):
+        self.client.force_login(self.unrelated_user)
+
+        response = self.client.post(self.cancel_url)
+
+        self.assertEqual(response.status_code, 404)
+
+        self.assertTrue(
+            FriendRequest.objects.filter(
+                id=self.friend_request.id,
+            ).exists()
+        )
+
+    def test_get_request_cannot_cancel_friend_request(self):
+        self.client.force_login(self.sender)
+
+        response = self.client.get(self.cancel_url)
+
+        self.assertEqual(response.status_code, 405)
+
+        self.assertTrue(
+            FriendRequest.objects.filter(
+                id=self.friend_request.id,
+            ).exists()
+        )
+
+    def test_sender_can_send_again_after_cancellation(self):
+        self.client.force_login(self.sender)
+
+        cancel_response = self.client.post(
+            self.cancel_url,
+        )
+
+        self.assertRedirects(
+            cancel_response,
+            reverse("friends"),
+        )
+
+        self.assertFalse(
+            FriendRequest.objects.filter(
+                sender=self.sender,
+                receiver=self.receiver,
+            ).exists()
+        )
+
+        send_response = self.client.post(
+            reverse(
+                "send_friend_request",
+                kwargs={
+                    "user_id": self.receiver.id,
+                },
+            )
+        )
+
+        self.assertRedirects(
+            send_response,
+            reverse("friends"),
+        )
+
+        self.assertTrue(
+            FriendRequest.objects.filter(
+                sender=self.sender,
+                receiver=self.receiver,
+            ).exists()
+        )
 # Create your tests here.

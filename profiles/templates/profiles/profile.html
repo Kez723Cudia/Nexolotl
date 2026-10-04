@@ -51,7 +51,17 @@
 
     {% elif sent_friend_request %}
 
-        <p>Friend request sent.</p>
+        <p>Friend request sent to {{ profile.user.username }}.</p>
+
+        <form
+        method="post"
+        action="{% url 'cancel_friend_request' sent_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Cancel Friend Request
+            </button>
+        </form>
 
     {% elif received_friend_request %}
 

@@ -321,6 +321,19 @@
         <span>
             Request Sent
         </span>
+        
+        <form 
+            method="POST" 
+            action="{% url 'cancel_friend_request' friend_request.id %}"
+        >
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="decline-button"
+            >
+                Cancel Request
+            </button>
+        </form>
 
     </div>
 

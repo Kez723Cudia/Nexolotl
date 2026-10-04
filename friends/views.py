@@ -163,6 +163,18 @@ def send_friend_request(request, user_id):
 
     return redirect("friends")
 
+@login_required
+@require_POST
+def cancel_friend_request(request, request_id):
+    friend_request = get_object_or_404(
+        FriendRequest,
+        id=request_id,
+        sender=request.user,
+    )
+
+    friend_request.delete()
+
+    return redirect("friends")
 
 @login_required
 @require_POST
