@@ -6,5 +6,5 @@
     {{ form.as_p }}
 
     <button type="submit">Save Changes</button>
-    <a href="{% url 'profile_view' username=request.user.username %}">Cancel</a>
+    <a href="{% url 'profile' username=request.user.username %}">Cancel</a>
 </form>

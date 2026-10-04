@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .models import Friendship, FriendRequest
+from django.views.decorators.http import require_POST
 
+User = get_user_model()
 
 @login_required
 def friends_page(request):
@@ -109,90 +111,8 @@ def friends_page(request):
         }
     )
 
-
 @login_required
-def profile_page(request):
-
-    # The currently logged-in user
-    current_user = request.user
-
-    friendships = Friendship.objects.filter(
-        user=current_user
-    ).select_related("friend")
-
-    friends_count = friendships.count()
-
-    close_friends_count = friendships.filter(
-        is_close_friend=True
-    ).count()
-
-    top_friends = friendships.filter(
-        is_top_friend=True
-    )
-
-    top_friends_count = top_friends.count()
-
-    return render(
-        request,
-        "friends/profile.html",
-        {
-            "current_user": current_user,
-            "friends_count": friends_count,
-            "close_friends_count": close_friends_count,
-            "top_friends": top_friends,
-            "top_friends_count": top_friends_count,
-        }
-    )
-
-
-@login_required
-def user_profile(request, user_id):
-
-    # Find the requested user
-    profile_user = get_object_or_404(
-        User,
-        id=user_id
-    )
-
-    friendships = Friendship.objects.filter(
-        user=profile_user
-    ).select_related("friend")
-
-    friends_count = friendships.count()
-
-    close_friends_count = friendships.filter(
-        is_close_friend=True
-    ).count()
-
-    top_friends = friendships.filter(
-        is_top_friend=True
-    )
-
-    top_friends_count = top_friends.count()
-
-    return render(
-        request,
-        "friends/user_profile.html",
-        {
-            "profile_user": profile_user,
-            "friends_count": friends_count,
-            "close_friends_count": close_friends_count,
-            "top_friends": top_friends,
-            "top_friends_count": top_friends_count,
-        }
-    )
-
-
-@login_required
-def add_friend(request, user_id):
-
-    return send_friend_request(
-        request,
-        user_id
-    )
-
-
-@login_required
+@require_POST
 def send_friend_request(request, user_id):
 
     # The currently logged-in user
@@ -243,8 +163,21 @@ def send_friend_request(request, user_id):
 
     return redirect("friends")
 
+@login_required
+@require_POST
+def cancel_friend_request(request, request_id):
+    friend_request = get_object_or_404(
+        FriendRequest,
+        id=request_id,
+        sender=request.user,
+    )
+
+    friend_request.delete()
+
+    return redirect("friends")
 
 @login_required
+@require_POST
 def accept_friend_request(request, request_id):
 
     # The currently logged-in user
@@ -277,6 +210,7 @@ def accept_friend_request(request, request_id):
 
 
 @login_required
+@require_POST
 def decline_friend_request(request, request_id):
 
     # The currently logged-in user
@@ -294,6 +228,7 @@ def decline_friend_request(request, request_id):
 
 
 @login_required
+@require_POST
 def remove_friend(request, user_id):
 
     # The currently logged-in user
@@ -322,6 +257,7 @@ def remove_friend(request, user_id):
 
 
 @login_required
+@require_POST
 def toggle_close_friend(request, user_id):
 
     # The currently logged-in user

@@ -15,8 +15,161 @@
 </ul>
 
 {% if request.user == profile.user %}
-    <p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+    <p>
+        <a 
+            href="{% url 'profile_edit' %}">
+            Edit Profile
+        </a>
+    </p>
+
+    <p>
+        <a 
+            href="{% url 'friend_list_privacy_edit' %}">
+            Friend List Privacy Settings
+        </a>
+    </p>
+
 {% endif %}
+
+<!-- FRIENDSHIP CONTROLS -->
+
+{% if not is_own_profile %}
+
+    {% if is_friend %}
+
+        <p>You are friends with {{ profile.user.username }}.</p>
+
+        <form
+        method="post"
+        action="{% url 'remove_friend' profile.user.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Remove Friend
+            </button>
+        </form>
+
+    {% elif sent_friend_request %}
+
+        <p>Friend request sent to {{ profile.user.username }}.</p>
+
+        <form
+        method="post"
+        action="{% url 'cancel_friend_request' sent_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Cancel Friend Request
+            </button>
+        </form>
+
+    {% elif received_friend_request %}
+
+        <p>
+            {{ profile.user.username }} sent you a friend request.
+        </p>
+
+        <form
+        method="post"
+        action="{% url 'accept_friend_request' received_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Accept Friend Request
+            </button>
+        </form>
+
+        
+        <form
+        method="post"
+        action="{% url 'decline_friend_request' received_friend_request.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Decline Friend Request
+            </button>
+        </form>
+
+    {% else %}
+
+        <form
+        method="post"
+        action="{% url 'send_friend_request' profile.user.id %}">
+            {% csrf_token %}
+
+            <button type="submit">
+                Add Friend
+            </button>
+        </form>
+
+    {% endif %}
+
+{% endif %}
+
+    <!-- FRIEND LISTS -->
+
+    <section>
+        <h2>Friends</h2>
+
+        {% if can_view_friends %}
+            <ul>
+                {% for friendship in friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This friends list is private.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Close Friends</h2>
+
+        {% if can_view_close_friends %}
+            <ul>
+                {% for friendship in close_friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No Close Friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This Close Friends list is private.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Top Friends</h2>
+
+        {% if can_view_top_friends %}
+            <ul>
+                {% for friendship in top_friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No Top Friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This Top Friends list is private.</p>
+        {% endif %}
+    </section>
 
 <!-- TESTIMONIALS -->
 {% include "testimonials/testimonial_list.html" %}

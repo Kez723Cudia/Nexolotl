@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -220,7 +218,7 @@
 
 <div style="text-align: center; margin-bottom: 20px;">
 
-    <a href="{% url 'profile' %}">
+    <a href="{% url 'profile' username=request.user.username %}">
         <button type="button">
              My Profile
         </button>
@@ -242,8 +240,7 @@
             <strong>
 
                 <a
-                    href="{% url 'user_profile' friend_request.sender.id %}"
-                    class="friend-name"
+                    href="{% url 'profile' username=friend_request.sender.username %}"
                 >
 
                      {{ friend_request.sender.username }}
@@ -255,32 +252,35 @@
 
             <!-- ACCEPT -->
 
-            <a href="{% url 'accept_friend_request' friend_request.id %}">
+            <form 
+            method="POST" 
+            action="{% url 'accept_friend_request' friend_request.id %}">
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="accept-button">
-
-                     Accept
-
+                    type="submit"
+                    class="accept-button"
+                >
+                    Accept
                 </button>
-
-            </a>
+            </form>
 
 
             <!-- DECLINE -->
 
-            <a href="{% url 'decline_friend_request' friend_request.id %}">
+            <form 
+            method="POST" 
+            action="{% url 'decline_friend_request' friend_request.id %}">
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="decline-button">
-
-                     Decline
-
+                    type="submit"
+                    class="decline-button"
+                >
+                    Decline
                 </button>
+            </form>
 
-            </a>
 
         </div>
 
@@ -308,7 +308,7 @@
         <strong>
 
             <a
-                href="{% url 'user_profile' friend_request.receiver.id %}"
+                href="{% url 'profile' username=friend_request.receiver.username %}"
                 class="friend-name"
             >
 
@@ -321,6 +321,19 @@
         <span>
             Request Sent
         </span>
+        
+        <form 
+            method="POST" 
+            action="{% url 'cancel_friend_request' friend_request.id %}"
+        >
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="decline-button"
+            >
+                Cancel Request
+            </button>
+        </form>
 
     </div>
 
@@ -348,7 +361,7 @@
             <strong>
 
                 <a
-                    href="{% url 'user_profile' friendship.friend.id %}"
+                    href="{% url 'profile' username=friendship.friend.username %}"
                     class="friend-name"
                 >
 
@@ -365,48 +378,55 @@
 
                 {% if friendship.is_close_friend %}
 
-                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
-                        <button
-                            type="button"
-                            class="close-button">
+                    <button
+                        type="submit"
+                        class="close-button"
+                    >
+                        Remove from Close Friends
+                    </button>
+                </form>
 
-                             Remove from Close Friends
-
-                        </button>
-
-                    </a>
 
                 {% else %}
 
-                    <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
-                        <button
-                            type="button"
-                            class="close-button">
-
-                             Add to Close Friends
-
-                        </button>
-
-                    </a>
+                    <button
+                        type="submit"
+                        class="close-button"
+                    >
+                        Add to Close Friends
+                    </button>
+                </form>
 
                 {% endif %}
 
 
                 <!-- REMOVE FRIEND BUTTON -->
 
-                <a href="{% url 'remove_friend' friendship.friend.id %}">
+                <form
+                    method="POST"
+                    action="{% url 'remove_friend' friendship.friend.id %}"
+                >
+                    {% csrf_token %}
 
                     <button
-                        type="button"
-                        class="remove-button">
-
+                        type="submit"
+                        class="remove-button"
+                    >
                         Remove Friend
-
                     </button>
-
-                </a>
+                </form>
 
             </div>
 
@@ -434,7 +454,7 @@
         <div class="friend">
 
             <a
-                href="{% url 'user_profile' friendship.friend.id %}"
+                href="{% url 'profile' username=friendship.friend.username %}"
                 class="friend-name"
             >
 
@@ -444,17 +464,20 @@
 
             <br>
 
-            <a href="{% url 'toggle_close_friend' friendship.friend.id %}">
+            <form
+                method="POST"
+                action="{% url 'toggle_close_friend' friendship.friend.id %}"
+            >
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="close-button">
-
+                    type="submit"
+                    class="close-button"
+                >
                     Remove from Close Friends
-
                 </button>
+            </form>
 
-            </a>
 
         </div>
 
@@ -482,7 +505,7 @@
             <div>
 
                 <a
-                    href="{% url 'user_profile' friendship.friend.id %}"
+                    href="{% url 'profile' username=friendship.friend.username %}"
                     class="friend-name"
                 >
 
@@ -592,17 +615,19 @@
                  {{ user.username }}
             </strong>
 
-            <a href="{% url 'send_friend_request' user.id %}">
+            <form
+                method="POST"
+                action="{% url 'send_friend_request' user.id %}"
+            >
+                {% csrf_token %}
 
                 <button
-                    type="button"
-                    class="add-button">
-
+                    type="submit"
+                    class="add-button"
+                >
                     Add Friend
-
                 </button>
-
-            </a>
+            </form>
 
         </div>
 

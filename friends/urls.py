@@ -2,10 +2,8 @@ from django.urls import path
 
 from .views import (
     friends_page,
-    profile_page,
-    user_profile,
-    add_friend,
     send_friend_request,
+    cancel_friend_request,
     remove_friend,
     toggle_close_friend,
     accept_friend_request,
@@ -22,27 +20,15 @@ urlpatterns = [
     ),
 
     path(
-        "profile/",
-        profile_page,
-        name="profile"
-    ),
-
-    path(
-        "profile/<int:user_id>/",
-        user_profile,
-        name="user_profile"
-    ),
-
-    path(
-        "add/<int:user_id>/",
-        add_friend,
-        name="add_friend"
-    ),
-
-    path(
         "send-request/<int:user_id>/",
         send_friend_request,
         name="send_friend_request"
+    ),
+
+    path(
+        "friend-request/<int:request_id>/cancel/", 
+        cancel_friend_request,
+        name="cancel_friend_request"
     ),
 
     path(
