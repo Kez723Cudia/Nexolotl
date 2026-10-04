@@ -185,3 +185,59 @@ class FriendListPrivacyTests(TestCase):
         self.assertFalse(response.context["friends"].exists()) 
         self.assertFalse( response.context["close_friends"].exists() ) 
         self.assertFalse( response.context["top_friends"].exists() ) 
+    
+    def test_privacy_settings_update_only_logged_in_users_profile(self):
+        self.client.force_login(self.viewer)
+
+        privacy_url = reverse(
+            "friend_list_privacy_edit",
+        )
+
+        response = self.client.post(privacy_url,
+            {
+                "friends_visibility": Profile.VisibilityChoices.PUBLIC,
+                "close_friends_visibility": Profile.VisibilityChoices.FRIENDS,
+                "top_friends_visibility": Profile.VisibilityChoices.ONLY_ME,
+            },
+        )
+
+        self.assertRedirects(response, 
+        reverse(
+            "profile",
+            kwargs={"username": self.viewer.username},
+            ),
+        )
+
+        self.viewer.profile.refresh_from_db()
+        
+        self.owner.profile.refresh_from_db()
+
+        self.assertEqual(
+            self.viewer.profile.friends_visibility,
+            Profile.VisibilityChoices.PUBLIC,   
+        )
+
+        self.assertEqual(
+            self.viewer.profile.close_friends_visibility,
+            Profile.VisibilityChoices.FRIENDS,
+        )
+
+        self.assertEqual(
+            self.viewer.profile.top_friends_visibility,
+            Profile.VisibilityChoices.ONLY_ME,
+        )
+
+        self.assertEqual(
+            self.owner.profile.friends_visibility,
+            Profile.VisibilityChoices.FRIENDS,
+        )
+
+        self.assertEqual(
+            self.owner.profile.close_friends_visibility,
+            Profile.VisibilityChoices.ONLY_ME,
+        )
+
+        self.assertEqual(
+            self.owner.profile.top_friends_visibility,
+            Profile.VisibilityChoices.PUBLIC,
+        )

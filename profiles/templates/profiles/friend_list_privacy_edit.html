@@ -1,0 +1,27 @@
+<h1>Friend List Privacy Settings</h1>
+
+<p> 
+    Control who can view each of your friend lists. “Public” means any user logged in to an existing Nexolotl account. 
+</p> 
+
+<form 
+    method="post"
+    > 
+    
+    {% csrf_token %} 
+    
+    {{ form.as_p }} 
+    
+    <button 
+        type="submit"
+        > 
+    Save Privacy Settings 
+
+    </button> 
+</form> 
+
+<p>
+    <a href="{% url 'profile' username=request.user.username %}">
+        Cancel
+    </a>
+</p>

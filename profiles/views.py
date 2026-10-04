@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Profile
-from .forms import ProfileForm
+from .forms import FriendListPrivacyForm, ProfileForm
 from friends.models import FriendRequest, Friendship
 from testimonials.models import testimonial
 from testimonials.forms import testimonialForm
@@ -154,3 +154,36 @@ def profile_edit(request):
     return render(request, "profiles/profile_edit.html", {
         "form": form
     })
+
+@login_required
+def friend_list_privacy_edit(request):
+    user_profile = get_object_or_404(
+        Profile,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = FriendListPrivacyForm(
+            request.POST,
+            instance=user_profile,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            return redirect(
+                "profile",
+                username=request.user.username,
+            )
+    else:
+        form = FriendListPrivacyForm(
+            instance=user_profile,
+        )
+
+    return render(
+        request,
+        "profiles/friend_list_privacy_edit.html",
+        {
+            "form": form,
+        },
+    )
