@@ -2,8 +2,6 @@ from django.urls import path
 
 from .views import (
     friends_page,
-    profile_page,
-    user_profile,
     send_friend_request,
     remove_friend,
     toggle_close_friend,
@@ -18,18 +16,6 @@ urlpatterns = [
         "",
         friends_page,
         name="friends"
-    ),
-
-    path(
-        "profile/",
-        profile_page,
-        name="profile"
-    ),
-
-    path(
-        "profile/<int:user_id>/",
-        user_profile,
-        name="user_profile"
     ),
 
     path(
