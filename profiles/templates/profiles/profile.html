@@ -80,11 +80,75 @@
                 Add Friend
             </button>
         </form>
-    </form>
 
     {% endif %}
 
 {% endif %}
+
+    <!-- FRIEND LISTS -->
+
+    <section>
+        <h2>Friends</h2>
+
+        {% if can_view_friends %}
+            <ul>
+                {% for friendship in friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This friends list is private.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Close Friends</h2>
+
+        {% if can_view_close_friends %}
+            <ul>
+                {% for friendship in close_friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No Close Friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This Close Friends list is private.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Top Friends</h2>
+
+        {% if can_view_top_friends %}
+            <ul>
+                {% for friendship in top_friends %}
+                    <li>
+                        <a 
+                            href="{% url 'profile' username=friendship.friend.username %}">
+                                {{ friendship.friend.username }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No Top Friends to display.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>This Top Friends list is private.</p>
+        {% endif %}
+    </section>
 
 <!-- TESTIMONIALS -->
 {% include "testimonials/testimonial_list.html" %}
