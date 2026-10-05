@@ -5,16 +5,17 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('Posting.urls')),
+
     path('', include('accounts.urls')),
+
     # User-related features
     path('profiles/', include('profiles.urls')),
     path('friends/', include('friends.urls')),
     path('testimonials/', include('testimonials.urls')),
-    # Posting
-    path('', include('Posting.urls')),
+
 ]
 
-#lagi po ito nasa baba, wag po itaas. This makes sure that media files are served correctly during development
-# Locally kung baga
+#lagi po ito nasa baba, wag po itaas. This makes sure that media files are served correctly during development, locally kung baga
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
