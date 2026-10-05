@@ -9,8 +9,8 @@
         <form method="post" autocomplete="off">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="identifier" class="form-label">Email or Phone</label>
-            <input type="text" name="identifier" class="form-control" autocomplete="off" required>
+            <label for="identifier" class="form-label">Email Address</label>
+            <input type="email" name="identifier" class="form-control" autocomplete="off" required>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>

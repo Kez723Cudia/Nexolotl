@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import User
 
@@ -22,14 +21,10 @@ def login_view(request):
         identifier = request.POST.get("identifier")
         password = request.POST.get("password")
 
-        user_obj = None
         try:
-            user_obj = User.objects.get(email=identifier)
+            user_obj = User.objects.get(email__iexact=identifier)
         except User.DoesNotExist:
-            try:
-                user_obj = User.objects.get(phone_number=identifier)
-            except User.DoesNotExist:
-                pass
+                user_obj = None
 
         user = None
         if user_obj:
@@ -37,9 +32,13 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("home")   
+            return redirect("post_feed")  # Redirect to the feed page after successful login
         else:
-            return render(request, "accounts/login.html", {"error": "Invalid email or password"})
+            return render(
+                request, 
+                "accounts/login.html", 
+                {"error": "Invalid email or password"},
+                )
 
     return render(request, "accounts/login.html")
 
@@ -48,7 +47,3 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
-
-@login_required
-def home_view(request):
-    return render(request, "accounts/home.html")

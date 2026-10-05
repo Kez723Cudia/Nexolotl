@@ -25,13 +25,12 @@ urlpatterns = [
     # Profiles
     path('profiles/', include('profiles.urls')),
 
-    # Testimonies
-    path('testimonies/', include('testimonies.urls')),
+    # Testimonials
+    path('testimonials/', include('testimonials.urls')),
 
-    # User Controls - Report
-    path('user-controls/report/', include('user_controls.urls')),
+    # User Controls
+    path('user-controls/', include('user_controls.urls')),
 ]
-
 
 
 # Serve uploaded media files during development

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.http import Http404
 
@@ -10,6 +11,7 @@ from .forms import PostForm
 from user_controls.models import Block, SeeLess
 from friends.models import Friendship
 
+
 User = get_user_model()
 
 
@@ -18,13 +20,16 @@ def are_friends(user1, user2):
     Check whether two users have a Friendship record
     in either direction.
     """
-    return Friendship.objects.filter(
-        user=user1,
-        friend=user2
-    ).exists() or Friendship.objects.filter(
-        user=user2,
-        friend=user1
-    ).exists()
+    return (
+        Friendship.objects.filter(
+            user=user1,
+            friend=user2
+        ).exists()
+        or Friendship.objects.filter(
+            user=user2,
+            friend=user1
+        ).exists()
+    )
 
 
 def can_view_post(viewer, post):
@@ -38,11 +43,11 @@ def can_view_post(viewer, post):
 
     author = post.author
 
-    # The author can always view their own post
+    # The author can always view their own post.
     if viewer.is_authenticated and viewer == author:
         return True
 
-    # Blocked accounts cannot view each other's posts
+    # Blocked accounts cannot view each other's posts.
     if viewer.is_authenticated:
         is_blocked = Block.objects.filter(
             user=viewer,
@@ -57,7 +62,7 @@ def can_view_post(viewer, post):
         if is_blocked or has_blocked_viewer:
             return False
 
-    # Check whether the author's account is private
+    # A private account's posts require friendship.
     profile = getattr(author, 'profile', None)
 
     if profile and profile.is_private:
@@ -67,16 +72,16 @@ def can_view_post(viewer, post):
         if not are_friends(viewer, author):
             return False
 
-    # Public posts can be viewed once account privacy is satisfied
+    # Public posts are visible once account privacy is satisfied.
     if post.visibility == 'public':
         return True
 
-    # Private posts are only visible to their author
+    # Private posts are only visible to their author.
     if post.visibility == 'private':
         return False
 
-    # Close-friends posts require the author to have marked
-    # the viewer as a close friend
+    # Close-Friends posts require the author to have
+    # marked the viewer as a close friend.
     if post.visibility == 'close_friends':
         if not viewer.is_authenticated:
             return False
@@ -90,27 +95,21 @@ def can_view_post(viewer, post):
     return False
 
 
+@login_required
 def post_feed_view(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
 
         if form.is_valid():
             post = form.save(commit=False)
-
-            if request.user.is_authenticated:
-                post.author = request.user
-            else:
-                fallback_user = (
-                    User.objects.filter(is_superuser=True).first()
-                    or User.objects.first()
-                )
-                post.author = fallback_user
-
+            post.author = request.user
             post.save()
+
             messages.success(
                 request,
                 "Your post was published successfully!"
             )
+
             return redirect('post_feed')
 
     else:
@@ -121,7 +120,7 @@ def post_feed_view(request):
     visible_posts = []
 
     for post in all_posts:
-        # Apply Block and See Less filtering for logged-in users
+        # Block and See Less are feed-level filters.
         if request.user.is_authenticated:
             blocked_by_viewer = Block.objects.filter(
                 user=request.user,
@@ -152,6 +151,7 @@ def post_feed_view(request):
     return render(request, 'feed.html', context)
 
 
+@login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
@@ -165,27 +165,21 @@ def post_detail(request, pk):
     )
 
 
+@login_required
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
 
         if form.is_valid():
             post = form.save(commit=False)
-
-            if request.user.is_authenticated:
-                post.author = request.user
-            else:
-                fallback_user = (
-                    User.objects.filter(is_superuser=True).first()
-                    or User.objects.first()
-                )
-                post.author = fallback_user
-
+            post.author = request.user
             post.save()
+
             messages.success(
                 request,
                 "Your post was published successfully!"
             )
+
             return redirect('post_feed')
 
     else:
