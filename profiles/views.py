@@ -1,45 +1,100 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Profile
-from .forms import FriendListPrivacyForm, ProfileForm
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+
 from friends.models import FriendRequest, Friendship
-from testimonials.models import testimonial
 from testimonials.forms import testimonialForm
+from testimonials.models import testimonial
+from user_controls.models import Block
 
-def can_view_friend_list( 
-    visibility, 
-    *, 
-    is_owner, 
-    viewer_relationship, 
-): 
-    if is_owner: 
-        return True 
-    
-    if visibility == Profile.VisibilityChoices.PUBLIC: 
-        return True 
-    
-    if viewer_relationship is None: 
-        return False 
-        
-    if visibility == Profile.VisibilityChoices.FRIENDS: 
-        return True 
+from .forms import FriendListPrivacyForm, ProfileForm
+from .models import Profile
 
-    if visibility == Profile.VisibilityChoices.CLOSE_FRIENDS: 
-        return viewer_relationship.is_close_friend 
 
-    if visibility == Profile.VisibilityChoices.TOP_FRIENDS: 
-        return viewer_relationship.is_top_friend 
+def are_friends(user1, user2):
+    """
+    Check whether two users have a Friendship record
+    in either direction.
+    """
+    return (
+        Friendship.objects.filter(
+            user=user1,
+            friend=user2,
+        ).exists()
+        or Friendship.objects.filter(
+            user=user2,
+            friend=user1,
+        ).exists()
+    )
+
+
+def can_view_friend_list(
+    visibility,
+    *,
+    is_owner,
+    viewer_relationship,
+):
+    """
+    Determine whether the current viewer can see a
+    profile owner's friend list.
+    """
+
+    if is_owner:
+        return True
+
+    if visibility == Profile.VisibilityChoices.PUBLIC:
+        return True
+
+    if viewer_relationship is None:
+        return False
+
+    if visibility == Profile.VisibilityChoices.FRIENDS:
+        return True
+
+    if visibility == Profile.VisibilityChoices.CLOSE_FRIENDS:
+        return viewer_relationship.is_close_friend
+
+    if visibility == Profile.VisibilityChoices.TOP_FRIENDS:
+        return viewer_relationship.is_top_friend
 
     return False
 
 
-
 @login_required
 def profile_view(request, username):
-    user_profile = get_object_or_404(Profile, user__username=username)
+    user_profile = get_object_or_404(
+        Profile,
+        user__username=username,
+    )
 
     profile_user = user_profile.user
     is_own_profile = request.user == profile_user
+
+    # Blocked users cannot view each other's profiles.
+    if not is_own_profile:
+        is_blocked = Block.objects.filter(
+            user=request.user,
+            blocked_user=profile_user,
+        ).exists()
+
+        has_blocked_viewer = Block.objects.filter(
+            user=profile_user,
+            blocked_user=request.user,
+        ).exists()
+
+        if is_blocked or has_blocked_viewer:
+            return HttpResponseForbidden(
+                "You cannot view this profile."
+            )
+
+    # Private profiles can only be viewed by friends
+    # or by the profile owner.
+    if user_profile.is_private and not is_own_profile:
+        if not are_friends(request.user, profile_user):
+            return HttpResponseForbidden(
+                "This account is private. "
+                "You must be friends to view this profile."
+            )
 
     viewer_relationship = None
 
@@ -74,86 +129,135 @@ def profile_view(request, username):
     if can_view_friends:
         friends = Friendship.objects.filter(
             user=profile_user,
-        ).select_related("friend")
+        ).select_related(
+            "friend",
+        )
 
     if can_view_close_friends:
         close_friends = Friendship.objects.filter(
             user=profile_user,
             is_close_friend=True,
-        ).select_related("friend")
+        ).select_related(
+            "friend",
+        )
 
     if can_view_top_friends:
         top_friends = Friendship.objects.filter(
             user=profile_user,
             is_top_friend=True,
-        ).select_related("friend")
+        ).select_related(
+            "friend",
+        )
 
     is_friend = Friendship.objects.filter(
-    user=request.user,
-    friend=profile_user,
+        user=request.user,
+        friend=profile_user,
     ).exists()
 
     sent_friend_request = FriendRequest.objects.filter(
-    sender=request.user,
-    receiver=profile_user,
+        sender=request.user,
+        receiver=profile_user,
     ).first()
 
     received_friend_request = FriendRequest.objects.filter(
-    sender=profile_user,
-    receiver=request.user,
+        sender=profile_user,
+        receiver=request.user,
     ).first()
 
     testimonials = testimonial.objects.filter(
-        recipient=user_profile.user,
-        is_approved=True
+        recipient=profile_user,
+        is_approved=True,
     )
 
-    # Handle testimonial submission
-    if request.method == "POST" and request.user != user_profile.user:
+    # Handle testimonial submission.
+    if request.method == "POST" and request.user != profile_user:
         form = testimonialForm(request.POST)
+
+        # Blocked users cannot submit testimonials to each other.
+        is_blocked = Block.objects.filter(
+            user=request.user,
+            blocked_user=profile_user,
+        ).exists()
+
+        has_blocked_viewer = Block.objects.filter(
+            user=profile_user,
+            blocked_user=request.user,
+        ).exists()
+
+        if is_blocked or has_blocked_viewer:
+            return HttpResponseForbidden(
+                "You cannot submit a testimonial to this user."
+            )
+
         if form.is_valid():
             new_testimonial = form.save(commit=False)
             new_testimonial.author = request.user
-            new_testimonial.recipient = user_profile.user
+            new_testimonial.recipient = profile_user
             new_testimonial.save()
-            return redirect("profile", username=username)
+
+            return redirect(
+                "profile",
+                username=username,
+            )
     else:
         form = testimonialForm()
 
-    return render(request, "profiles/profile.html", {
-        "profile": user_profile,
-        "testimonials": testimonials,
-        "form": form,
-        "username": username,
-        "is_own_profile": is_own_profile,
-        "is_friend": is_friend,
-        "sent_friend_request": sent_friend_request,
-        "received_friend_request": received_friend_request,
-        "can_view_friends": can_view_friends,
-        "can_view_close_friends": can_view_close_friends,
-        "can_view_top_friends": can_view_top_friends,
-        "friends": friends,
-        "close_friends": close_friends,
-        "top_friends": top_friends,
-    })
+    return render(
+        request,
+        "profiles/profile.html",
+        {
+            "profile": user_profile,
+            "testimonials": testimonials,
+            "form": form,
+            "username": username,
+            "is_own_profile": is_own_profile,
+            "is_friend": is_friend,
+            "sent_friend_request": sent_friend_request,
+            "received_friend_request": received_friend_request,
+            "can_view_friends": can_view_friends,
+            "can_view_close_friends": can_view_close_friends,
+            "can_view_top_friends": can_view_top_friends,
+            "friends": friends,
+            "close_friends": close_friends,
+            "top_friends": top_friends,
+        },
+    )
 
 
-# Edit the logged-in user's profile
 @login_required
 def profile_edit(request):
-    user_profile = get_object_or_404(Profile, user=request.user)
+    user_profile = get_object_or_404(
+        Profile,
+        user=request.user,
+    )
 
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=user_profile)
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=user_profile,
+        )
+
         if form.is_valid():
             form.save()
-            return redirect("profile", username=request.user.username)
-    else:
-        form = ProfileForm(instance=user_profile)
 
-    return render(request, "profiles/profile_edit.html", {
-        "form": form
-    })
+            return redirect(
+                "profile",
+                username=request.user.username,
+            )
+    else:
+        form = ProfileForm(
+            instance=user_profile,
+        )
+
+    return render(
+        request,
+        "profiles/profile_edit.html",
+        {
+            "form": form,
+        },
+    )
+
 
 @login_required
 def friend_list_privacy_edit(request):

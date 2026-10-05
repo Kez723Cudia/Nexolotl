@@ -1,18 +1,32 @@
 from django import forms
 from .models import Profile
 
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio', 'interests']
+        fields = ['avatar', 'bio', 'interests', 'is_private']
+
+        widgets = {
+            'bio': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Write something about yourself...'
+            }),
+            'interests': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Share your interests...'
+            }),
+            'is_private': forms.CheckboxInput(),
+        }
+
 
 class FriendListPrivacyForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
-        'friends_visibility', 
-        'close_friends_visibility', 
-        'top_friends_visibility'
+            'friends_visibility',
+            'close_friends_visibility',
+            'top_friends_visibility',
         ]
 
         labels = {
