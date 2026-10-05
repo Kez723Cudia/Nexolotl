@@ -1,51 +1,73 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
-from .models import Friendship, FriendRequest
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+
+from .models import Friendship, FriendRequest
+from user_controls.models import Block, Restriction
+
 
 User = get_user_model()
 
+
+def is_restricted_by(user, restricting_user):
+    """
+    Return True if restricting_user has restricted user.
+    """
+    return Restriction.objects.filter(
+        user=restricting_user,
+        restricted_user=user,
+    ).exists()
+
+
+def is_blocked_between(user1, user2):
+    """
+    Return True if either user has blocked the other.
+    """
+    return (
+        Block.objects.filter(
+            user=user1,
+            blocked_user=user2,
+        ).exists()
+        or Block.objects.filter(
+            user=user2,
+            blocked_user=user1,
+        ).exists()
+    )
+
+
 @login_required
 def friends_page(request):
-
-    # The currently logged-in user
     current_user = request.user
 
-    # All friendships belonging to the logged-in user
     friendships = Friendship.objects.filter(
-        user=current_user
+        user=current_user,
     ).select_related("friend")
 
-    # Everyone in this list is a friend
     friends = friendships
 
-    # Close Friends
     close_friends = friendships.filter(
-        is_close_friend=True
+        is_close_friend=True,
     )
 
-    # Top Friends
     top_friends = friendships.filter(
-        is_top_friend=True
+        is_top_friend=True,
     )
 
-    # Handle Top Friend selection
     if request.method == "POST":
-
         selected_top_friends = request.POST.getlist(
             "top_friends"
         )
 
-        # Maximum of 5 Top Friends
+        # Top Friends are limited to 5.
         selected_top_friends = selected_top_friends[:5]
 
-        # Remove Top Friend status from all friends
+        # Remove all existing Top Friends selections.
         friendships.update(
             is_top_friend=False
         )
 
-        # Add Top Friend status to selected friends
+        # Add the selected users as Top Friends.
         friendships.filter(
             friend_id__in=selected_top_friends
         ).update(
@@ -54,48 +76,71 @@ def friends_page(request):
 
         return redirect("friends")
 
-    # IDs of users who are already friends
     friend_ids = friendships.values_list(
         "friend_id",
-        flat=True
+        flat=True,
     )
 
-    # IDs of users we already sent a request to
     sent_request_ids = FriendRequest.objects.filter(
-        sender=current_user
+        sender=current_user,
     ).values_list(
         "receiver_id",
-        flat=True
+        flat=True,
     )
 
-    # IDs of users who already sent us a request
     incoming_request_ids = FriendRequest.objects.filter(
-        receiver=current_user
+        receiver=current_user,
     ).values_list(
         "sender_id",
-        flat=True
+        flat=True,
     )
 
-    # Users who are not yet friends and have no pending request
+    # Find users blocked by the current user.
+    blocked_user_ids = set(
+        Block.objects.filter(
+            user=current_user,
+        ).values_list(
+            "blocked_user_id",
+            flat=True,
+        )
+    )
+
+    # Find users who have blocked the current user.
+    blocked_by_user_ids = set(
+        Block.objects.filter(
+            blocked_user=current_user,
+        ).values_list(
+            "user_id",
+            flat=True,
+        )
+    )
+
+    # Block works in both directions.
+    blocked_ids = blocked_user_ids | blocked_by_user_ids
+
     available_users = User.objects.exclude(
-        id=current_user.id
+        id=current_user.id,
     ).exclude(
-        id__in=friend_ids
+        id__in=friend_ids,
     ).exclude(
-        id__in=sent_request_ids
+        id__in=sent_request_ids,
     ).exclude(
-        id__in=incoming_request_ids
+        id__in=incoming_request_ids,
+    ).exclude(
+        id__in=blocked_ids,
     )
 
-    # Friend requests sent by the logged-in user
     sent_requests = FriendRequest.objects.filter(
-        sender=current_user
-    ).select_related("receiver")
+        sender=current_user,
+    ).select_related(
+        "receiver",
+    )
 
-    # Incoming Friend Requests
     incoming_requests = FriendRequest.objects.filter(
-        receiver=current_user
-    ).select_related("sender")
+        receiver=current_user,
+    ).select_related(
+        "sender",
+    )
 
     return render(
         request,
@@ -108,60 +153,73 @@ def friends_page(request):
             "available_users": available_users,
             "incoming_requests": incoming_requests,
             "sent_requests": sent_requests,
-        }
+        },
     )
+
 
 @login_required
 @require_POST
 def send_friend_request(request, user_id):
-
-    # The currently logged-in user
     current_user = request.user
 
-    # Prevent sending a request to yourself
+    # Users cannot send a friend request to themselves.
     if current_user.id == user_id:
         return redirect("friends")
 
-    # Find the user we want to send the request to
     receiver = get_object_or_404(
         User,
-        id=user_id
+        id=user_id,
     )
 
-    # Check if they are already friends
+    # Blocked users cannot send friend requests
+    # to each other in either direction.
+    if is_blocked_between(
+        current_user,
+        receiver,
+    ):
+        return redirect("friends")
+
+    # A restricted user cannot send a new request
+    # to the user who restricted them.
+    if is_restricted_by(
+        current_user,
+        receiver,
+    ):
+        return redirect("friends")
+
     already_friends = Friendship.objects.filter(
         user=current_user,
-        friend=receiver
+        friend=receiver,
     ).exists()
 
     if already_friends:
         return redirect("friends")
 
-    # Check if a request already exists
     request_exists = FriendRequest.objects.filter(
         sender=current_user,
-        receiver=receiver
+        receiver=receiver,
     ).exists()
 
     if request_exists:
         return redirect("friends")
 
-    # Check if the other user already sent us a request
+    # Do not create a duplicate request if
+    # the other user already sent one.
     reverse_request = FriendRequest.objects.filter(
         sender=receiver,
-        receiver=current_user
+        receiver=current_user,
     ).first()
 
     if reverse_request:
         return redirect("friends")
 
-    # Create the friend request
     FriendRequest.objects.create(
         sender=current_user,
-        receiver=receiver
+        receiver=receiver,
     )
 
     return redirect("friends")
+
 
 @login_required
 @require_POST
@@ -176,34 +234,48 @@ def cancel_friend_request(request, request_id):
 
     return redirect("friends")
 
+
 @login_required
 @require_POST
 def accept_friend_request(request, request_id):
-
-    # The currently logged-in user
     current_user = request.user
 
     friend_request = get_object_or_404(
         FriendRequest,
         id=request_id,
-        receiver=current_user
+        receiver=current_user,
     )
 
     sender = friend_request.sender
 
-    # Create friendship from current user → sender
+    # A block prevents the friendship from being created.
+    if is_blocked_between(
+        current_user,
+        sender,
+    ):
+        friend_request.delete()
+        return redirect("friends")
+
+    # If the receiver has restricted the sender,
+    # do not allow the request to become a friendship.
+    if is_restricted_by(
+        sender,
+        current_user,
+    ):
+        friend_request.delete()
+        return redirect("friends")
+
+    # Create the friendship in both directions.
     Friendship.objects.get_or_create(
         user=current_user,
-        friend=sender
+        friend=sender,
     )
 
-    # Create reverse friendship from sender → current user
     Friendship.objects.get_or_create(
         user=sender,
-        friend=current_user
+        friend=current_user,
     )
 
-    # Delete the request after accepting
     friend_request.delete()
 
     return redirect("friends")
@@ -212,14 +284,12 @@ def accept_friend_request(request, request_id):
 @login_required
 @require_POST
 def decline_friend_request(request, request_id):
-
-    # The currently logged-in user
     current_user = request.user
 
     friend_request = get_object_or_404(
         FriendRequest,
         id=request_id,
-        receiver=current_user
+        receiver=current_user,
     )
 
     friend_request.delete()
@@ -230,27 +300,24 @@ def decline_friend_request(request, request_id):
 @login_required
 @require_POST
 def remove_friend(request, user_id):
-
-    # The currently logged-in user
     current_user = request.user
 
     friend = User.objects.filter(
-        id=user_id
+        id=user_id,
     ).first()
 
     if not friend:
         return redirect("friends")
 
-    # Remove current user's friendship
+    # Remove the friendship in both directions.
     Friendship.objects.filter(
         user=current_user,
-        friend=friend
+        friend=friend,
     ).delete()
 
-    # Remove reverse friendship
     Friendship.objects.filter(
         user=friend,
-        friend=current_user
+        friend=current_user,
     ).delete()
 
     return redirect("friends")
@@ -259,17 +326,17 @@ def remove_friend(request, user_id):
 @login_required
 @require_POST
 def toggle_close_friend(request, user_id):
-
-    # The currently logged-in user
     current_user = request.user
 
     friendship = Friendship.objects.filter(
         user=current_user,
-        friend_id=user_id
+        friend_id=user_id,
     ).first()
 
     if friendship:
         friendship.is_close_friend = not friendship.is_close_friend
-        friendship.save()
+        friendship.save(
+            update_fields=["is_close_friend"]
+        )
 
     return redirect("friends")
