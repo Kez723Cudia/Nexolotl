@@ -1,0 +1,27 @@
+{% load static %}
+<header class="nx-nav">
+  <a class="nx-logo" href="{% url 'post_feed' %}">
+    <img class="nx-logo__mark" src="{% static 'img/nexolotl-logo.png' %}" alt="">
+    <span class="nx-logo__word">NEXOLOTL</span>
+  </a>
+
+  <nav class="nx-nav__links" aria-label="Main">
+    <a href="{% url 'post_feed' %}">Home</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'profile' username=user.username %}">Profile</a>
+    {% endif %}
+  </nav>
+
+  <div class="nx-nav__actions">
+    {% if user.is_authenticated %}
+      <a class="nx-btn" href="{% url 'create_post' %}">+ New Post</a>
+      <a href="{% url 'profile' username=user.username %}">
+        <img class="nx-avatar nx-avatar--sm" src="{{ user.profile.avatar.url }}" alt="Your profile">
+      </a>
+      <a href="{% url 'logout' %}">Log out</a>
+    {% else %}
+      <a class="nx-btn nx-btn--ghost" href="{% url 'login' %}">Log in</a>
+      <a class="nx-btn" href="{% url 'register' %}">Sign up</a>
+    {% endif %}
+  </div>
+</header>
