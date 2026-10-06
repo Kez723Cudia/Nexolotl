@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
+from django.conf import settings 
 
 User = get_user_model()
 
@@ -14,7 +15,7 @@ class Post(models.Model):
     ]
 
     POST_TYPE_CHOICES = [
-        ('permanent', 'Permanent Post'),
+        ('permanent', 'Post'),
         ('flash', '24-Hour Flash Post'),
     ]
 
@@ -37,6 +38,12 @@ class Post(models.Model):
         choices=POST_TYPE_CHOICES,
         default='permanent'
     )
+
+    image = models.ImageField(
+        upload_to="posts/", 
+        blank=True, 
+        null=True
+        )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -62,3 +69,27 @@ class Post(models.Model):
             f"{self.post_type} "
             f"({self.created_at.strftime('%Y-%m-%d %H:%M')})"
         )
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="comments"
+        )
+    
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+        )
+    
+    image = models.ImageField(
+        upload_to="comments/", 
+        blank=True, 
+        null=True
+        )
+    
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
