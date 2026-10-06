@@ -5,12 +5,15 @@
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/interests.css' %}">
 {% endblock %}
 
 {% block content %}
   {% include 'profiles/partials/_hero.html' %}
 
-  {# Future profile sections (interests widget, etc.): add a partial and include it here #}
+  {% include 'profiles/partials/_interests.html' %}
+
+  {# Future profile sections: add a partial and include it here #}
 
   {% include 'profiles/partials/_friends.html' %}
 
