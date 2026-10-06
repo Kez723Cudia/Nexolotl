@@ -1,13 +1,27 @@
-<h1>Edit Profile</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+{% block title %}Edit Profile · Nexolotl{% endblock %}
 
-    {{ form.as_p }}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
 
-    <button type="submit">Save Changes</button>
+{% block content %}
+  <section class="fm-page">
+    <h1 class="fm-title">Edit Profile</h1>
 
-    <a href="{% url 'profile' username=request.user.username %}">
-        Cancel
-    </a>
-</form>
+    <div class="nx-card">
+      <form class="fm-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="fm-actions">
+          <button type="submit">Save Changes</button>
+          <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

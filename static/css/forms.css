@@ -1,0 +1,19 @@
+/* Shared form styles (prefix fm-). Link this file from any page that has a form. */
+.fm-page { width: 100%; max-width: 640px; margin: 0 auto; }
+.fm-title { color: var(--nx-card); font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; margin-bottom: 1rem; }
+
+.fm-form p { margin-bottom: 1.1rem; }
+.fm-form p > label:first-child { display: block; margin-bottom: 0.35rem; font-weight: 500; }
+.fm-form :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select, textarea) { width: 100%; padding: 0.65rem 0.85rem; font: inherit; color: var(--nx-ink); background: #fff; border: 2px solid rgba(91, 74, 158, 0.3); border-radius: var(--nx-radius-sm); }
+.fm-form textarea { min-height: 7rem; resize: vertical; }
+.fm-form :is(input, select, textarea):focus-visible { outline: 3px solid var(--nx-accent); outline-offset: 1px; border-color: var(--nx-bg-soft); }
+.fm-form input[type="checkbox"] { accent-color: var(--nx-bg); margin-right: 0.35rem; }
+.fm-form input[type="file"] { max-width: 100%; font: inherit; }
+.fm-form input[type="file"]::file-selector-button { margin-right: 0.75rem; padding: 0.4rem 1rem; font: inherit; font-weight: 500; color: var(--nx-accent); background: var(--nx-bg-soft); border: 0; border-radius: 999px; cursor: pointer; }
+.fm-form a { text-decoration: underline; }
+.fm-form .helptext { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: var(--nx-ink-soft); }
+.fm-form .errorlist { list-style: none; padding: 0; margin: 0 0 0.35rem; font-size: 0.9rem; color: #b3261e; }
+
+.fm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
+.fm-form .fm-link { display: inline-block; padding: 0.5rem 1.1rem; border: 2px solid var(--nx-ink); border-radius: 999px; color: var(--nx-ink); text-decoration: none; }
+.fm-form .fm-link:hover { background: rgba(59, 47, 107, 0.08); }
