@@ -1,29 +1,29 @@
 /* Nexolotl design tokens: edit here to re-theme the whole site */
 :root {
-  --nx-navy: #241441;
-  --nx-bg: #5b4a9e;
-  --nx-bg-soft: #6f5fb8;
-  --nx-card: #fdf8e3;
+  --nx-navy: #fdf0ec;
+  --nx-bg: #aee1f9;
+  --nx-bg-soft: #aee1f9;
+  --nx-card: #fdf0ec;
   --nx-card-ink: var(--nx-ink);
-  --nx-on-brand: #fdf8e3;
-  --nx-button-ink: var(--nx-accent);
-  --nx-logo-accent: var(--nx-accent);
-  --nx-settings-heading: var(--nx-accent);
-  --nx-nav-border: transparent;
-  --nx-ink: #3b2f6b;
-  --nx-ink-soft: #6f64a0;
-  --nx-accent: #ffd84a;
-  --nx-orange: #ff9f45;
-  --nx-hero-mid: #3e2d78;
-  --nx-hero-end: var(--nx-bg-soft);
-  --nx-input-bg: #fff;
-  --nx-row-bg: rgba(91, 74, 158, 0.1);
-  --nx-divider: rgba(91, 74, 158, 0.18);
+  --nx-on-brand: #111111;
+  --nx-button-ink: #111111;
+  --nx-logo-accent: #111111;
+  --nx-settings-heading: #111111;
+  --nx-nav-border: #111111;
+  --nx-ink: #111111;
+  --nx-ink-soft: #414141;
+  --nx-accent: #aee1f9;
+  --nx-orange: #fdf0ec;
+  --nx-hero-mid: #aee1f9;
+  --nx-hero-end: #fdf0ec;
+  --nx-input-bg: #fffaf8;
+  --nx-row-bg: rgba(174, 225, 249, 0.42);
+  --nx-divider: rgba(17, 17, 17, 0.82);
   color-scheme: light;
 
   --nx-radius: 22px;
   --nx-radius-sm: 14px;
-  --nx-shadow: 0 6px 0 rgba(36, 20, 65, 0.25);
+  --nx-shadow: 0 5px 0 rgba(17, 17, 17, 0.18);
   --nx-gap: 1.25rem;
   --nx-nav-h: 68px;
 

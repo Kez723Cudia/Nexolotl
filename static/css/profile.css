@@ -8,6 +8,7 @@
 .pf-hero__banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pf-hero__banner::after { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, rgba(30, 16, 58, 0.9), rgba(30, 16, 58, 0.62) 55%, rgba(30, 16, 58, 0.34)); }
 .pf-hero--banner > :not(.pf-hero__banner) { z-index: 1; }
+.pf-hero--banner h1 { -webkit-text-stroke: 1px var(--nx-card); paint-order: stroke fill; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.85); }
 .pf-eyebrow { font-family: var(--nx-pixel); color: var(--nx-accent); letter-spacing: 0.06em; }
 .pf-hero h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.1; margin: 0.2rem 0 0.6rem; }
 .pf-bio { max-width: 52ch; }
@@ -66,8 +67,8 @@
 .pf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.25rem; }
 .pf-actions form { margin: 0; }
 .pf-status { flex-basis: 100%; margin: 0; }
-.pf-btn { font: inherit; font-weight: 500; display: inline-block; padding: 0.55rem 1.2rem; border-radius: 999px; border: 2px solid var(--nx-accent); background: var(--nx-accent); color: var(--nx-navy); cursor: pointer; }
-.pf-btn--ghost { background: transparent; color: var(--nx-on-brand); border-color: var(--nx-on-brand); }
+.pf-btn { font: inherit; font-weight: 700; display: inline-block; padding: 0.55rem 1.2rem; border-radius: 999px; border: 2px solid var(--nx-ink); background: var(--nx-bg-soft); color: var(--nx-ink); cursor: pointer; }
+.pf-btn--ghost { background: var(--nx-card); color: var(--nx-ink); border-color: var(--nx-ink); }
 .pf-btn:hover { filter: brightness(1.08); }
 .pf-more { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(253, 248, 227, 0.25); color: var(--nx-on-brand); }
 .pf-more a { text-decoration: underline; }

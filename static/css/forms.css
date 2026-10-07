@@ -22,7 +22,7 @@
 .pf-edit-actions .pf-cancel-button:hover { border-color: #8f1d14; background: #8f1d14; color: #fff; }
 .fm-form input[type="checkbox"] { accent-color: var(--nx-bg); margin-right: 0.35rem; }
 .fm-form input[type="file"] { max-width: 100%; font: inherit; }
-.fm-form input[type="file"]::file-selector-button { margin-right: 0.75rem; padding: 0.4rem 1rem; font: inherit; font-weight: 500; color: var(--nx-accent); background: var(--nx-bg-soft); border: 0; border-radius: 999px; cursor: pointer; }
+.fm-form input[type="file"]::file-selector-button { margin-right: 0.75rem; padding: 0.4rem 1rem; font: inherit; font-weight: 700; color: var(--nx-ink); background: var(--nx-bg-soft); border: 2px solid var(--nx-ink); border-radius: 999px; cursor: pointer; }
 .fm-form a { text-decoration: underline; }
 .fm-form .helptext { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: var(--nx-ink-soft); }
 .fm-form .errorlist { list-style: none; padding: 0; margin: 0 0 0.35rem; font-size: 0.9rem; color: #b3261e; }

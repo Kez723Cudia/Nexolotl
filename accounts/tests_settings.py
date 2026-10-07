@@ -25,6 +25,17 @@ class AccountSettingsTests(TestCase):
         )
         self.client.force_login(self.user)
 
+    def test_default_theme_uses_the_new_nexolotl_palette(self):
+        self.assertEqual(self.user.theme, User.ThemeChoices.CLASSIC)
+        self.assertEqual(User.ThemeChoices.CLASSIC.label, "Nexolotl Breeze")
+
+        response = self.client.get(reverse("account_settings"))
+
+        self.assertContains(response, 'data-theme="classic"')
+        self.assertContains(response, "Nexolotl Breeze")
+        self.assertContains(response, "css/tokens.css?v=3")
+        self.assertContains(response, "css/nexolotl.css?v=2")
+
     def test_settings_saves_theme_and_private_view_preference(self):
         response = self.client.post(
             reverse("account_settings"),

@@ -50,7 +50,7 @@ class ProfileFrameTests(TestCase):
         self.assertContains(response, "flower")
         self.assertContains(response, "planet")
         self.assertContains(response, "data-sticker-stage")
-        self.assertContains(response, 'href="/static/css/forms.css?v=4"')
+        self.assertContains(response, 'href="/static/css/forms.css?v=5"')
         self.assertContains(response, 'form="profile-edit-form"')
         self.assertContains(response, "pf-cancel-button")
         self.assertLess(
@@ -227,7 +227,7 @@ class ProfileFrameTests(TestCase):
         response = self.client.get(self.profile_url)
 
         self.assertContains(response, "pf-avatar-frame--floral")
-        self.assertContains(response, "css/profile.css?v=6")
+        self.assertContains(response, "css/profile.css?v=9")
 
     def test_invalid_frame_choice_is_not_saved(self):
         response = self.client.post(

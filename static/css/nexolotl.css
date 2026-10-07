@@ -20,7 +20,7 @@ img { max-width: 100%; display: block; }
 .nx-search button { padding: 0.35rem 0.75rem; border: 0; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-button-ink); font: inherit; cursor: pointer; }
 
 /* Buttons */
-.nx-btn, .nx-card form button { font: inherit; font-weight: 500; display: inline-block; padding: 0.5rem 1.1rem; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-button-ink); border: 2px solid transparent; cursor: pointer; }
+.nx-btn, .nx-card form button { font: inherit; font-weight: 500; display: inline-block; padding: 0.5rem 1.1rem; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-button-ink); border: 2px solid var(--nx-ink); cursor: pointer; }
 .nx-btn:hover, .nx-card form button:hover { filter: brightness(1.12); }
 .nx-btn--ghost { background: transparent; border-color: var(--nx-accent); }
 
@@ -31,7 +31,7 @@ img { max-width: 100%; display: block; }
 
 /* Layout and cards */
 .nx-container { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem 4rem; display: grid; gap: var(--nx-gap); }
-.nx-card { color: var(--nx-card-ink); background: var(--nx-card); border-radius: var(--nx-radius); padding: 1.25rem 1.5rem; box-shadow: var(--nx-shadow); }
+.nx-card { color: var(--nx-card-ink); background: var(--nx-card); border: 2px solid var(--nx-divider); border-radius: var(--nx-radius); padding: 1.25rem 1.5rem; box-shadow: var(--nx-shadow); }
 .nx-muted, .nx-handle { color: var(--nx-ink-soft); }
 .nx-handle { font-size: 0.9rem; }
 .nx-section__title { font-size: 1.15rem; margin-bottom: 0.75rem; }

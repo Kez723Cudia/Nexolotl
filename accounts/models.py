@@ -3,7 +3,7 @@ from django.db import models
 
 class User(AbstractUser):
     class ThemeChoices(models.TextChoices):
-        CLASSIC = "classic", "Nexolotl original"
+        CLASSIC = "classic", "Nexolotl Breeze"
         DARK = "dark", "Midnight"
         OCEAN = "ocean", "Ocean"
         FOREST = "forest", "Forest"
