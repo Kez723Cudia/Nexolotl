@@ -4,23 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Nexolotl Admin{% endblock %}</title>
+
+    {% load static %}
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        >
+
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{% static 'css/dashboard.css' %}"
+        >
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
 </head>
 <body>
 
-    <header>
-        <h1>Nexolotl Admin Panel</h1>
-    </header>
+<div class="dashboard-layout">
 
-    <nav>
-        {% url 'dashboard_home' %}
-            Dashboard
-        </a>
-    </nav>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Nexolotl</h2>
+            <span>Admin Panel</span>
+        </div>
 
-    <main>
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard_home' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_home' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{% url 'dashboard_users' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_users' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+
+            <a href="{% url 'dashboard_profiles' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_profiles' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-id-card"></i>
+                <span>Profiles</span>
+            </a>
+
+            <a href="{% url 'dashboard_posts' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_posts' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-newspaper"></i>
+                <span>Posts</span>
+            </a>
+
+            <a href="{% url 'dashboard_reports' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_reports' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-flag"></i>
+                <span>Reports</span>
+            </a>
+
+            <a href="{% url 'dashboard_testimonials' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard_testimonials' %}active-nav{% endif %}"
+            >
+                <i class="fa-solid fa-comments"></i>
+                <span>Testimonials</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-content">
+
         {% block content %}
         {% endblock %}
+
     </main>
+
+</div>
 
 </body>
 </html>

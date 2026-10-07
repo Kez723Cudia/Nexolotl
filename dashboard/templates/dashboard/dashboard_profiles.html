@@ -1,0 +1,78 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Profiles | Nexolotl Admin{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Profile Management</h1>
+        <p>View the profiles connected to registered accounts.</p>
+    </div>
+</header>
+
+<div class="data-panel">
+    <table class="dashboard-table">
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th>Username</th>
+                <th>Bio</th>
+                <th>Interests</th>
+                <th>Privacy</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for profile in profiles %}
+                <tr>
+                    <td> 
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.user.username }}" class="profile-avatar">
+                    </td>
+                    <td>{{ profile.user.username }}</td>
+                    <td>
+                        {% if profile.bio %}
+                            <span class="badge-bio">
+                                Bio Added
+                            </span>
+                        {% else %}
+                            <span class="badge-empty">
+                                No Bio
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.interest_items.count == 0 %}
+                            <span class="badge-empty">
+                                No Interests
+                            </span>
+                        {% elif profile.interest_items.count == 1 %}
+                            <span class="badge-interest">
+                                1 Interest
+                            </span>
+                        {% else %}
+                            <span class="badge-interest">
+                                {{ profile.interest_items.count }} Interests
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.is_private %}
+                            <span class="badge-private">
+                                Private
+                            </span>
+                        {% else %}
+                            <span class="badge-public">
+                                Public
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No profiles found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

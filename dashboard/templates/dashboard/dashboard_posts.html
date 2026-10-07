@@ -1,0 +1,84 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Posts | Nexolotl Admin{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Post Management</h1>
+        <p>Review content published across Nexolotl.</p>
+    </div>
+</header>
+
+<div class="data-panel">
+    <table class="dashboard-table">
+        <thead>
+        <tr>
+            <th>Author</th>
+            <th>Content</th>
+            <th>Type</th>
+            <th>Image</th>
+            <th>Visibility</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td>{{ post.author.username }}</td>
+                    <td>
+                        {{ post.content|default:"Image-only post"|truncatechars:90 }}
+                    </td>
+
+                    <td>
+                        {% if post.post_type == "flash" %}
+                            <span class="badge-interest">
+                                Flash
+                            </span>
+                        {% else %}
+                            <span class="badge-public">
+                                Permanent
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if post.image %}
+                            <span class="badge-public">
+                                Has Image
+                            </span>
+                        {% else %}
+                            <span class="badge-empty">
+                                Text Only
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ post.visibility }}</td>
+                    <td>{{ post.created_at|date:"M d, Y" }}</td>
+                    <td>
+                            <form
+                            method="POST"
+                            action="{% url 'dashboard_delete_post' post.id %}"
+                            >
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="delete-button"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No posts found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

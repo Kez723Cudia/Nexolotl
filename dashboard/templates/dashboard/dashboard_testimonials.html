@@ -1,0 +1,54 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Testimonials | Nexolotl Admin{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Testimonial Management</h1>
+        <p>View testimonials shared between Nexolotl users.</p>
+    </div>
+</header>
+
+<div class="data-panel">
+    <table class="dashboard-table">
+        <thead>
+        <tr>
+            <th>Author</th>
+            <th>Recipient</th>
+            <th>Status</th>
+            <th>Message</th>
+            <th>Created</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {% for entry in testimonials %}
+                <tr>
+                    <td>{{ entry.author.username }}</td>
+                    <td>{{ entry.recipient.username }}</td>
+
+                    <td>
+                        {% if entry.is_approved %}
+                            <span class="badge-public">
+                                Approved
+                            </span>
+                        {% else %}
+                            <span class="badge-private">
+                                Pending
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ entry.content|truncatechars:100 }}</td>
+                    <td>{{ entry.created_at|date:"M d, Y" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No testimonials found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
