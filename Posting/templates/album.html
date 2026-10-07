@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nexolotl - Album</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&family=Silkscreen:wght@700&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        font-family: var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        min-height: 100vh;
+        padding-bottom: 110px;
+    }
+
+    /* ---- Same header, dock, button and dialog styles as the home page ---- */
+    .feed-topbar {
+        position: sticky; top: 0; z-index: 10;
+        height: var(--nx-nav-h, 68px);
+        background: var(--nx-card, #FDF0EC);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 1.5rem;
+    }
+    .feed-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .feed-brand img { height: 36px; width: auto; object-fit: contain; }
+    .feed-brand span {
+        font-family: var(--nx-pixel, "Silkscreen", "Courier New", monospace);
+        font-weight: 700; font-size: 1.6rem; letter-spacing: 1px; color: var(--nx-text, #000000);
+    }
+    .feed-topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+
+    .feed-avatar {
+        flex: none; width: 42px; height: 42px; border-radius: 50%;
+        border: 3px solid var(--nx-text, #000000); object-fit: cover;
+        background: var(--nx-bg, #AEE1F9);
+        display: flex; align-items: center; justify-content: center;
+        font: 700 1.2rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        text-transform: uppercase;
+    }
+
+    .feed-new-post {
+        background: var(--nx-bg, #AEE1F9); color: var(--nx-text, #000000);
+        border: 2px solid var(--nx-text, #000000); border-radius: 999px;
+        padding: 0.35rem 1.5rem;
+        font: 700 1rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+    .feed-new-post:hover { filter: brightness(0.95); }
+
+    .feed-dock {
+        position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+        width: min(460px, 100%); height: 80px;
+        background: var(--nx-card, #FDF0EC);
+        border-radius: 40px 40px 0 0; z-index: 20;
+        display: flex; align-items: center; justify-content: space-around; padding: 0 1rem;
+    }
+    .feed-dock a {
+        width: 108px; height: 58px; border-radius: 29px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--nx-text, #000000);
+    }
+    .feed-dock a.active { background: var(--nx-bg, #AEE1F9); }
+    .feed-dock svg { width: 34px; height: 34px; fill: currentColor; }
+    .feed-dock svg.line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .feed-messages { list-style: none; display: grid; gap: 0.6rem; margin-bottom: 1.25rem; }
+    .feed-messages li {
+        background: var(--nx-card, #FDF0EC); border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px; padding: 0.6rem 1.5rem; font-weight: 700;
+    }
+
+    .feed-dialog {
+        margin: auto; border: 0; border-radius: calc(var(--nx-radius, 22px) * 1.4);
+        background: var(--nx-card, #FDF0EC); color: var(--nx-text, #000000);
+        width: min(640px, calc(100% - 2rem)); padding: 1.75rem 2rem;
+    }
+    .feed-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+    .feed-dialog h2 { font-size: 1.4rem; margin-bottom: 0.9rem; }
+    .feed-dialog form p { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.9rem; }
+    .feed-dialog label { font-weight: 700; font-size: 0.95rem; }
+    .feed-dialog input[type="file"] {
+        width: 100%; padding: 0.5rem; border: 2px dashed var(--nx-text, #000000);
+        border-radius: var(--nx-radius-sm, 14px); background: var(--nx-bg, #AEE1F9);
+        font: 500 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+    }
+    .feed-dialog input[type="file"]::file-selector-button {
+        margin-right: 0.75rem; padding: 0.4rem 1.1rem; border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px; background: var(--nx-card, #FDF0EC);
+        font: 700 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif); cursor: pointer;
+    }
+    .feed-dialog .errorlist { list-style: none; color: #b3261e; font-weight: 700; font-size: 0.9rem; }
+    .feed-preview { display: block; max-width: 100%; max-height: 220px; margin: 0 0 0.9rem; border-radius: var(--nx-radius-sm, 14px); object-fit: cover; }
+    .feed-preview[hidden] { display: none; }
+    .feed-dialog-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; }
+    .feed-dialog-actions button {
+        border: 2px solid transparent; border-radius: 999px; padding: 0.5rem 1.6rem;
+        font: 700 1rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif); cursor: pointer;
+    }
+    .feed-cancel { background: transparent; color: var(--nx-text, #000000); }
+    .feed-submit { background: var(--nx-bg, #AEE1F9); color: var(--nx-text, #000000); border-color: var(--nx-text, #000000) !important; }
+
+    /* ---- Album-specific ---- */
+    .album-wrap { max-width: 1240px; margin: 0 auto; padding: 1.5rem; }
+
+    .album-bar {
+        display: flex; flex-wrap: wrap; align-items: center;
+        justify-content: space-between; gap: 0.75rem; margin-bottom: 1.5rem;
+    }
+    .album-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .album-chip {
+        padding: 0.35rem 1.1rem; border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px; background: var(--nx-card, #FDF0EC);
+        color: var(--nx-text, #000000); text-decoration: none; font-weight: 700; font-size: 0.95rem;
+    }
+    .album-chip.on { background: var(--nx-text, #000000); color: var(--nx-card, #FDF0EC); }
+
+    /* Collage: columns of photos with mixed heights, like the mockup */
+    .album-grid { column-width: 260px; column-gap: 1rem; }
+    .album-item {
+        position: relative; break-inside: avoid; margin-bottom: 1rem;
+        border-radius: calc(var(--nx-radius, 22px) * 1.2); overflow: hidden;
+        background: var(--nx-card, #FDF0EC);
+        box-shadow: var(--nx-shadow, 0 5px 0 rgba(0, 0, 0, 0.18));
+    }
+    .album-item img { display: block; width: 100%; height: auto; }
+
+    .album-by {
+        position: absolute; left: 10px; bottom: 10px;
+        padding: 2px 10px; border-radius: 999px;
+        background: var(--nx-card, #FDF0EC); font-size: 0.75rem; font-weight: 700;
+        opacity: 0; transition: opacity 0.15s;
+    }
+    .album-item:hover .album-by, .album-item:focus-within .album-by { opacity: 1; }
+
+    .album-del {
+        position: absolute; top: 10px; right: 10px; width: 30px; height: 30px;
+        border-radius: 50%; border: 2px solid var(--nx-text, #000000);
+        background: var(--nx-card, #FDF0EC); font: 700 1rem/1 var(--nx-font, "Lexend", sans-serif);
+        cursor: pointer; opacity: 0; transition: opacity 0.15s;
+    }
+    .album-item:hover .album-del, .album-item:focus-within .album-del { opacity: 1; }
+
+    .album-empty { text-align: center; font-size: 1.2rem; padding: 3rem 0; }
+
+    .feed-new-post:focus-visible, .album-chip:focus-visible, .album-del:focus-visible,
+    .feed-dock a:focus-visible, .feed-dialog button:focus-visible, .feed-dialog input:focus-visible {
+        outline: 3px solid var(--nx-text, #000000); outline-offset: 2px;
+    }
+
+    @media (max-width: 720px) {
+        .feed-brand span { font-size: 1.3rem; }
+        .feed-new-post { padding: 0.35rem 1.1rem; font-size: 0.95rem; }
+        .feed-topbar-right { gap: 0.75rem; }
+        .album-grid { column-width: 150px; column-gap: 0.6rem; }
+        .album-item { margin-bottom: 0.6rem; }
+        .album-by, .album-del { opacity: 1; }
+    }
+
+    .member-list { list-style: none; display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+    .member-list li { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; }
+    .member-list form { margin-left: auto; }
+</style>
+</head>
+<body>
+<header class="feed-topbar">
+    <a class="feed-brand" href="{% url 'post_feed' %}">
+        <img src="{% static 'nexolotl-logo-removebg-preview.png' %}" alt="">
+        <span>NEXOLOTL</span>
+    </a>
+    <div class="feed-topbar-right">
+        <button class="feed-new-post" id="openPhoto" type="button">+ New Photo</button>
+        {% if user.profile.avatar %}
+            <img class="feed-avatar" src="{{ user.profile.avatar.url }}" alt="Your profile">
+        {% else %}
+            <div class="feed-avatar" title="{{ user.username }}">{{ user.username|slice:":1" }}</div>
+        {% endif %}
+    </div>
+</header>
+
+<main class="album-wrap">
+    {% if messages %}
+        <ul class="feed-messages">
+            {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="album-bar">
+        <nav class="album-chips" aria-label="Your albums">
+            {% for a in albums %}
+                <a class="album-chip {% if a.pk == album.pk %}on{% endif %}" href="{% url 'album_detail' a.pk %}">
+                    {% if a.owner == user %}My album{% else %}{{ a.owner.username }}'s album{% endif %}
+                </a>
+            {% endfor %}
+        </nav>
+        {% if album.owner == user %}
+            <button class="feed-new-post" id="copyInvite" type="button"
+        data-link="{% url 'album_join' album.invite_code %}">Copy invite link</button>
+        {% endif %}
+        <button class="feed-new-post" id="openMembers" type="button">
+            Members ({{ album.members.count|add:1 }})
+        </button>
+    </div>
+
+    {% if photos %}
+        <section class="album-grid">
+            {% for photo in photos %}
+                <figure class="album-item">
+                    <img src="{{ photo.image.url }}" alt="Photo added by {{ photo.uploader.username }}" loading="lazy">
+                    <figcaption class="album-by">@{{ photo.uploader.username }}</figcaption>
+                    {% if photo.uploader == user or album.owner == user %}
+                        <form method="POST" action="{% url 'photo_delete' photo.pk %}">
+                            {% csrf_token %}
+                            <button class="album-del" type="submit" aria-label="Delete photo">&times;</button>
+                        </form>
+                    {% endif %}
+                </figure>
+            {% endfor %}
+        </section>
+    {% else %}
+        <p class="album-empty">No photos yet. Add the first one with + New Photo.</p>
+    {% endif %}
+
+    <dialog class="feed-dialog" id="photoDialog" {% if form.errors %}data-open="true"{% endif %}>
+        <h2>Add a photo</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <img class="feed-preview" id="imgPreview" alt="Selected photo preview" hidden>
+            <div class="feed-dialog-actions">
+                <button class="feed-cancel" id="cancelPhoto" type="button">Cancel</button>
+                <button class="feed-submit" type="submit">Add photo</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="feed-dialog" id="membersDialog">
+        <h2>Album members</h2>
+        <ul class="member-list">
+            <li>
+                <span class="feed-avatar">{{ album.owner.username|slice:":1" }}</span>
+                <span>@{{ album.owner.username }} <small>(owner)</small></span>
+            </li>
+            {% for m in album.members.all %}
+                <li>
+                    <span class="feed-avatar">{{ m.username|slice:":1" }}</span>
+                    <span>@{{ m.username }}</span>
+                    {% if album.owner == user %}
+                        <form method="POST" action="{% url 'member_remove' album.pk m.pk %}">
+                            {% csrf_token %}
+                            <button class="feed-cancel" type="submit">Remove</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>No friends have joined yet. Share your invite link.</li>
+            {% endfor %}
+        </ul>
+        <div class="feed-dialog-actions">
+            <button class="feed-cancel" id="closeMembers" type="button">Close</button>
+        </div>
+    </dialog>
+</main>
+
+<nav class="feed-dock" aria-label="Main">
+    <a href="{% url 'post_feed' %}" aria-label="Home">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg>
+    </a>
+    <a href="{% url 'album_home' %}" class="active" aria-label="Shared album" aria-current="page">
+        <svg class="line" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><circle cx="12" cy="10" r="2.2"/><path d="M8 17c1-2.5 2.5-3.5 4-3.5s3 1 4 3.5M2 7v10M22 7v10"/></svg>
+    </a>
+</nav>
+
+<script>
+    const dlg = document.getElementById("photoDialog");
+    document.getElementById("openPhoto").addEventListener("click", () => dlg.showModal());
+    document.getElementById("cancelPhoto").addEventListener("click", () => dlg.close());
+
+    const fileInput = dlg.querySelector('input[type="file"]');
+    const preview = document.getElementById("imgPreview");
+    fileInput.accept = "image/*";
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        preview.hidden = !file;
+        if (file) preview.src = URL.createObjectURL(file);
+    });
+
+    // Reopen the dialog if the upload had a validation error
+    if (dlg.dataset.open) dlg.showModal();
+
+const copyBtn = document.getElementById("copyInvite");
+if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(location.origin + copyBtn.dataset.link);
+        copyBtn.textContent = "Link copied";
+    });
+}
+
+const membersDlg = document.getElementById("membersDialog");
+document.getElementById("openMembers").addEventListener("click", () => membersDlg.showModal());
+document.getElementById("closeMembers").addEventListener("click", () => membersDlg.close());
+</script>
+</body>
+</html>

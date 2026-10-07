@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings 
+import secrets
 
 User = get_user_model()
 
@@ -92,3 +93,23 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["created_at"]
+
+def new_code():
+    return secrets.token_urlsafe(8)
+ 
+class Album(models.Model):
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="album")
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="shared_albums", blank=True)
+    invite_code = models.CharField(max_length=16, unique=True, default=new_code)
+ 
+    def can_access(self, user):
+        return user == self.owner or self.members.filter(pk=user.pk).exists()
+ 
+class AlbumPhoto(models.Model):
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="photos")
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="album/")
+    created_at = models.DateTimeField(auto_now_add=True)
+ 
+    class Meta:
+        ordering = ["-created_at"]

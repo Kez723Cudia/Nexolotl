@@ -5,11 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.http import Http404
 
-from .models import Post
-from .forms import PostForm, CommentForm
+from .models import Post, Album, AlbumPhoto
+from .forms import PostForm, CommentForm, AlbumPhotoForm
 
 from user_controls.models import Block, SeeLess
 from friends.models import Friendship
+
+from django.db.models import Q
+from django.views.decorators.http import require_POST
 
 
 User = get_user_model()
@@ -194,3 +197,68 @@ class PostListView(ListView):
                 visible_posts.append(post)
 
         return visible_posts
+
+@login_required
+def album_home(request):
+    """Navbar button: go to the user's own album (created on first visit)."""
+    album, _ = Album.objects.get_or_create(owner=request.user)
+    return redirect("album_detail", pk=album.pk)
+ 
+@login_required
+def album_detail(request, pk):
+    album = get_object_or_404(Album, pk=pk)
+    if not album.can_access(request.user):
+        raise Http404
+ 
+    if request.method == "POST":
+        form = AlbumPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            photo = form.save(commit=False)
+            photo.album, photo.uploader = album, request.user
+            photo.save()
+            messages.success(request, "Photo added to the album.")
+            return redirect("album_detail", pk=pk)
+    else:
+        form = AlbumPhotoForm()
+ 
+    albums = Album.objects.filter(Q(owner=request.user) | Q(members=request.user)).distinct()
+    return render(request, "album.html", {
+        "album": album,
+        "albums": albums,
+        "photos": album.photos.select_related("uploader"),
+        "form": form,
+    })
+ 
+@login_required
+def album_join(request, code):
+    album = get_object_or_404(Album, invite_code=code)
+    if album.can_access(request.user):
+        return redirect("album_detail", pk=album.pk)
+
+    if request.method == "POST":
+        if request.POST.get("action") == "accept":
+            album.members.add(request.user)
+            messages.success(request, "You joined the album.")
+            return redirect("album_detail", pk=album.pk)
+        return redirect("post_feed") 
+
+    return render(request, "album_invite.html", {
+        "album": album,
+        "member_count": album.members.count() + 1, \
+    })
+
+@login_required
+@require_POST
+def photo_delete(request, pk):
+    photo = get_object_or_404(AlbumPhoto, pk=pk)
+    if request.user in (photo.uploader, photo.album.owner):
+        photo.delete()
+    return redirect("album_detail", pk=photo.album_id)
+
+@login_required
+@require_POST
+def member_remove(request, pk, user_id):
+    album = get_object_or_404(Album, pk=pk, owner=request.user)  
+    album.members.remove(user_id)
+    return redirect("album_detail", pk=pk)
+ 

@@ -1,43 +1,594 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nexolotl - Home</title>
 </head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&family=Silkscreen:wght@700&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        font-family: var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        min-height: 100vh;
+        padding-bottom: 110px;
+    }
+
+    .feed-wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .feed-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: var(--nx-nav-h, 68px);
+        background: var(--nx-card, #FDF0EC);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+    }
+
+    .feed-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+    }
+
+
+    .feed-brand span {
+        font-family: var(--nx-pixel, "Silkscreen", "Courier New", monospace);
+        font-weight: 700;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+        color: var(--nx-text, #000000);
+    }
+
+    .feed-topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+
+    .feed-topbar .feed-avatar {
+        width: 42px;
+        height: 42px;
+        margin: 0;
+        font-size: 1.2rem;
+        position: static;
+    }
+
+    /* Bottom nav */
+    .feed-dock {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: min(460px, 100%);
+        height: 80px;
+        background: var(--nx-card, #FDF0EC);
+        border-radius: 40px 40px 0 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 1rem;
+    }
+
+    .feed-dock a {
+        width: 108px;
+        height: 58px;
+        border-radius: 29px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--nx-text, #000000);
+    }
+
+    .feed-dock a.active { background: var(--nx-bg, #AEE1F9); }
+
+    .feed-dock svg {
+        width: 34px;
+        height: 34px;
+        fill: currentColor;
+    }
+
+    .feed-dock svg.line {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* New Post button */
+    .feed-new-post {
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px;
+        padding: 0.35rem 1.5rem;
+        font: 700 1rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+
+    .feed-new-post:hover { filter: brightness(0.95); }
+
+    /* Messages */
+    .feed-messages {
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+        margin-bottom: var(--nx-gap, 1.25rem);
+    }
+
+    .feed-messages li {
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-text, #000000);
+        border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 700;
+    }
+
+    .feed-messages li.error { background: #ffb4a8; }
+
+    /* Posts */
+    .feed-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .feed-post {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .feed-avatar {
+        flex: none;
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        border: 3px solid var(--nx-text, #000000);
+        object-fit: cover;
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font: 700 2rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        text-transform: uppercase;
+        margin-top: -6px;
+    }
+
+    .feed-card {
+        flex: 1;
+        min-width: 0;
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-text, #000000);
+        border-radius: calc(var(--nx-radius, 22px) * 1.5);
+        box-shadow: var(--nx-shadow, 0 5px 0 rgba(0, 0, 0, 0.18));
+        padding: 1.25rem 2rem 1rem;
+    }
+
+    .feed-head {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+    }
+
+    .feed-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .feed-handle {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--nx-text, #000000);
+    }
+
+    .feed-menu {
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        gap: 4px;
+        padding: 6px;
+        background: none;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .feed-menu i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--nx-text, #000000);
+        display: block;
+    }
+
+    .feed-body {
+        color: var(--nx-text, #000000);
+        font-size: 1.05rem;
+        line-height: 1.55;
+        margin: 0.4rem 0 0.5rem 0.5rem;
+        overflow-wrap: anywhere;
+    }
+
+    .post-image {
+        display: block;
+        max-width: 100%;
+        max-height: 420px;
+        border-radius: var(--nx-radius, 22px);
+        margin: 4px 0 10px 0.5rem;
+        object-fit: cover;
+    }
+
+    .feed-expires {
+        margin: 0 0 0.5rem 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--nx-text, #AEE1F9);
+    }
+
+    .feed-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem 0 0.5rem;
+    }
+
+    .feed-actions { display: flex; gap: 0.5rem; }
+
+    .feed-icon {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px;
+        background: none;
+        border: 0;
+        color: var(--nx-text, #000000);
+        font: 500 0.9rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .feed-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .feed-icon.liked svg { fill: var(--nx-bg, #AEE1F9); stroke: var(--nx-text, #000000); }
+
+    .feed-stamp {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--nx-text, #000000);
+        text-transform: uppercase;
+    }
+
+    .feed-empty {
+        text-align: center;
+        color: var(--nx-text, #000000);
+        font-size: 1.2rem;
+        padding: 3rem 0;
+    }
+
+    /* Visibility badges */
+    .feed-badge {
+        display: inline-flex;
+        align-items: center;
+        align-self: center;
+        gap: 4px;
+        padding: 1px 10px;
+        border: 1.5px solid var(--nx-text, #000000);
+        border-radius: 999px;
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .feed-badge svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .feed-badge.close-friends { background: var(--nx-card, #AEE1F9); }
+
+    /* New post dialog */
+    .feed-dialog {
+        margin: auto;
+        border: 0;
+        border-radius: calc(var(--nx-radius, 22px) * 1.4);
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-text, #000000);
+        width: min(640px, calc(100% - 2rem));
+        padding: 1.75rem 2rem;
+    }
+
+    .feed-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+    .feed-dialog h2 { font-size: 1.4rem; margin-bottom: 0.9rem; }
+
+    .feed-dialog form p {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .feed-dialog label { font-weight: 700; font-size: 0.95rem; }
+
+    .feed-dialog textarea,
+    .feed-dialog input[type="text"],
+    .feed-dialog select {
+        width: 100%;
+        border: 2px solid var(--nx-text, #000000);
+        border-radius: var(--nx-radius-sm, 14px);
+        background: var(--nx-bg, #AEE1F9);
+        padding: 0.7rem 1rem;
+        font: 400 1rem/1.5 var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        color: var(--nx-text, #000000);
+    }
+
+    .feed-dialog textarea { height: 150px; resize: vertical; }
+
+    .feed-dialog input[type="file"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px dashed var(--nx-text, #000000);
+        border-radius: var(--nx-radius-sm, 14px);
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        font: 500 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+    }
+
+    .feed-dialog input[type="file"]::file-selector-button {
+        margin-right: 0.75rem;
+        padding: 0.4rem 1.1rem;
+        border: 2px solid var(--nx-text, #000000);
+        border-radius: 999px;
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-text, #000000);
+        font: 700 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+
+    .feed-preview {
+        display: block;
+        max-width: 100%;
+        max-height: 220px;
+        margin: 0 0 0.9rem;
+        border-radius: var(--nx-radius-sm, 14px);
+        object-fit: cover;
+    }
+
+    .feed-preview[hidden] { display: none; }
+    .feed-dialog .errorlist { list-style: none; color: #b3261e; font-weight: 700; font-size: 0.9rem; }
+    .feed-dialog .helptext { color: var(--nx-text, #000000); font-size: 0.85rem; }
+
+    .feed-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .feed-dialog-actions button {
+        border: 2px solid transparent;
+        border-radius: 999px;
+        padding: 0.5rem 1.6rem;
+        font: 700 1rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+
+    .feed-cancel { background: transparent; color: var(--nx-text, #000000); }
+
+    .feed-submit {
+        background: var(--nx-bg, #AEE1F9);
+        color: var(--nx-text, #000000);
+        border-color: var(--nx-text, #000000) !important;
+    }
+
+    /* Keyboard focus */
+    .feed-new-post:focus-visible,
+    .feed-icon:focus-visible,
+    .feed-dock a:focus-visible,
+    .feed-dialog button:focus-visible,
+    .feed-dialog textarea:focus-visible,
+    .feed-dialog select:focus-visible,
+    .feed-dialog input:focus-visible {
+        outline: 3px solid var(--nx-text, #000000);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 720px) {
+        .feed-post { flex-direction: column; gap: 0.5rem; }
+        .feed-avatar { width: 64px; height: 64px; font-size: 1.5rem; margin: 0 0 -24px 0.5rem; position: relative; z-index: 1; }
+        .feed-card { padding: 1.75rem 1.25rem 0.9rem; border-radius: calc(var(--nx-radius, 22px) * 1.2); }
+        .feed-body, .post-image, .feed-expires { margin-left: 0; }
+        .feed-foot { padding: 0; }
+        .feed-stamp { gap: 0.75rem; font-size: 0.75rem; }
+        .feed-brand span { font-size: 1.3rem; }
+        .feed-new-post { padding: 0.35rem 1.1rem; font-size: 0.95rem; }
+        .feed-topbar-right { gap: 0.75rem; }
+    }
+
+    .feed-brand img {
+    height: 36px; 
+    width: auto;
+    object-fit: contain;
+}
+
+    .feed-badge svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .feed-badge.close-friends { background: var(--nx-card, #AEE1F9); }
+
+</style>
+</head>
 <body>
-
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-
-    <h2>Create a Post</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Post</button>
-    </form>
-
-    <hr>
-
-    <h2>Recent Posts</h2>
-    {% for post in posts %}
-        <div>
-            <p>
-                <strong>{{ post.author.username }}</strong> 
-                - <small>{{ post.created_at|date:"M d, Y H:i" }}</small>
-            </p>
-            <p>{{ post.content }}</p>
-
-            {% if post.post_type == 'flash' %}
-                <p><small>Expires in: {{ post.expires_at|timeuntil }}</small></p>
+<header class="feed-topbar">
+        <a class="feed-brand" href="{% url 'post_feed' %}">
+            <img src="{% static 'nexolotl-logo-removebg-preview.png' %}" alt="">
+            <span>NEXOLOTL</span>
+        </a>
+        <div class="feed-topbar-right">
+            <button class="feed-new-post" id="openPost" type="button">+ New Post</button>
+            {% if user.profile.avatar %}
+                <img class="feed-avatar" src="{{ user.profile.avatar.url }}" alt="Your profile">
+            {% else %}
+                <div class="feed-avatar" title="{{ user.username }}">{{ user.username|slice:":1" }}</div>
             {% endif %}
-
-            <a href="{% url 'post_detail' post.pk %}">View Details</a>
         </div>
-    {% empty %}
-        <p>No posts yet. Be the first to post!</p>
-    {% endfor %}
+    </header>
+
+    <main class="feed-wrap">
+
+
+        {% if messages %}
+            <ul class="feed-messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <section class="feed-list">
+            {% for post in posts %}
+                <article class="feed-post">
+
+                    {% if post.author.profile.avatar %}
+                        <img class="feed-avatar" src="{{ post.author.profile.avatar.url }}" alt="">
+                    {% else %}
+                        <div class="feed-avatar" aria-hidden="true">{{ post.author.username|slice:":1" }}</div>
+                    {% endif %}
+
+                    <div class="feed-card">
+                        <div class="feed-head">
+                            <span class="feed-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                            <span class="feed-handle">@{{ post.author.username }}</span>
+                                {% if post.visibility == 'private' %}
+                                <span class="feed-badge" title="Only you can see this post">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>
+                                    Private
+                                </span>
+                                    {% elif post.visibility == 'close_friends' %}
+                                        <span class="feed-badge close-friends" title="Visible to close friends only">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z"/></svg>
+                                            Close friends
+                                        </span>
+                                    {% endif %}
+                            <button class="feed-menu" type="button" aria-label="Post options">
+                                <i></i><i></i><i></i>
+                            </button>
+                        </div>
+
+                        <p class="feed-body">{{ post.content|linebreaksbr }}</p>
+
+                        {% if post.image %}
+                            <img class="post-image" src="{{ post.image.url }}" alt="">
+                        {% endif %}
+
+                        {% if post.post_type == 'flash' %}
+                            <p class="feed-expires">Expires in {{ post.expires_at|timeuntil }}</p>
+                        {% endif %}
+
+                        <div class="feed-foot">
+                            <div class="feed-actions">
+                                <button class="feed-icon feed-like" type="button" aria-label="Like" aria-pressed="false">
+                                    <svg viewBox="0 0 24 24"><path d="M12 20.5S3 14.8 3 8.9A4.9 4.9 0 0 1 12 6.4a4.9 4.9 0 0 1 9 2.5c0 5.9-9 11.6-9 11.6z"/></svg>
+                                </button>
+                                <a class="feed-icon" href="{% url 'post_detail' post.pk %}" aria-label="View details and comments">
+                                    <svg viewBox="0 0 24 24"><path transform="translate(24 0) scale(-1 1)" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                    <span>{{ post.comments.count }}</span>
+                                </a>
+                            </div>
+                            <div class="feed-stamp">
+                                <span>{{ post.created_at|date:"M j, Y" }}</span>
+                                <span>{{ post.created_at|date:"g:i A" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+            {% empty %}
+                <p class="feed-empty">No posts yet. Be the first to post!</p>
+            {% endfor %}
+        </section>
+
+        <dialog class="feed-dialog" id="postDialog">
+            <h2>Create a post</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <img class="feed-preview" id="imgPreview" alt="Selected image preview" hidden>
+                <div class="feed-dialog-actions">
+                    <button class="feed-cancel" id="cancelPost" type="button">Cancel</button>
+                    <button class="feed-submit" type="submit">Post</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script>
+            const dlg = document.getElementById("postDialog");
+
+            document.getElementById("openPost").addEventListener("click", () => {
+                dlg.showModal();
+                const first = dlg.querySelector("textarea, input:not([type=hidden]), select");
+                if (first) first.focus();
+            });
+
+            document.getElementById("cancelPost").addEventListener("click", () => dlg.close());
+
+            // Image upload: only allow images and show a preview of the chosen file
+            const fileInput = dlg.querySelector('input[type="file"]');
+            const preview = document.getElementById("imgPreview");
+            if (fileInput) {
+                fileInput.accept = "image/*";
+                fileInput.addEventListener("change", () => {
+                    const file = fileInput.files[0];
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.hidden = false;
+                    } else {
+                        preview.hidden = true;
+                    }
+                });
+            }
+
+            // Heart is visual only for now (not saved to the database)
+            document.querySelectorAll(".feed-like").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const on = btn.classList.toggle("liked");
+                    btn.setAttribute("aria-pressed", on);
+                });
+            });
+        </script>
+    </main>
+
+    <nav class="feed-dock" aria-label="Main">
+        <a href="{% url 'post_feed' %}" class="active" aria-label="Home" aria-current="page">
+            <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg>
+        </a>
+        <a href="{% url 'album_home' %}" aria-label="Gallery">
+            <svg class="line" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><circle cx="12" cy="10" r="2.2"/><path d="M8 17c1-2.5 2.5-3.5 4-3.5s3 1 4 3.5M2 7v10M22 7v10"/></svg>
+        </a>
+    </nav>
 
 </body>
 </html>
