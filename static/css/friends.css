@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;500;600;700;800&display=swap');
+/* Friends */
+
+.nx-friends-page { max-width: 1100px; }
+
+.nx-friends-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nx-friends-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+.nx-friends-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--nx-orange);
+    margin-bottom: 0.2rem;
+}
+
+.nx-friends-section {
+    display: grid;
+    gap: 1rem;
+}
+
+.nx-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nx-friends-badge,
+.nx-top-friend-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: var(--nx-bg);
+    color: var(--nx-card);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.nx-request-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.nx-request-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(111, 95, 184, 0.12);
+}
+
+.nx-friend-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.nx-friend-identity > div:last-child {
+    display: grid;
+}
+
+.nx-action-row,
+.nx-friend-actions,
+.nx-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.nx-btn--primary {
+    background: var(--nx-orange);
+    color: var(--nx-navy);
+}
+
+.nx-btn--danger {
+    background: transparent;
+    border-color: rgba(91, 74, 158, 0.35);
+    color: var(--nx-ink);
+}
+
+.nx-btn--full {
+    width: 100%;
+    text-align: center;
+}
+
+.nx-friend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1rem;
+}
+
+.nx-friend-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(111, 95, 184, 0.1);
+    text-align: center;
+}
+
+.nx-friend-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.nx-friend-profile h3 {
+    margin-top: 0.5rem;
+}
+
+.nx-friend-actions {
+    justify-content: center;
+}
+
+.nx-mini-friend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.nx-mini-friend {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(111, 95, 184, 0.1);
+    font-weight: 600;
+}
+
+.nx-mini-friend:hover,
+.nx-selection-card:hover,
+.nx-top-friend:hover {
+    background: rgba(111, 95, 184, 0.2);
+}
+
+.nx-top-friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.nx-top-friend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(111, 95, 184, 0.1);
+}
+
+.nx-top-friend-number {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--nx-accent);
+    color: var(--nx-navy);
+    font-weight: 700;
+}
+
+.nx-top-friend > div:last-child {
+    display: grid;
+}
+
+.nx-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.nx-selection-card {
+    display: block;
+    padding: 0.8rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(111, 95, 184, 0.1);
+    cursor: pointer;
+}
+
+.nx-selection-main {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.nx-selection-main input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--nx-bg);
+}
+
+.nx-selection-main > div:last-child {
+    display: grid;
+}
+
+.nx-top-friend-limit {
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--nx-radius-sm);
+    background: rgba(255, 159, 69, 0.15);
+    color: var(--nx-ink);
+    font-size: 0.9rem;
+}
+
+.nx-empty-state {
+    display: grid;
+    place-items: center;
+    gap: 0.35rem;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.nx-empty-state--small {
+    padding: 1rem;
+}
+
+.nx-empty-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.25rem;
+    border-radius: 50%;
+    background: var(--nx-bg);
+    color: var(--nx-accent);
+    font-size: 1.4rem;
+}
+
+.nx-add-friend-card form {
+    width: 100%;
+}
+
+/* Friends typography */
+
+.nx-friends-page {
+    font-family: var(--nx-font);
+}
+
+.nx-friends-eyebrow {
+    font-family: var(--nx-pixel);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.nx-friends-title {
+    font-family: var(--nx-font);
+    font-weight: 800;
+}
+
+.nx-section-heading h2,
+.nx-section-heading h3 {
+    font-family: var(--nx-font);
+    font-weight: 700;
+}
+
+.nx-friends-page p,
+.nx-friends-page span,
+.nx-friends-page label {
+    font-family: var(--nx-font);
+}
+
+.nx-friends-page .nx-btn,
+.nx-friends-page button {
+    font-family: var(--nx-font);
+    font-weight: 600;
+}

@@ -1,11 +1,11 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from Posting.models import Post
-from friends.models import FriendRequest, Friendship
-
+from friends.models import Friendship, FriendRequest
 from .forms import ReportForm
 from .models import Block, Restriction, SeeLess
 
@@ -15,10 +15,7 @@ User = get_user_model()
 
 @login_required
 def report_user(request, user_id):
-    reported_user = get_object_or_404(
-        User,
-        id=user_id,
-    )
+    reported_user = get_object_or_404(User, id=user_id)
 
     if request.method == "POST":
         form = ReportForm(
@@ -32,8 +29,7 @@ def report_user(request, user_id):
             report.reporter = request.user
             report.reported_user = reported_user
             report.save()
-
-            return redirect("post_feed")
+            return redirect("profile", username=reported_user.username)
     else:
         form = ReportForm(
             reporter=request.user,
@@ -46,17 +42,13 @@ def report_user(request, user_id):
         {
             "form": form,
             "reported_user": reported_user,
-            "reported_post": None,
         },
     )
 
 
 @login_required
 def report_post(request, post_id):
-    reported_post = get_object_or_404(
-        Post,
-        id=post_id,
-    )
+    reported_post = get_object_or_404(Post, id=post_id)
 
     if request.method == "POST":
         form = ReportForm(
@@ -70,8 +62,7 @@ def report_post(request, post_id):
             report.reporter = request.user
             report.reported_post = reported_post
             report.save()
-
-            return redirect("post_feed")
+            return redirect("post_detail", pk=reported_post.pk)
     else:
         form = ReportForm(
             reporter=request.user,
@@ -83,7 +74,6 @@ def report_post(request, post_id):
         "user_controls/report_form.html",
         {
             "form": form,
-            "reported_user": None,
             "reported_post": reported_post,
         },
     )
@@ -92,60 +82,61 @@ def report_post(request, post_id):
 @login_required
 @require_POST
 def toggle_block(request, user_id):
-    target_user = get_object_or_404(
-        User,
-        id=user_id,
-    )
+    target_user = get_object_or_404(User, id=user_id)
 
+    # Users cannot block themselves.
     if target_user == request.user:
-        return redirect("post_feed")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     block, created = Block.objects.get_or_create(
         user=request.user,
         blocked_user=target_user,
     )
 
-    if created:
-        # Remove friendship in both directions.
-        Friendship.objects.filter(
-            user=request.user,
-            friend=target_user,
-        ).delete()
-
-        Friendship.objects.filter(
-            user=target_user,
-            friend=request.user,
-        ).delete()
-
-        # Remove pending requests in both directions.
-        FriendRequest.objects.filter(
-            sender=request.user,
-            receiver=target_user,
-        ).delete()
-
-        FriendRequest.objects.filter(
-            sender=target_user,
-            receiver=request.user,
-        ).delete()
-
-    else:
-        # Unblocking does not restore friendships
-        # or previously deleted friend requests.
+    if not created:
+        # Unblocking simply removes the block.
+        #
+        # IMPORTANT:
+        # Unblocking does NOT automatically restore friendships
+        # or previously deleted friend requests. If the users want
+        # to reconnect, they must send a new friend request.
         block.delete()
 
-    return redirect("post_feed")
+        return redirect(
+            "profile",
+            username=target_user.username,
+        )
+
+    Friendship.objects.filter(
+        Q(user=request.user, friend=target_user)
+        | Q(user=target_user, friend=request.user)
+    ).delete()
+
+    FriendRequest.objects.filter(
+        Q(sender=request.user, receiver=target_user)
+        | Q(sender=target_user, receiver=request.user)
+    ).delete()
+
+    return redirect(
+        "profile",
+        username=target_user.username,
+    )
 
 
 @login_required
 @require_POST
 def toggle_restriction(request, user_id):
-    target_user = get_object_or_404(
-        User,
-        id=user_id,
-    )
+    target_user = get_object_or_404(User, id=user_id)
 
+    # Users cannot restrict themselves.
     if target_user == request.user:
-        return redirect("post_feed")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     restriction, created = Restriction.objects.get_or_create(
         user=request.user,
@@ -153,21 +144,27 @@ def toggle_restriction(request, user_id):
     )
 
     if not created:
+        # Removing the restriction restores the normal
+        # interaction rules between the two users.
         restriction.delete()
 
-    return redirect("post_feed")
+    return redirect(
+        "profile",
+        username=target_user.username,
+    )
 
 
 @login_required
 @require_POST
 def toggle_see_less(request, user_id):
-    target_user = get_object_or_404(
-        User,
-        id=user_id,
-    )
+    target_user = get_object_or_404(User, id=user_id)
 
+    # Users cannot apply See Less to themselves.
     if target_user == request.user:
-        return redirect("post_feed")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     see_less, created = SeeLess.objects.get_or_create(
         user=request.user,
@@ -178,3 +175,35 @@ def toggle_see_less(request, user_id):
         see_less.delete()
 
     return redirect("post_feed")
+
+
+def is_blocked(user_a, user_b):
+    """
+    Returns True if either user has blocked the other.
+
+    Blocking is treated as mutual for protected interactions.
+    """
+    return Block.objects.filter(
+        Q(user=user_a, blocked_user=user_b)
+        | Q(user=user_b, blocked_user=user_a)
+    ).exists()
+
+
+def is_restricted(blocker, target):
+    """
+    Returns True if blocker has restricted target.
+    """
+    return Restriction.objects.filter(
+        user=blocker,
+        restricted_user=target,
+    ).exists()
+
+
+def is_see_less(user, target):
+    """
+    Returns True if user has selected See Less for target.
+    """
+    return SeeLess.objects.filter(
+        user=user,
+        target_user=target,
+    ).exists()
