@@ -1,0 +1,58 @@
+<div class="pf-grid">
+
+  <section class="nx-card">
+    <h2 class="pf-title">Top Friends</h2>
+    {% if can_view_top_friends %}
+      <ul class="pf-tiles">
+        {% for friendship in top_friends %}
+          <li>
+            <a class="pf-tile" href="{% url 'profile' username=friendship.friend.username %}">
+              {% if friendship.friend.profile.avatar %}<img src="{{ friendship.friend.profile.avatar.url }}" alt="">{% endif %}
+              <span>{{ friendship.friend.username }}</span>
+            </a>
+          </li>
+        {% empty %}
+          <li class="pf-empty">No Top Friends to display.</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="pf-empty">This Top Friends list is private.</p>
+    {% endif %}
+  </section>
+
+  <section class="nx-card">
+    <h2 class="pf-title">Close Friends</h2>
+    {% if can_view_close_friends %}
+      <ul class="pf-pills">
+        {% for friendship in close_friends %}
+          <li><a class="pf-pill" href="{% url 'profile' username=friendship.friend.username %}">{{ friendship.friend.username }}</a></li>
+        {% empty %}
+          <li class="pf-empty">No Close Friends to display.</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="pf-empty">This Close Friends list is private.</p>
+    {% endif %}
+  </section>
+
+  <section class="nx-card">
+    <h2 class="pf-title">Friends</h2>
+    {% if can_view_friends %}
+      <ul class="pf-rows">
+        {% for friendship in friends %}
+          <li>
+            <a class="pf-row" href="{% url 'profile' username=friendship.friend.username %}">
+              {% if friendship.friend.profile.avatar %}<img src="{{ friendship.friend.profile.avatar.url }}" alt="">{% else %}<i></i>{% endif %}
+              {{ friendship.friend.username }}
+            </a>
+          </li>
+        {% empty %}
+          <li class="pf-empty">No friends to display.</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="pf-empty">This friends list is private.</p>
+    {% endif %}
+  </section>
+
+</div>
