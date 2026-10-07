@@ -1,0 +1,93 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1>Dashboard Overview</h1>
+
+<div class="dashboard-cards">
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <h3>Users</h3>
+        <p>{{ user_count }}</p>
+        <span class="card-subtitle">
+            Registered Accounts
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-id-card"></i>
+        </div>
+        <h3>Profiles</h3>
+        <p>{{ profile_count }}</p>
+        <span class="card-subtitle">
+            User Profiles
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-newspaper"></i>
+        </div>
+        <h3>Posts</h3>
+        <p>{{ post_count }}</p>
+        <span class="card-subtitle">
+            Published Posts
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-user-group"></i>
+        </div>
+        <h3>Friendships</h3>
+        <p>{{ friendship_count }}</p>
+        <span class="card-subtitle">
+            Friend Connections
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+        <h3>Testimonials</h3>
+        <p>{{ testimonial_count }}</p>
+        <span class="card-subtitle">
+            User Testimonials
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-flag"></i>
+        </div>
+        <h3>Reports</h3>
+        <p>{{ report_count }}</p>
+        <span class="card-subtitle">
+            Submitted Reports
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <div class="card-header">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h3>Pending Reports</h3>
+        </div>
+
+        <p>{{ pending_report_count }}</p>
+
+        <span class="card-subtitle">
+            Awaiting Review
+        </span>
+    </div>
+</div>
+
+{% endblock %}

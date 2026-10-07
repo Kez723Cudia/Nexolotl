@@ -1,0 +1,92 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Reports | Nexolotl Admin{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <h1>Report Management</h1>
+        <p>Review reports submitted by Nexolotl users.</p>
+    </div>
+</header>
+
+<div class="data-panel">
+    <table class="dashboard-table">
+        <thead>
+        <tr>
+            <th>Reporter</th>
+            <th>Target</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {% for report in reports %}
+                <tr>
+                    <td>{{ report.reporter.username }}</td>
+
+                    <td>
+                        {% if report.reported_user %}
+                            Account: {{ report.reported_user.username }}
+                        {% elif report.reported_post %}
+                            Post #{{ report.reported_post.pk }}
+                        {% else %}
+                            Missing target
+                        {% endif %}
+                    </td>
+
+                    <td>{{ report.get_reason_display }}</td>
+
+                    <td>
+                        {% if report.status == "pending" %}
+                            <span class="badge-private">
+                                Pending
+                            </span>
+                        {% elif report.status == "reviewed" %}
+                            <span class="badge-interest">
+                                Reviewed
+                            </span>
+                        {% else %}
+                            <span class="badge-public">
+                                Resolved
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ report.description|default:"No additional details"|truncatechars:90 }}
+                    </td>
+
+                    <td>
+                        {% if report.status != "resolved" %}
+                            <form
+                            method="POST"
+                            action="{% url 'dashboard_resolve_report' report.id %}"
+                            >
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="resolve-button"
+                                >
+                                    Resolve
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="badge-public">
+                                Complete
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No reports found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
