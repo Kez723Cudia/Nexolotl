@@ -1,27 +1,31 @@
-<h1>Friend List Privacy Settings</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<p> 
-    Control who can view each of your friend lists. “Public” means any user logged in to an existing Nexolotl account. 
-</p> 
+{% block title %}Friend List Privacy Settings · Nexolotl{% endblock %}
 
-<form 
-    method="post"
-    > 
-    
-    {% csrf_token %} 
-    
-    {{ form.as_p }} 
-    
-    <button 
-        type="submit"
-        > 
-    Save Privacy Settings 
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
 
-    </button> 
-</form> 
+{% block content %}
+  <section class="fm-page">
+    <h1 class="fm-title">Friend List Privacy Settings</h1>
 
-<p>
-    <a href="{% url 'profile' username=request.user.username %}">
-        Cancel
-    </a>
-</p>
+    <div class="nx-card">
+      <form class="fm-form" method="post">
+        {% csrf_token %}
+
+        <p>
+          Control who can view each of your friend lists. “Public” means any user logged in to an existing Nexolotl account.
+        </p>
+
+        {{ form.as_p }}
+
+        <div class="fm-actions">
+          <button type="submit">Save Privacy Settings</button>
+          <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

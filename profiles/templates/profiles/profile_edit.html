@@ -1,13 +1,131 @@
-<h1>Edit Profile</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+{% block title %}Edit Profile · Nexolotl{% endblock %}
 
-    {{ form.as_p }}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/interests.css' %}">
+{% endblock %}
 
-    <button type="submit">Save Changes</button>
+{% block content %}
+  <section class="fm-page">
+    <h1 class="fm-title">Edit Profile</h1>
 
-    <a href="{% url 'profile' username=request.user.username %}">
-        Cancel
-    </a>
-</form>
+    <div class="nx-card">
+      <form class="fm-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="fm-actions">
+          <button type="submit">Save Changes</button>
+          <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="fm-page" id="interests">
+    <div class="nx-card">
+      <h2 class="in-subtitle">Interests</h2>
+      <p class="in-meta">{{ interests|length }} of {{ interest_limit }} added</p>
+
+      {% if interests %}
+        <ul class="in-list">
+          {% for item in interests %}
+            <li class="in-chip" style="background-color: {{ item.color }}; color: {{ item.text_color }};">
+              <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>{{ item.label }}
+              <form method="POST" action="{% url 'interest_delete' item.id %}">
+                {% csrf_token %}
+                <button type="submit" class="in-chip__remove" aria-label="Remove {{ item.label }}">×</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if interests|length < interest_limit %}
+        <form id="interest-form" class="fm-form in-form" method="POST" action="{% url 'interest_create' %}">
+          {% csrf_token %}
+          {{ interest_form.non_field_errors }}
+
+          <div class="in-row">
+            <div class="in-field">
+              <label for="{{ interest_form.emoji.id_for_label }}">Emoji</label>
+              {{ interest_form.emoji }}
+            </div>
+            <div class="in-field">
+              <label for="{{ interest_form.label.id_for_label }}">Interest</label>
+              {{ interest_form.label }}
+            </div>
+            <div class="in-field">
+              <label for="{{ interest_form.color.id_for_label }}">Colour</label>
+              {{ interest_form.color }}
+            </div>
+          </div>
+          {{ interest_form.emoji.errors }}
+          {{ interest_form.label.errors }}
+          {{ interest_form.color.errors }}
+
+          <div class="in-quick" role="group" aria-label="Suggested emoji">
+            {% for e in interest_emoji %}
+              <button type="button" class="in-quick__btn" data-emoji="{{ e }}">{{ e }}</button>
+            {% endfor %}
+          </div>
+
+          <div class="in-swatches" role="group" aria-label="Preset colours">
+            {% for hex in interest_palette %}
+              <button type="button" class="in-swatch" data-color="{{ hex }}" style="background-color: {{ hex }};" aria-label="Use colour {{ hex }}"></button>
+            {% endfor %}
+          </div>
+
+          <div class="in-preview-wrap">
+            <span id="interest-preview" class="in-chip">
+              <span class="in-chip__emoji" aria-hidden="true"></span><span class="in-chip__label"></span>
+            </span>
+          </div>
+
+          <div class="fm-actions">
+            <button type="submit">Add interest</button>
+            <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Done</a>
+          </div>
+        </form>
+      {% else %}
+        <p class="in-meta">You've reached the limit. Remove one to add another.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var form = document.getElementById("interest-form");
+      if (!form) return;
+      var emoji = form.querySelector('[name="emoji"]');
+      var label = form.querySelector('[name="label"]');
+      var color = form.querySelector('[name="color"]');
+      var preview = document.getElementById("interest-preview");
+      var previewEmoji = preview.querySelector(".in-chip__emoji");
+      var previewLabel = preview.querySelector(".in-chip__label");
+
+      function textColor(hex) {
+        var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6 ? "#1f1536" : "#fdf8e3";
+      }
+      function update() {
+        previewEmoji.textContent = emoji.value || "✨";
+        previewLabel.textContent = label.value || "Your interest";
+        preview.style.backgroundColor = color.value;
+        preview.style.color = textColor(color.value);
+      }
+      form.addEventListener("input", update);
+      form.querySelectorAll("[data-color]").forEach(function (b) {
+        b.addEventListener("click", function () { color.value = b.dataset.color; update(); });
+      });
+      form.querySelectorAll("[data-emoji]").forEach(function (b) {
+        b.addEventListener("click", function () { emoji.value = b.dataset.emoji; update(); });
+      });
+      update();
+    })();
+  </script>
+{% endblock %}
