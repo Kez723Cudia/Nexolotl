@@ -14,20 +14,15 @@ from user_controls.models import Block
 from friends.models import Friendship
 
 User = get_user_model()
-
 VISIBILITY_PUBLIC = "public"             
 VISIBILITY_CLOSE_FRIENDS = "close_friends"
 VISIBILITY_PRIVATE = "private"
-
 POST_TYPE_PERMANENT = "permanent"
 POST_TYPE_FLASH = "flash"
-
 LOGIN_URL_NAME = "login"                
-
 
 def block_user(blocker, blocked):
     return Block.objects.create(user=blocker, blocked_user=blocked)
-
 
 def add_close_friend(owner, friend):
     Friendship.objects.update_or_create(
@@ -37,7 +32,6 @@ def add_close_friend(owner, friend):
 
 
 TEMP_MEDIA = tempfile.mkdtemp()
-
 
 def make_image(name="test.png"):
     """A tiny real PNG, so ImageField validation passes."""
@@ -54,7 +48,6 @@ def make_post(author, content="hello", visibility=VISIBILITY_PUBLIC, **extra):
         post_type=POST_TYPE_PERMANENT,
         **extra,
     )
-
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA) 
 class BaseTestCase(TestCase):
@@ -76,7 +69,6 @@ class BaseTestCase(TestCase):
        
     def detail_url(self, post):
         return reverse("post_detail", args=[post.pk])
-
 
 # ---------------------------------------------------------------------------
 # Comment creation
@@ -109,7 +101,6 @@ class CommentCreationTests(BaseTestCase):
         Comment.objects.create(post=self.post, author=self.bob, content="visible comment")
         response = self.client.get(self.detail_url(self.post))
         self.assertContains(response, "visible comment")
-
 
 # ---------------------------------------------------------------------------
 # Image uploads (posts)
@@ -154,7 +145,6 @@ class ImageUploadTests(BaseTestCase):
         self.client.post(self.feed_url, self.data(image=make_image("pic.png")))
         self.assertTrue(Post.objects.get().image.name.startswith("posts/"))
 
-
 # ---------------------------------------------------------------------------
 # Direct-URL privacy: typing /post/<id>/ for a post you shouldn't see
 # ---------------------------------------------------------------------------
@@ -188,7 +178,6 @@ class DirectUrlPrivacyTests(BaseTestCase):
         self.client.login(username="bob", password="pw12345!")
         self.assertContains(self.client.get(self.detail_url(public)), "open text")
 
-
 # ---------------------------------------------------------------------------
 # Blocked-user access
 # ---------------------------------------------------------------------------
@@ -215,7 +204,6 @@ class BlockedUserTests(BaseTestCase):
     def test_unblocked_user_can_still_see_post(self):
         self.client.login(username="carol", password="pw12345!")
         self.assertEqual(self.client.get(self.detail_url(self.post)).status_code, 200)
-
 
 # ---------------------------------------------------------------------------
 # Close Friends visibility
@@ -250,7 +238,6 @@ class CloseFriendsTests(BaseTestCase):
         self.client.login(username="carol", password="pw12345!")
         self.client.post(self.detail_url(self.post), {"content": "sneaky"})
         self.assertEqual(Comment.objects.count(), 0)
-
 
 # ---------------------------------------------------------------------------
 # Unauthorized comment submission
