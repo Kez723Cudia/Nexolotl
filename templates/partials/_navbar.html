@@ -25,13 +25,6 @@
     <div class="nx-nav__actions">
         {% if user.is_authenticated %}
 
-            {% url 'create_post' as new_post_url %}
-            {% if new_post_url %}
-                <a href="{{ new_post_url }}" class="nx-btn">
-                    + New Post
-                </a>
-            {% endif %}
-
             <a
                 href="{% url 'profile' username=user.username %}"
                 class="nx-nav__profile"
