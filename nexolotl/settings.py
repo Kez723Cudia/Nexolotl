@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'Posting',
     'accounts',
     'user_controls',
+    'dashboard',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

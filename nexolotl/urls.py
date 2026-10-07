@@ -9,7 +9,7 @@ urlpatterns = [
     path('', include('Posting.urls')),
 
     path('', include('accounts.urls')),
-
+    path('dashboard/', include('dashboard.urls')),
     # User-related features
     path('profiles/', include('profiles.urls')),
     path('friends/', include('friends.urls')),
