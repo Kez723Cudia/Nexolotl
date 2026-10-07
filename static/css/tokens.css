@@ -1,20 +1,20 @@
 /* Nexolotl design tokens: edit here to re-theme the whole site */
 :root {
-  --nx-navy: #241441;
-  --nx-bg: #5b4a9e;
-  --nx-bg-soft: #6f5fb8;
-  --nx-card: #fdf8e3;
-  --nx-ink: #3b2f6b;
-  --nx-ink-soft: #6f64a0;
-  --nx-accent: #ffd84a;
-  --nx-orange: #ff9f45;
+    --nx-navy: #241441;
+    --nx-bg: #5b4a9e;
+    --nx-bg-soft: #6f5fb8;
+    --nx-card: #fdf8e3;
+    --nx-ink: #3b2f6b;
+    --nx-ink-soft: #6f64a0;
+    --nx-accent: #ffd84a;
+    --nx-orange: #ff9f45;
 
-  --nx-radius: 22px;
-  --nx-radius-sm: 14px;
-  --nx-shadow: 0 6px 0 rgba(36, 20, 65, 0.25);
-  --nx-gap: 1.25rem;
-  --nx-nav-h: 68px;
+    --nx-radius: 22px;
+    --nx-radius-sm: 14px;
+    --nx-shadow: 0 6px 0 rgba(36, 20, 65, 0.25);
+    --nx-gap: 1.25rem;
+    --nx-nav-h: 68px;
 
-  --nx-font: "Lexend", "Segoe UI", system-ui, sans-serif;
-  --nx-pixel: "Silkscreen", "Courier New", monospace;
+    --nx-font: "Lexend", "Segoe UI", system-ui, sans-serif;
+    --nx-pixel: "Silkscreen", "Courier New", monospace;
 }
