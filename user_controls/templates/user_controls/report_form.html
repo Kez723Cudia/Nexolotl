@@ -1,27 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Submit a Report | NEXOLOTL</title>
-</head>
-<body>
-    <h1>Submit a Report</h1>
+{% extends "base.html" %}
+{% load static %}
 
-    {% if reported_user %}
-        <p>Reporting account: {{ reported_user.username }}</p>
-    {% elif reported_post %}
-        <p>Reporting a post by: {{ reported_post.author.username }}</p>
-        <p>{{ reported_post.content }}</p>
-    {% endif %}
+{% block title %}Report User | Nexolotl{% endblock %}
 
-    <form method="POST">
-        {% csrf_token %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/report.css' %}">
+{% endblock %}
 
-        {{ form.as_p }}
+{% block content %}
+<main class="report-page">
+    <div class="report-page__container">
 
-        <button type="submit">Submit Report</button>
-    </form>
+        <div class="report-card">
 
-    <p><a href="/">Cancel</a></p>
-</body>
-</html>
+            <div class="report-card__header">
+                <span class="report-card__icon">!</span>
+
+                <div>
+                    <h1>Report User</h1>
+                    <p>Help keep Nexolotl a safe and welcoming community.</p>
+                </div>
+            </div>
+
+            {% if reported_user %}
+                <div class="report-target">
+                    <span class="report-target__label">Reporting</span>
+                    <strong>@{{ reported_user.username }}</strong>
+                </div>
+            {% endif %}
+
+            <form method="POST" class="report-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="report-error">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="report-field">
+                    <label for="{{ form.reason.id_for_label }}">
+                        Reason for reporting
+                    </label>
+
+                    {{ form.reason }}
+
+                    {% if form.reason.errors %}
+                        <div class="field-error">
+                            {{ form.reason.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="report-field">
+                    <label for="{{ form.description.id_for_label }}">
+                        Additional details <span>(optional)</span>
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+                        <div class="field-error">
+                            {{ form.description.errors }}
+                        </div>
+                    {% endif %}
+
+                    <small>
+                        Please provide any details that may help us understand the report.
+                    </small>
+                </div>
+
+                <div class="report-actions">
+                    {% if reported_user %}
+                        <a href="{% url 'profile' username=reported_user.username %}" class="nx-btn nx-btn--ghost">
+                            Cancel
+                        </a>
+                    {% else %}
+                        <a href="{% url 'post_feed' %}" class="nx-btn nx-btn--ghost">
+                            Cancel
+                        </a>
+                    {% endif %}
+
+                    <button type="submit" class="nx-btn report-submit">
+                        Submit Report
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

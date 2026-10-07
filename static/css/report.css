@@ -1,0 +1,24 @@
+/* Report User */
+.report-page { min-height: calc(100vh - var(--nx-nav-h)); padding: 3rem 1.5rem; }
+.report-page__container { width: 100%; max-width: 720px; margin: 0 auto; }
+.report-card { width: 100%; background: var(--nx-card); border-radius: var(--nx-radius); padding: 2rem; box-shadow: var(--nx-shadow); }
+.report-card__header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+.report-card__icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; background: var(--nx-accent); color: var(--nx-navy); font-size: 1.4rem; font-weight: 800; }
+.report-card__header h1 { font-size: 1.7rem; line-height: 1.2; margin-bottom: 0.25rem; }
+.report-card__header p { color: var(--nx-ink-soft); font-size: 0.95rem; }
+.report-target { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; margin-bottom: 1.75rem; background: rgba(111, 95, 184, 0.1); border-radius: var(--nx-radius-sm); }
+.report-target__label { color: var(--nx-ink-soft); font-size: 0.85rem; }
+.report-target strong { font-weight: 700; }
+.report-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.report-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.report-field label { font-size: 0.95rem; font-weight: 700; }
+.report-field label span { color: var(--nx-ink-soft); font-weight: 400; }
+.report-field select, .report-field textarea { display: block; width: 100%; padding: 0.75rem 0.9rem; font: inherit; color: var(--nx-ink); background: #fff; border: 2px solid rgba(91, 74, 158, 0.3); border-radius: var(--nx-radius-sm); }
+.report-field select { min-height: 44px; }
+.report-field textarea { min-height: 140px; resize: vertical; }
+.report-field select:focus, .report-field textarea:focus { border-color: var(--nx-accent); outline: none; }
+.report-field small { color: var(--nx-ink-soft); font-size: 0.8rem; }
+.field-error, .report-error { color: #b42318; font-size: 0.85rem; }
+.report-actions { display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; padding-top: 1.25rem; margin-top: 0.25rem; border-top: 1px solid rgba(91, 74, 158, 0.18); }
+.report-submit { border: 0; cursor: pointer; }
+@media (max-width: 600px) { .report-page { padding: 1.5rem 1rem; } .report-card { padding: 1.25rem; } .report-card__header h1 { font-size: 1.4rem; } .report-target { align-items: flex-start; flex-direction: column; } .report-actions { align-items: stretch; flex-direction: column-reverse; } .report-actions .nx-btn { width: 100%; text-align: center; } }
