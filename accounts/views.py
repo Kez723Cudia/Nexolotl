@@ -32,7 +32,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("post_feed")  # Redirect to the feed page after successful login
+            return redirect("daily_question_wall")
         else:
             return render(
                 request, 

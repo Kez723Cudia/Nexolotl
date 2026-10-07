@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'accounts',
     'user_controls',
     'dashboard',
+    'daily_question',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
