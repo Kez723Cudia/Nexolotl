@@ -33,14 +33,6 @@ def are_friends(user1, user2):
 
 
 def can_view_post(viewer, post):
-    """
-    Determine whether a user can view a post based on:
-    - Account privacy
-    - Post visibility
-    - Friendship and close-friend status
-    - Block settings
-    """
-
     author = post.author
 
     # The author can always view their own post.
@@ -154,6 +146,8 @@ def post_feed_view(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if not can_view_post(request.user, post):
+        raise Http404("This post is not available.")
     if request.method == "POST":
         form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -165,33 +159,6 @@ def post_detail(request, pk):
     else:
         form = CommentForm()
     return render(request, "post_detail.html", {"post": post, "form": form, "comments": post.comments.select_related("author")})
-
-@login_required
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-
-            messages.success(
-                request,
-                "Your post was published successfully!"
-            )
-
-            return redirect('post_feed')
-
-    else:
-        form = PostForm()
-
-    return render(
-        request,
-        'create_post.html',
-        {'form': form}
-    )
-
 
 class PostListView(ListView):
     model = Post

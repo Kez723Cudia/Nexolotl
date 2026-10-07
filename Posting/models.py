@@ -25,7 +25,7 @@ class Post(models.Model):
         related_name='posts'
     )
 
-    content = models.TextField()
+    content = models.TextField(blank=True)
 
     visibility = models.CharField(
         max_length=20,
@@ -69,7 +69,6 @@ class Post(models.Model):
             f"{self.post_type} "
             f"({self.created_at.strftime('%Y-%m-%d %H:%M')})"
         )
-
 class Comment(models.Model):
     post = models.ForeignKey(
         Post,
