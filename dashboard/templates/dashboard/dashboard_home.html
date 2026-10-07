@@ -1,0 +1,20 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2>Database Statistics</h2>
+
+<ul>
+    <li>Total Users: {{ user_count }}</li>
+    <li>Total Profiles: {{ profile_count }}</li>
+    <li>Total Posts: {{ post_count }}</li>
+    <li>Total Friendships: {{ friendship_count }}</li>
+    <li>Total Testimonials: {{ testimonial_count }}</li>
+    <li>Total Reports: {{ report_count }}</li>
+</ul>
+
+{% endblock %}

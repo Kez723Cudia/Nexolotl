@@ -13,17 +13,10 @@ urlpatterns = [
 
     # Accounts
     path('', include('accounts.urls')),
-
-    # Friends
+    path('dashboard/', include('dashboard.urls')),
     path('friends/', include('friends.urls')),
-
-    # Profiles
     path('profiles/', include('profiles.urls')),
-
-    # Testimonials
     path('testimonials/', include('testimonials.urls')),
-
-    # User Controls
     path('user-controls/', include('user_controls.urls')),
 ]
 
