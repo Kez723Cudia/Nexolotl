@@ -1,5 +1,6 @@
 # Django database
 db.sqlite3
+db.backup.sqlite3
 
 # Python cache
 *.pyc
