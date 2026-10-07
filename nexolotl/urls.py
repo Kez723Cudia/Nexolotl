@@ -3,19 +3,26 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
+
+    # Main feed and posts
     path('', include('Posting.urls')),
 
+    # Accounts
     path('', include('accounts.urls')),
 
-    # User-related features
-    path('profiles/', include('profiles.urls')),
+    # Friends
     path('friends/', include('friends.urls')),
+
+    # Profiles
+    path('profiles/', include('profiles.urls')),
 
     # Testimonials
     path('testimonials/', include('testimonials.urls')),
+
     # User Controls
     path('user-controls/', include('user_controls.urls')),
 ]
