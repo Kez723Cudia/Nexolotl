@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Daily Question | Nexolotl{% endblock %}
+
+{% block content %}
+<main class="nx-container">
+    <section class="nx-card nx-daily-question">
+        <div class="nx-daily-question__header">
+            <p class="nx-daily-question__eyebrow">DAILY QUESTION</p>
+            <h1 class="nx-section__title">Help us make Nexolotl better</h1>
+            <p class="nx-muted">
+                Share your thoughts and suggestions about future features,
+                updates, or improvements.
+            </p>
+        </div>
+
+        <div class="nx-daily-question__question">
+            <p>{{ question.question }}</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="nx-daily-question__form">
+                {{ form.answer }}
+            </div>
+
+            {% if form.answer.errors %}
+                <div class="nx-daily-question__error">
+                    {{ form.answer.errors }}
+                </div>
+            {% endif %}
+
+            <div class="nx-form-actions nx-daily-question__actions">
+                <button
+                    type="submit"
+                    name="action"
+                    value="dismiss"
+                    class="nx-btn nx-btn--ghost"
+                    formnovalidate
+                >
+                    Dismiss
+                </button>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="answer"
+                    class="nx-btn nx-btn--primary"
+                    id="submitButton"
+                    style="display: none;"
+                >
+                    Submit
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script>
+    const answerBox = document.getElementById("id_answer");
+    const submitButton = document.getElementById("submitButton");
+
+    function toggleSubmitButton() {
+        if (answerBox.value.trim().length > 0) {
+            submitButton.style.display = "inline-block";
+        } else {
+            submitButton.style.display = "none";
+        }
+    }
+
+    answerBox.addEventListener("input", toggleSubmitButton);
+
+    toggleSubmitButton();
+</script>
+{% endblock %}

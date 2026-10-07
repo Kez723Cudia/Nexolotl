@@ -112,3 +112,15 @@ img { max-width: 100%; display: block; }
     .nx-nav__actions .nx-btn { padding: 0.4rem 0.7rem; font-size: 0.85rem; }
     .nx-friends-title { font-size: 1.6rem; }
 }
+
+/* Daily Question */
+.nx-daily-question { max-width: 700px; width: 100%; margin: 2rem auto; }
+.nx-daily-question__header { margin-bottom: 1.5rem; }
+.nx-daily-question__eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: var(--nx-orange); margin-bottom: 0.2rem; }
+.nx-daily-question__header .nx-section__title { font-size: 1.6rem; margin-bottom: 0.5rem; }
+.nx-daily-question__question { padding: 1rem 1.1rem; margin-bottom: 1.25rem; border-radius: var(--nx-radius-sm); background: rgba(111, 95, 184, 0.1); }
+.nx-daily-question__question p { font-size: 1.05rem; font-weight: 600; }
+.nx-daily-question__form textarea { width: 100%; min-height: 130px; resize: vertical; padding: 0.75rem 0.9rem; font: inherit; background: #fff; color: var(--nx-ink); border: 2px solid rgba(91, 74, 158, 0.3); border-radius: var(--nx-radius-sm); }
+.nx-daily-question__form textarea:focus { border-color: var(--nx-accent); outline: none; }
+.nx-daily-question__error { margin-top: 0.5rem; color: var(--nx-orange); font-size: 0.9rem; }
+.nx-daily-question__actions { justify-content: flex-end; margin-top: 1rem; }

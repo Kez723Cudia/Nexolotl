@@ -18,6 +18,7 @@ urlpatterns = [
     path('profiles/', include('profiles.urls')),
     path('testimonials/', include('testimonials.urls')),
     path('user-controls/', include('user_controls.urls')),
+    path('daily-question/', include('daily_question.urls')),
 ]
 
 
