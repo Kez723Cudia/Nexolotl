@@ -19,6 +19,7 @@
             <th>Status</th>
             <th>Message</th>
             <th>Created</th>
+            <th>Actions</th>
         </tr>
         </thead>
 
@@ -42,10 +43,24 @@
 
                     <td>{{ entry.content|truncatechars:100 }}</td>
                     <td>{{ entry.created_at|date:"M d, Y" }}</td>
+                    <td>
+                            <form
+                            method="POST"
+                            action="{% url 'dashboard_delete_testimonial' entry.id %}"
+                            >
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="delete-button"
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="5">No testimonials found.</td>
+                    <td colspan="6">No testimonials found.</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -240,3 +240,31 @@ def dashboard_delete_post(request, post_id):
     return HttpResponseForbidden(
         "Invalid request."
     )
+
+@login_required
+def dashboard_delete_testimonial(
+    request,
+    testimonial_id,
+):
+    denied_response = deny_non_superuser(
+        request
+    )
+
+    if denied_response:
+        return denied_response
+
+    entry = get_object_or_404(
+        testimonial,
+        pk=testimonial_id,
+    )
+
+    if request.method == "POST":
+        entry.delete()
+
+        return redirect(
+            "dashboard_testimonials"
+        )
+
+    return HttpResponseForbidden(
+        "Invalid request."
+    )
