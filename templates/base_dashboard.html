@@ -75,6 +75,22 @@
                 <span>Testimonials</span>
             </a>
         </nav>
+
+        <div class="sidebar-logout">
+
+    <div class="sidebar-logout">
+        <button
+            type="button"
+            class="sidebar-logout-button"
+            onclick="openLogoutModal()"
+        >
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </button>
+
+    </div>
+
+</div>
     </aside>
 
     <main class="dashboard-content">
@@ -85,6 +101,68 @@
     </main>
 
 </div>
+
+<div
+    id="logoutModal"
+    class="modal-overlay"
+>
+    <div class="modal-card">
+
+        <h2>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Confirm Logout
+        </h2>
+
+        <p>
+            Are you sure you want to end your admin session?
+        </p>
+
+        <div class="warning-box">
+            You will be returned to the login page.
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="cancel-button"
+                onclick="closeLogoutModal()"
+            >
+                Cancel
+            <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                >
+                    {% csrf_token %}
+                <button
+                    type="submit"
+                    class="sidebar-logout-button"
+                    onclick="openLogoutModal()"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+function openLogoutModal() {
+    document.getElementById(
+        "logoutModal"
+    ).style.display = "flex";
+}
+
+function closeLogoutModal() {
+    document.getElementById(
+        "logoutModal"
+    ).style.display = "none";
+}
+</script>
 
 </body>
 </html>
