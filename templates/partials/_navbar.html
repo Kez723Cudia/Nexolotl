@@ -1,39 +1,59 @@
 {% load static %}
-<header class="nx-nav">
-  <a class="nx-logo" href="{% url 'post_feed' %}">
-    <img class="nx-logo__mark" src="{% static 'img/nexolotl-logo.png' %}" alt="">
+<header class="nx-appbar">
+  <a class="nx-logo" href="{% url 'post_feed' %}" aria-label="Nexolotl home">
+    <img class="nx-logo__mark" src="{% static 'img/nexolotl-logo-removebg-preview.png' %}" alt="">
     <span class="nx-logo__word">NEXOLOTL</span>
   </a>
 
-  <nav class="nx-nav__links" aria-label="Main">
-    <a href="{% url 'post_feed' %}">Home</a>
-    {% if user.is_authenticated %}
-      <a href="{% url 'profile' username=user.username %}">Profile</a>
-    {% endif %}
-  </nav>
-
-  <div class="nx-nav__actions">
+  <div class="nx-appbar__actions">
     {% if user.is_authenticated %}
       <form class="nx-search" method="get" action="{% url 'search' %}" role="search">
         <label class="sr-only" for="site-search">Search profiles and posts</label>
         <input id="site-search" type="search" name="q" placeholder="Search" value="{{ request.GET.q|default:'' }}">
         <button type="submit" aria-label="Search">Search</button>
       </form>
-      {% url 'create_post' as new_post_url %}
-      {% if new_post_url %}<a class="nx-btn" href="{{ new_post_url }}">+ New Post</a>{% endif %}
-
-      <a href="{% url 'account_settings' %}">Settings</a>
-      <a href="{% url 'profile' username=user.username %}" aria-label="Your profile">
+      <a class="nx-btn nx-appbar__new-post" href="{% url 'post_feed' %}?compose=1">+ New Post</a>
+      <details class="nx-profile-menu">
+        <summary aria-label="Open account menu">
         {% if user.profile.avatar %}
           <img class="nx-avatar nx-avatar--sm" src="{{ user.profile.avatar.url }}" alt="">
         {% else %}
-          <div class="nx-avatar nx-avatar--sm"></div>
+          <span class="nx-avatar nx-avatar--sm nx-avatar-placeholder">{{ user.username|first|upper }}</span>
         {% endif %}
-      </a>
-      <a href="{% url 'logout' %}">Log out</a>
+        </summary>
+        <div class="nx-profile-menu__items">
+          <a href="{% url 'profile' username=user.username %}">Your profile</a>
+          <a href="{% url 'friends' %}">Friends</a>
+          <a href="{% url 'account_settings' %}">Settings</a>
+          <a href="{% url 'logout' %}">Log out</a>
+        </div>
+      </details>
     {% else %}
       <a class="nx-btn nx-btn--ghost" href="{% url 'login' %}">Log in</a>
       <a class="nx-btn" href="{% url 'register' %}">Sign up</a>
     {% endif %}
   </div>
 </header>
+
+{% if user.is_authenticated %}
+  <nav class="nx-dock" aria-label="Main navigation">
+    <a href="{% url 'post_feed' %}"
+       aria-label="Home"
+       {% if request.resolver_match.url_name == 'post_feed' %}class="active" aria-current="page"{% endif %}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg>
+      <span class="sr-only">Home</span>
+    </a>
+    <a href="{% url 'album_home' %}"
+       aria-label="Gallery"
+       {% if request.resolver_match.url_name == 'album_home' or request.resolver_match.url_name == 'album_detail' %}class="active" aria-current="page"{% endif %}>
+      <svg class="nx-icon-line" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="16" rx="2"/><circle cx="12" cy="10" r="2.2"/><path d="M8 17c1-2.5 2.5-3.5 4-3.5s3 1 4 3.5M2 7v10M22 7v10"/></svg>
+      <span class="sr-only">Gallery</span>
+    </a>
+    <a href="{% url 'account_settings' %}"
+       aria-label="Settings"
+       {% if request.resolver_match.url_name == 'account_settings' %}class="active" aria-current="page"{% endif %}>
+      <svg class="nx-icon-line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg>
+      <span class="sr-only">Settings</span>
+    </a>
+  </nav>
+{% endif %}

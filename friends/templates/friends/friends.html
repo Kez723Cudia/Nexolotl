@@ -1,67 +1,14 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}{{ current_user.username }}'s Friends · Nexolotl{% endblock %}
 
-    <title>{{ current_user.username }}'s Friends</title>
+{% block extra_head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/friends.css' %}?v=2">
+{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
-    <link rel="stylesheet" href="{% static 'css/nexolotl.css' %}">
-</head>
-
-<body>
-
-    <!-- NAVBAR -->
-    <nav class="nx-nav">
-
-        <a href="{% url 'post_feed' %}" class="nx-logo">
-
-            <img
-                src="{% static 'img/nexolotl-logo.png' %}"
-                alt="Nexolotl logo"
-                class="nx-logo-image"
-            >
-
-            <span class="nx-logo__word">NEXOLOTL</span>
-
-        </a>
-
-        <div class="nx-nav__actions">
-
-            <a
-                href="{% url 'profile' username=request.user.username %}"
-                class="nx-nav__profile"
-                aria-label="Open your profile"
-            >
-
-                {% if request.user.profile.avatar %}
-
-                    <img
-                        src="{{ request.user.profile.avatar.url }}"
-                        alt="{{ request.user.username }}"
-                        class="nx-avatar nx-avatar--sm"
-                    >
-
-                {% else %}
-
-                    <div class="nx-friend-avatar nx-friend-avatar--sm">
-                        {{ request.user.username|first|upper }}
-                    </div>
-
-                {% endif %}
-
-            </a>
-
-        </div>
-
-    </nav>
-
-
-    <!-- MAIN CONTENT -->
-    <main class="nx-container nx-friends-page">
+{% block content %}
+    <div class="nx-friends-page">
 
         <!-- PAGE HEADER -->
         <section class="nx-card nx-friends-header">
@@ -753,7 +700,7 @@
 
         </section>
 
-    </main>
+    </div>
 
 
     <!-- TOP FRIEND LIMIT SCRIPT -->
@@ -814,5 +761,4 @@
         });
     </script>
 
-</body>
-</html>
+{% endblock %}

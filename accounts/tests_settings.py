@@ -33,8 +33,8 @@ class AccountSettingsTests(TestCase):
 
         self.assertContains(response, 'data-theme="classic"')
         self.assertContains(response, "Nexolotl Breeze")
-        self.assertContains(response, "css/tokens.css?v=3")
-        self.assertContains(response, "css/nexolotl.css?v=2")
+        self.assertContains(response, "css/tokens.css?v=4")
+        self.assertContains(response, "css/nexolotl.css?v=3")
 
     def test_settings_saves_theme_and_private_view_preference(self):
         response = self.client.post(

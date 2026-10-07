@@ -8,10 +8,13 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
-from .models import Comment, Post
+from .models import Comment, Post, Album, AlbumPhoto
 
 from user_controls.models import Block
 from friends.models import Friendship
+
+from django.conf import settings
+from django.shortcuts import resolve_url
 
 User = get_user_model()
 
@@ -281,3 +284,222 @@ class UnauthorizedCommentTests(BaseTestCase):
             {"content": "who am i", "author": self.alice.pk},
         )
         self.assertEqual(Comment.objects.get().author, self.bob)
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA)
+class AlbumTestCase(TestCase):
+    """Base class: three users and one album owned by `owner`."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_user(
+            username="owner",
+            email="owner@example.com",
+            password="pw12345!"
+        )
+        cls.friend = User.objects.create_user(
+            username="friend", 
+            email="friend@example.com", 
+            password="pw12345!"
+        )
+        cls.stranger = User.objects.create_user(
+            username="stranger", 
+            email="stranger@example.com", 
+            password="pw12345!"
+        )
+        # 1. FIX: Create the album and add friend as member
+        cls.album = Album.objects.create(owner=cls.owner)
+        cls.album.members.set([cls.friend])
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA, ignore_errors=True)
+
+    def add_photo(self, uploader):
+        return AlbumPhoto.objects.create(album=self.album, uploader=uploader, image=make_image())
+
+    def assertRedirectsToLogin(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(resolve_url(settings.LOGIN_URL)))
+
+
+class AlbumModelTests(AlbumTestCase):
+    def test_invite_code_is_generated_and_unique(self):
+        other = Album.objects.create(owner=self.stranger)
+        self.assertTrue(self.album.invite_code)
+        self.assertNotEqual(self.album.invite_code, other.invite_code)
+
+    def test_can_access(self):
+        self.assertTrue(self.album.can_access(self.owner))
+        self.assertTrue(self.album.can_access(self.friend))
+        self.assertFalse(self.album.can_access(self.stranger))
+
+    def test_photos_are_ordered_newest_first(self):
+        first = self.add_photo(self.owner)
+        second = self.add_photo(self.friend)
+        self.assertEqual(list(self.album.photos.all()), [second, first])
+
+
+class AlbumHomeTests(AlbumTestCase):
+    def test_requires_login(self):
+        self.assertRedirectsToLogin(self.client.get(reverse("album_home")))
+
+    def test_creates_album_on_first_visit(self):
+        self.assertFalse(Album.objects.filter(owner=self.stranger).exists())
+        self.client.force_login(self.stranger)
+        response = self.client.get(reverse("album_home"))
+        album = Album.objects.get(owner=self.stranger)
+        self.assertRedirects(response, reverse("album_detail", args=[album.pk]))
+
+    def test_reuses_existing_album(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("album_home"))
+        self.assertRedirects(response, reverse("album_detail", args=[self.album.pk]))
+        self.assertEqual(Album.objects.filter(owner=self.owner).count(), 1)
+
+
+class AlbumDetailTests(AlbumTestCase):
+    # 2. FIX: Removed overridden setUpTestData to inherit parent cls.album and users
+
+    def url(self):
+        return reverse("album_detail", args=[self.album.pk])
+
+    def test_requires_login(self):
+        self.assertRedirectsToLogin(self.client.get(self.url()))
+
+    def test_owner_and_member_can_view(self):
+        for user in (self.owner, self.friend):
+            self.client.force_login(user)
+            response = self.client.get(self.url())
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, "album.html")
+
+    def test_stranger_gets_404(self):
+        self.client.force_login(self.stranger)
+        self.assertEqual(self.client.get(self.url()).status_code, 404)
+
+    def test_member_can_upload_photo(self):
+        self.client.force_login(self.friend)
+        response = self.client.post(self.url(), {"image": make_image()})
+        self.assertRedirects(response, self.url())
+        photo = AlbumPhoto.objects.get()
+        self.assertEqual(photo.album, self.album)
+        self.assertEqual(photo.uploader, self.friend)
+
+    def test_stranger_cannot_upload(self):
+        self.client.force_login(self.stranger)
+        response = self.client.post(self.url(), {"image": make_image()})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(AlbumPhoto.objects.count(), 0)
+
+    def test_non_image_upload_is_rejected(self):
+        self.client.force_login(self.friend)
+        bad = SimpleUploadedFile("notes.txt", b"not an image", content_type="text/plain")
+        response = self.client.post(self.url(), {"image": bad})
+        self.assertEqual(response.status_code, 200)  # form re-rendered with errors
+        self.assertEqual(AlbumPhoto.objects.count(), 0)
+
+    def test_page_lists_albums_user_belongs_to(self):
+        self.client.force_login(self.friend)
+        Album.objects.create(owner=self.friend)
+        response = self.client.get(self.url())
+        self.assertEqual(response.context["albums"].count(), 2)
+
+
+class AlbumJoinTests(AlbumTestCase):
+    def url(self, code=None):
+        return reverse("album_join", args=[code or self.album.invite_code])
+
+    def test_requires_login(self):
+        self.assertRedirectsToLogin(self.client.get(self.url()))
+
+    def test_invalid_code_gives_404(self):
+        self.client.force_login(self.stranger)
+        self.assertEqual(self.client.get(self.url("nope")).status_code, 404)
+
+    def test_invite_page_shows_member_count_without_joining(self):
+        self.client.force_login(self.stranger)
+        response = self.client.get(self.url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "album_invite.html")
+        self.assertEqual(response.context["member_count"], 2)  # owner + friend
+        self.assertFalse(self.album.members.filter(pk=self.stranger.pk).exists())
+
+    def test_accept_adds_member(self):
+        self.client.force_login(self.stranger)
+        response = self.client.post(self.url(), {"action": "accept"})
+        self.assertRedirects(response, reverse("album_detail", args=[self.album.pk]))
+        self.assertTrue(self.album.members.filter(pk=self.stranger.pk).exists())
+
+    def test_decline_does_not_add_member(self):
+        self.client.force_login(self.stranger)
+        response = self.client.post(self.url(), {"action": "decline"})
+        self.assertRedirects(response, reverse("post_feed"), fetch_redirect_response=False)
+        self.assertFalse(self.album.members.filter(pk=self.stranger.pk).exists())
+
+    def test_owner_skips_invite_page(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(self.url())
+        self.assertRedirects(response, reverse("album_detail", args=[self.album.pk]))
+
+    def test_existing_member_is_not_duplicated(self):
+        self.client.force_login(self.friend)
+        self.client.post(self.url(), {"action": "accept"})
+        self.assertEqual(self.album.members.filter(pk=self.friend.pk).count(), 1)
+
+
+class PhotoDeleteTests(AlbumTestCase):
+    def url(self, photo):
+        return reverse("photo_delete", args=[photo.pk])
+
+    def test_uploader_can_delete(self):
+        photo = self.add_photo(self.friend)
+        self.client.force_login(self.friend)
+        self.client.post(self.url(photo))
+        self.assertFalse(AlbumPhoto.objects.filter(pk=photo.pk).exists())
+
+    def test_owner_can_delete_any_photo(self):
+        photo = self.add_photo(self.friend)
+        self.client.force_login(self.owner)
+        self.client.post(self.url(photo))
+        self.assertFalse(AlbumPhoto.objects.filter(pk=photo.pk).exists())
+
+    def test_other_member_cannot_delete(self):
+        # 3. FIX: Added email argument to prevent duplicate empty string emails
+        other = User.objects.create_user("other", email="other@example.com", password="pw12345!")
+        self.album.members.add(other)
+        photo = self.add_photo(self.friend)
+        self.client.force_login(other)
+        self.client.post(self.url(photo))
+        self.assertTrue(AlbumPhoto.objects.filter(pk=photo.pk).exists())
+
+    def test_get_is_not_allowed(self):
+        photo = self.add_photo(self.owner)
+        self.client.force_login(self.owner)
+        self.assertEqual(self.client.get(self.url(photo)).status_code, 405)
+        self.assertTrue(AlbumPhoto.objects.filter(pk=photo.pk).exists())
+
+
+class MemberRemoveTests(AlbumTestCase):
+    def url(self, user):
+        return reverse("member_remove", args=[self.album.pk, user.pk])
+
+    def test_owner_can_remove_member(self):
+        self.client.force_login(self.owner)
+        self.client.post(self.url(self.friend))
+        self.assertFalse(self.album.members.filter(pk=self.friend.pk).exists())
+
+    def test_member_cannot_remove_others(self):
+        self.client.force_login(self.friend)
+        response = self.client.post(self.url(self.friend))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(self.album.members.filter(pk=self.friend.pk).exists())
+
+    def test_removed_member_loses_access_but_photos_stay(self):
+        photo = self.add_photo(self.friend)
+        self.client.force_login(self.owner)
+        self.client.post(self.url(self.friend))
+        self.assertTrue(AlbumPhoto.objects.filter(pk=photo.pk).exists())
+        self.client.force_login(self.friend)
+        response = self.client.get(reverse("album_detail", args=[self.album.pk]))
+        self.assertEqual(response.status_code, 404)

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Album Invite · Nexolotl{% endblock %}
+
+{% block extra_head %}
+<style>
+    .invite-dialog {
+        margin: auto; border: 0; text-align: center;
+        border-radius: calc(var(--nx-radius, 22px) * 1.4);
+        background: var(--nx-card); color: var(--nx-card-ink);
+        width: min(420px, calc(100% - 2rem)); padding: 2rem;
+        box-shadow: var(--nx-shadow, 0 5px 0 rgba(0, 0, 0, 0.18));
+    }
+    .invite-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+    .invite-avatar {
+        width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 1rem;
+        border: 3px solid var(--nx-ink); background: var(--nx-bg-soft);
+        display: flex; align-items: center; justify-content: center;
+        font: 700 1.8rem var(--nx-font, "Lexend", sans-serif); text-transform: uppercase;
+        object-fit: cover;
+    }
+    .invite-dialog h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .invite-count {
+        display: inline-block; margin: 0.5rem 0 1.5rem; padding: 2px 14px;
+        border: 1.5px solid var(--nx-ink); border-radius: 999px;
+        background: var(--nx-bg-soft); color: var(--nx-button-ink); font-weight: 700; font-size: 0.9rem;
+    }
+    .invite-actions { display: flex; justify-content: center; gap: 0.75rem; }
+    .invite-actions button {
+        border: 2px solid var(--nx-ink); border-radius: 999px;
+        padding: 0.5rem 1.6rem; cursor: pointer;
+        font: 700 1rem var(--nx-font, "Lexend", sans-serif);
+    }
+    .invite-decline { background: transparent; color: var(--nx-card-ink); }
+    .invite-accept { background: var(--nx-bg-soft); color: var(--nx-button-ink); }
+    .invite-actions button:focus-visible { outline: 3px solid var(--nx-ink); outline-offset: 2px; }
+</style>
+{% endblock %}
+
+{% block content %}
+    <dialog class="invite-dialog" id="inviteDialog">
+        {% if album.owner.profile.avatar %}
+            <img class="invite-avatar" src="{{ album.owner.profile.avatar.url }}" alt="">
+        {% else %}
+            <div class="invite-avatar" aria-hidden="true">{{ album.owner.username|slice:":1" }}</div>
+        {% endif %}
+
+        <h2>@{{ album.owner.username }} invited you to their shared album</h2>
+        <p class="invite-count">{{ member_count }} member{{ member_count|pluralize }} so far</p>
+
+        <form method="POST" class="invite-actions">
+            {% csrf_token %}
+            <button class="invite-decline" type="submit" name="action" value="decline">Decline</button>
+            <button class="invite-accept" type="submit" name="action" value="accept">Accept</button>
+        </form>
+    </dialog>
+
+    <script>
+        const dlg = document.getElementById("inviteDialog");
+        dlg.showModal();
+        dlg.addEventListener("cancel", () => {
+            window.location.href = "{% url 'album_home' %}";
+        });
+    </script>
+{% endblock %}
