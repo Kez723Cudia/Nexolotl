@@ -49,4 +49,9 @@ urlpatterns = [
         views.dashboard_testimonials,
         name="dashboard_testimonials",
     ),
+    path(
+    "testimonials/<int:testimonial_id>/delete/",
+    views.dashboard_delete_testimonial,
+    name="dashboard_delete_testimonial",
+    ),
 ]

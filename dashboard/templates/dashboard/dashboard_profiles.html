@@ -11,6 +11,19 @@
 </header>
 
 <div class="data-panel">
+    <div class="table-toolbar">
+        <form method="get" class="search-form">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search username..."
+                value="{{ request.GET.q }}"
+            >
+            <button type="submit">
+                Search
+            </button>
+        </form>
+    </div>
     <table class="dashboard-table">
         <thead>
             <tr>
