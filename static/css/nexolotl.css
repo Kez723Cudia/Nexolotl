@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 body { background: var(--nx-bg); color: var(--nx-ink); font-family: var(--nx-font); line-height: 1.5; min-height: 100vh; }
 a { color: inherit; text-decoration: none; }
@@ -6,13 +8,13 @@ img { max-width: 100%; display: block; }
 
 /* Navbar */
 .nx-nav { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: var(--nx-nav-h); padding: 0 1.5rem; background: var(--nx-navy); color: var(--nx-card); }
-.nx-logo { display: flex; align-items: center; gap: 0.6rem; }
-.nx-logo__mark { height: 38px; width: auto; }
-.nx-logo__word { font-family: var(--nx-pixel); font-size: 1.5rem; letter-spacing: 0.04em; color: var(--nx-accent); }
+.nx-logo { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+.nx-logo-image { display: block !important; width: 38px !important; height: 38px !important; min-width: 38px !important; min-height: 38px !important; max-width: 38px !important; object-fit: contain !important; visibility: visible !important; opacity: 1 !important; }
+.nx-logo__word { font-family: "Silkscreen", "Courier New", monospace !important; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.08em; color: var(--nx-accent); line-height: 1; white-space: nowrap; }
 .nx-nav__links { display: flex; gap: 1.5rem; margin-left: 1.5rem; margin-right: auto; }
 .nx-nav__links a { padding: 0.25rem 0; border-bottom: 2px solid transparent; }
 .nx-nav__links a:hover { border-color: var(--nx-accent); }
-.nx-nav__actions { display: flex; align-items: center; gap: 0.75rem; }
+.nx-nav__actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
 .nx-nav__profile { display: flex; align-items: center; }
 
 /* Buttons */

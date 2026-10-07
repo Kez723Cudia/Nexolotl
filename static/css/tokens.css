@@ -1,4 +1,7 @@
 /* Nexolotl design tokens: edit here to re-theme the whole site */
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap');
+
 :root {
     --nx-navy: #241441;
     --nx-bg: #5b4a9e;

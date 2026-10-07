@@ -19,26 +19,40 @@
 
         <a href="{% url 'post_feed' %}" class="nx-logo">
 
-            <span class="nx-logo__word">
-                NEXOLOTL
-            </span>
+            <img
+                src="{% static 'img/nexolotl-logo.png' %}"
+                alt="Nexolotl logo"
+                class="nx-logo-image"
+            >
+
+            <span class="nx-logo__word">NEXOLOTL</span>
 
         </a>
 
         <div class="nx-nav__actions">
 
-            <a href="{% url 'profile' username=request.user.username %}">
+            <a
+                href="{% url 'profile' username=request.user.username %}"
+                class="nx-nav__profile"
+                aria-label="Open your profile"
+            >
+
                 {% if request.user.profile.avatar %}
+
                     <img
                         src="{{ request.user.profile.avatar.url }}"
                         alt="{{ request.user.username }}"
                         class="nx-avatar nx-avatar--sm"
                     >
+
                 {% else %}
+
                     <div class="nx-friend-avatar nx-friend-avatar--sm">
                         {{ request.user.username|first|upper }}
                     </div>
+
                 {% endif %}
+
             </a>
 
         </div>
@@ -52,7 +66,7 @@
         <!-- PAGE HEADER -->
         <section class="nx-card nx-friends-header">
 
-            <div>
+            <div class="nx-friends-header__content">
                 <p class="nx-friends-eyebrow">YOUR SOCIAL CIRCLE</p>
 
                 <h1 class="nx-friends-title">
@@ -79,7 +93,6 @@
         <section class="nx-card nx-friends-section">
 
             <div class="nx-section-heading">
-
                 <div>
                     <p class="nx-friends-eyebrow">NEW CONNECTIONS</p>
 
@@ -91,9 +104,7 @@
                 <span class="nx-friends-badge">
                     {{ incoming_requests|length }}
                 </span>
-
             </div>
-
 
             <div class="nx-request-grid">
 
@@ -105,7 +116,6 @@
                         href="{% url 'profile' username=request.sender.username %}"
                         class="nx-friend-identity"
                     >
-
                         {% if request.sender.profile.avatar %}
                             <img
                                 src="{{ request.sender.profile.avatar.url }}"
@@ -119,17 +129,13 @@
                         {% endif %}
 
                         <div>
-                            <strong>
-                                {{ request.sender.username }}
-                            </strong>
+                            <strong>{{ request.sender.username }}</strong>
 
                             <span class="nx-handle">
                                 Wants to be your friend
                             </span>
                         </div>
-
                     </a>
-
 
                     <div class="nx-action-row">
 
@@ -145,9 +151,7 @@
                             >
                                 Accept
                             </button>
-
                         </form>
-
 
                         <form
                             method="post"
@@ -161,7 +165,6 @@
                             >
                                 Decline
                             </button>
-
                         </form>
 
                     </div>
@@ -176,13 +179,11 @@
         {% endif %}
 
 
-
         <!-- SENT REQUESTS -->
         {% if sent_requests %}
         <section class="nx-card nx-friends-section">
 
             <div class="nx-section-heading">
-
                 <div>
                     <p class="nx-friends-eyebrow">WAITING</p>
 
@@ -194,9 +195,7 @@
                 <span class="nx-friends-badge">
                     {{ sent_requests|length }}
                 </span>
-
             </div>
-
 
             <div class="nx-request-grid">
 
@@ -222,9 +221,7 @@
                         {% endif %}
 
                         <div>
-                            <strong>
-                                {{ request.receiver.username }}
-                            </strong>
+                            <strong>{{ request.receiver.username }}</strong>
 
                             <span class="nx-handle">
                                 Friend request pending
@@ -232,7 +229,6 @@
                         </div>
 
                     </a>
-
 
                     <form
                         method="post"
@@ -246,7 +242,6 @@
                         >
                             Cancel Request
                         </button>
-
                     </form>
 
                 </article>
@@ -259,32 +254,33 @@
         {% endif %}
 
 
-
         <!-- FRIENDS -->
         <section class="nx-card nx-friends-section">
 
             <div class="nx-section-heading">
-
                 <div>
                     <p class="nx-friends-eyebrow">YOUR CIRCLE</p>
 
                     <h2 class="nx-section__title">
                         Friends
                     </h2>
+
+                    <p class="nx-muted">
+                        People you're connected with.
+                    </p>
                 </div>
 
                 <span class="nx-friends-badge">
-                    {{ friendships|length }}
+                    {{ friends|length }}
                 </span>
-
             </div>
 
 
-            {% if friendships %}
+            {% if friends %}
 
             <div class="nx-friend-grid">
 
-                {% for friendship in friendships %}
+                {% for friendship in friends %}
 
                 <article class="nx-friend-card">
 
@@ -293,24 +289,28 @@
                         class="nx-friend-profile"
                     >
 
-                        {% if friendship.friend.profile.avatar %}
-                            <img
-                                src="{{ friendship.friend.profile.avatar.url }}"
-                                alt="{{ friendship.friend.username }}"
-                                class="nx-avatar nx-avatar--xl"
-                            >
-                        {% else %}
-                            <div class="nx-friend-avatar nx-friend-avatar--xl">
-                                {{ friendship.friend.username|first|upper }}
-                            </div>
-                        {% endif %}
+                        <div class="nx-friend-avatar-wrap">
+
+                            {% if friendship.friend.profile.avatar %}
+                                <img
+                                    src="{{ friendship.friend.profile.avatar.url }}"
+                                    alt="{{ friendship.friend.username }}"
+                                    class="nx-avatar nx-avatar--xl"
+                                >
+                            {% else %}
+                                <div class="nx-friend-avatar nx-friend-avatar--xl">
+                                    {{ friendship.friend.username|first|upper }}
+                                </div>
+                            {% endif %}
+
+                        </div>
 
                         <h3>
                             {{ friendship.friend.username }}
                         </h3>
 
                         <span class="nx-handle">
-                            View Profile
+                            View Profile →
                         </span>
 
                     </a>
@@ -327,13 +327,12 @@
                             <button type="submit" class="nx-btn">
 
                                 {% if friendship.is_close_friend %}
-                                    Remove Close Friend
+                                    ★ Close Friend
                                 {% else %}
-                                    Add Close Friend
+                                    ☆ Add Close Friend
                                 {% endif %}
 
                             </button>
-
                         </form>
 
 
@@ -347,9 +346,8 @@
                                 type="submit"
                                 class="nx-btn nx-btn--danger"
                             >
-                                Remove Friend
+                                Remove
                             </button>
-
                         </form>
 
                     </div>
@@ -383,7 +381,6 @@
         </section>
 
 
-
         <!-- CLOSE FRIENDS -->
         <section class="nx-card nx-friends-section">
 
@@ -395,6 +392,10 @@
                     <h2 class="nx-section__title">
                         Close Friends
                     </h2>
+
+                    <p class="nx-muted">
+                        Your closer connections.
+                    </p>
                 </div>
 
                 <span class="nx-friends-badge">
@@ -427,9 +428,10 @@
                         </div>
                     {% endif %}
 
-                    <span>
-                        {{ friendship.friend.username }}
-                    </span>
+                    <div class="nx-mini-friend-info">
+                        <strong>{{ friendship.friend.username }}</strong>
+                        <span>Close Friend</span>
+                    </div>
 
                 </a>
 
@@ -440,17 +442,14 @@
             {% else %}
 
             <div class="nx-empty-state nx-empty-state--small">
-
                 <p class="nx-muted">
                     You haven't added anyone to Close Friends yet.
                 </p>
-
             </div>
 
             {% endif %}
 
         </section>
-
 
 
         <!-- TOP FRIENDS -->
@@ -464,6 +463,10 @@
                     <h2 class="nx-section__title">
                         Top Friends
                     </h2>
+
+                    <p class="nx-muted">
+                        Your five favorite connections.
+                    </p>
                 </div>
 
                 <span class="nx-friends-badge">
@@ -488,7 +491,6 @@
                         {{ forloop.counter }}
                     </div>
 
-
                     {% if friendship.friend.profile.avatar %}
                         <img
                             src="{{ friendship.friend.profile.avatar.url }}"
@@ -501,17 +503,12 @@
                         </div>
                     {% endif %}
 
-
-                    <div>
-
-                        <strong>
-                            {{ friendship.friend.username }}
-                        </strong>
+                    <div class="nx-top-friend-info">
+                        <strong>{{ friendship.friend.username }}</strong>
 
                         <span class="nx-handle">
                             Top Friend
                         </span>
-
                     </div>
 
                 </a>
@@ -523,17 +520,14 @@
             {% else %}
 
             <div class="nx-empty-state nx-empty-state--small">
-
                 <p class="nx-muted">
                     You haven't selected any Top Friends yet.
                 </p>
-
             </div>
 
             {% endif %}
 
         </section>
-
 
 
         <!-- TOP FRIEND SELECTION -->
@@ -567,12 +561,11 @@
 
                 {% csrf_token %}
 
-
-                {% if friendships %}
+                {% if friends %}
 
                 <div class="nx-selection-grid">
 
-                    {% for friendship in friendships %}
+                    {% for friendship in friends %}
 
                     <label class="nx-selection-card">
 
@@ -588,7 +581,6 @@
                                 {% endif %}
                             >
 
-
                             {% if friendship.friend.profile.avatar %}
                                 <img
                                     src="{{ friendship.friend.profile.avatar.url }}"
@@ -601,8 +593,7 @@
                                 </div>
                             {% endif %}
 
-
-                            <div>
+                            <div class="nx-selection-info">
 
                                 <strong>
                                     {{ friendship.friend.username }}
@@ -647,7 +638,6 @@
 
                 </div>
 
-
                 {% else %}
 
                 <div class="nx-empty-state nx-empty-state--small">
@@ -663,7 +653,6 @@
             </form>
 
         </section>
-
 
 
         <!-- PEOPLE YOU MAY KNOW -->
@@ -711,17 +700,15 @@
                             </div>
                         {% endif %}
 
-
                         <h3>
                             {{ user.username }}
                         </h3>
 
                         <span class="nx-handle">
-                            View Profile
+                            View Profile →
                         </span>
 
                     </a>
-
 
                     <form
                         method="post"
@@ -769,29 +756,37 @@
     </main>
 
 
-
     <!-- TOP FRIEND LIMIT SCRIPT -->
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
 
-            const checkboxes = document.querySelectorAll(".top-friend-checkbox");
-            const counter = document.getElementById("topFriendCounter");
-            const limitMessage = document.getElementById("topFriendLimitMessage");
+            const checkboxes =
+                document.querySelectorAll(".top-friend-checkbox");
+
+            const counter =
+                document.getElementById("topFriendCounter");
+
+            const limitMessage =
+                document.getElementById("topFriendLimitMessage");
+
 
             function updateTopFriendLimit() {
 
-                const checked = document.querySelectorAll(
-                    ".top-friend-checkbox:checked"
-                ).length;
+                const checked =
+                    document.querySelectorAll(
+                        ".top-friend-checkbox:checked"
+                    ).length;
+
 
                 if (counter) {
                     counter.textContent = checked + "/5";
                 }
 
+
                 if (limitMessage) {
                     limitMessage.hidden = checked < 5;
                 }
+
 
                 checkboxes.forEach(function (checkbox) {
 
@@ -817,7 +812,6 @@
             updateTopFriendLimit();
 
         });
-
     </script>
 
 </body>
