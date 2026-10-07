@@ -3,16 +3,16 @@
 
     <form method="POST" action="{% url 'toggle_block' target_user.id %}">
         {% csrf_token %}
-        <button type="submit">Block / Unblock</button>
+        <button type="submit" class="nx-btn">Block / Unblock</button>
     </form>
 
     <form method="POST" action="{% url 'toggle_restriction' target_user.id %}">
         {% csrf_token %}
-        <button type="submit">Restrict / Unrestrict</button>
+        <button type="submit" class="nx-btn">Restrict / Unrestrict</button>
     </form>
 
     <form method="POST" action="{% url 'toggle_see_less' target_user.id %}">
         {% csrf_token %}
-        <button type="submit">See Less / Undo See Less</button>
+        <button type="submit" class="nx-btn">See Less / Undo See Less</button>
     </form>
 </div>

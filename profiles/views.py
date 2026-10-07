@@ -1,14 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.views.decorators.http import require_POST
 from friends.models import FriendRequest, Friendship
 from testimonials.forms import testimonialForm
 from testimonials.models import testimonial
 from user_controls.models import Block
-
-from .forms import FriendListPrivacyForm, ProfileForm
-from .models import Profile
+from .forms import FriendListPrivacyForm, InterestForm, ProfileForm
+from .models import Interest, Profile
 
 
 def are_friends(user1, user2):
@@ -224,6 +223,17 @@ def profile_view(request, username):
     )
 
 
+def _edit_context(profile, form=None, interest_form=None):
+    return {
+        "form": form if form is not None else ProfileForm(instance=profile),
+        "interest_form": interest_form if interest_form is not None else InterestForm(profile=profile),
+        "interests": profile.interest_items.all(),
+        "interest_limit": Interest.MAX_PER_PROFILE,
+        "interest_palette": Interest.PALETTE,
+        "interest_emoji": Interest.SUGGESTED_EMOJI,
+    }
+
+
 @login_required
 def profile_edit(request):
     user_profile = get_object_or_404(
@@ -253,10 +263,48 @@ def profile_edit(request):
     return render(
         request,
         "profiles/profile_edit.html",
-        {
-            "form": form,
-        },
+        _edit_context(user_profile, form=form),
     )
+
+
+@login_required
+@require_POST
+def interest_create(request):
+    user_profile = get_object_or_404(
+        Profile,
+        user=request.user,
+    )
+
+    interest_form = InterestForm(
+        request.POST,
+        profile=user_profile,
+    )
+
+    if interest_form.is_valid():
+        interest = interest_form.save(commit=False)
+        interest.profile = user_profile
+        interest.save()
+
+        return redirect("profile_edit")
+
+    return render(
+        request,
+        "profiles/profile_edit.html",
+        _edit_context(user_profile, interest_form=interest_form),
+    )
+
+
+@login_required
+@require_POST
+def interest_delete(request, interest_id):
+    interest = get_object_or_404(
+        Interest,
+        id=interest_id,
+        profile__user=request.user,
+    )
+    interest.delete()
+
+    return redirect("profile_edit")
 
 
 @login_required
