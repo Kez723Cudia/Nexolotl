@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -9,6 +8,9 @@ from Posting.models import Post
 from friends.models import Friendship, FriendRequest
 from .forms import ReportForm
 from .models import Block, Restriction, SeeLess
+
+
+User = get_user_model()
 
 
 @login_required
@@ -23,7 +25,10 @@ def report_user(request, user_id):
         )
 
         if form.is_valid():
-            form.save()
+            report = form.save(commit=False)
+            report.reporter = request.user
+            report.reported_user = reported_user
+            report.save()
             return redirect("profile", username=reported_user.username)
     else:
         form = ReportForm(
@@ -33,7 +38,7 @@ def report_user(request, user_id):
 
     return render(
         request,
-        "user_controls/report.html",
+        "user_controls/report_form.html",
         {
             "form": form,
             "reported_user": reported_user,
@@ -53,7 +58,10 @@ def report_post(request, post_id):
         )
 
         if form.is_valid():
-            form.save()
+            report = form.save(commit=False)
+            report.reporter = request.user
+            report.reported_post = reported_post
+            report.save()
             return redirect("post_detail", pk=reported_post.pk)
     else:
         form = ReportForm(
@@ -63,7 +71,7 @@ def report_post(request, post_id):
 
     return render(
         request,
-        "user_controls/report.html",
+        "user_controls/report_form.html",
         {
             "form": form,
             "reported_post": reported_post,
@@ -78,7 +86,10 @@ def toggle_block(request, user_id):
 
     # Users cannot block themselves.
     if target_user == request.user:
-        return HttpResponseForbidden("You cannot block yourself.")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     block, created = Block.objects.get_or_create(
         user=request.user,
@@ -98,7 +109,6 @@ def toggle_block(request, user_id):
             "profile",
             username=target_user.username,
         )
-
 
     Friendship.objects.filter(
         Q(user=request.user, friend=target_user)
@@ -123,7 +133,10 @@ def toggle_restriction(request, user_id):
 
     # Users cannot restrict themselves.
     if target_user == request.user:
-        return HttpResponseForbidden("You cannot restrict yourself.")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     restriction, created = Restriction.objects.get_or_create(
         user=request.user,
@@ -140,6 +153,7 @@ def toggle_restriction(request, user_id):
         username=target_user.username,
     )
 
+
 @login_required
 @require_POST
 def toggle_see_less(request, user_id):
@@ -147,7 +161,10 @@ def toggle_see_less(request, user_id):
 
     # Users cannot apply See Less to themselves.
     if target_user == request.user:
-        return HttpResponseForbidden("You cannot use See Less on yourself.")
+        return redirect(
+            "profile",
+            username=request.user.username,
+        )
 
     see_less, created = SeeLess.objects.get_or_create(
         user=request.user,
