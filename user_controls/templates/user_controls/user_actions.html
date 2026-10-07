@@ -1,18 +1,40 @@
 <div class="user-actions">
     <h3>User Controls</h3>
 
+    <a href="{% url 'report_user' target_user.id %}" class="nx-btn">
+        Report User
+    </a>
+
     <form method="POST" action="{% url 'toggle_block' target_user.id %}">
         {% csrf_token %}
-        <button type="submit" class="nx-btn">Block / Unblock</button>
+        <button type="submit" class="nx-btn">
+            {% if blocked %}
+                Unblock User
+            {% else %}
+                Block User
+            {% endif %}
+        </button>
     </form>
 
     <form method="POST" action="{% url 'toggle_restriction' target_user.id %}">
         {% csrf_token %}
-        <button type="submit" class="nx-btn">Restrict / Unrestrict</button>
+        <button type="submit" class="nx-btn">
+            {% if restricted %}
+                Unrestrict User
+            {% else %}
+                Restrict User
+            {% endif %}
+        </button>
     </form>
 
     <form method="POST" action="{% url 'toggle_see_less' target_user.id %}">
         {% csrf_token %}
-        <button type="submit" class="nx-btn">See Less / Undo See Less</button>
+        <button type="submit" class="nx-btn">
+            {% if see_less %}
+                Undo See Less
+            {% else %}
+                See Less
+            {% endif %}
+        </button>
     </form>
 </div>
