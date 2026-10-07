@@ -8,6 +8,7 @@ from profiles.models import Profile
 from friends.models import Friendship
 from testimonials.models import testimonial
 from user_controls.models import Report
+from django.db.models import Q
 
 
 
@@ -48,7 +49,6 @@ def dashboard_home(request):
         context,
     )
 
-
 @login_required
 def dashboard_users(request):
     denied_response = deny_non_superuser(request)
@@ -56,7 +56,19 @@ def dashboard_users(request):
     if denied_response:
         return denied_response
 
-    users = User.objects.all().order_by("-date_joined")
+    users = User.objects.all()
+
+    query = request.GET.get("q")
+
+    if query:
+        users = users.filter(
+            Q(username__icontains=query) |
+            Q(email__icontains=query)
+    )
+
+    users = users.order_by(
+        "-date_joined"
+    )
 
     return render(
         request,
@@ -77,7 +89,17 @@ def dashboard_profiles(request):
     profiles = (
         Profile.objects
         .select_related("user")
-        .order_by("user__username")
+    )
+
+    query = request.GET.get("q")
+
+    if query:
+        profiles = profiles.filter(
+            user__username__icontains=query
+        )
+
+    profiles = profiles.order_by(
+        "user__username"
     )
 
     return render(
@@ -87,7 +109,6 @@ def dashboard_profiles(request):
             "profiles": profiles,
         },
     )
-
 
 @login_required
 def dashboard_posts(request):
@@ -268,3 +289,4 @@ def dashboard_delete_testimonial(
     return HttpResponseForbidden(
         "Invalid request."
     )
+
