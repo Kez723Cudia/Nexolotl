@@ -1,33 +1,72 @@
 {% load static %}
-<header class="nx-nav">
-  <a class="nx-logo" href="{% url 'post_feed' %}">
-    <img class="nx-logo__mark" src="{% static 'img/nexolotl-logo.png' %}" alt="">
-    <span class="nx-logo__word">NEXOLOTL</span>
-  </a>
 
-  <nav class="nx-nav__links" aria-label="Main">
-    <a href="{% url 'post_feed' %}">Home</a>
-    {% if user.is_authenticated %}
-      <a href="{% url 'profile' username=user.username %}">Profile</a>
-    {% endif %}
-  </nav>
+<nav class="nx-nav">
+    <a href="{% url 'post_feed' %}" class="nx-logo">
+        <img
+            class="nx-logo__mark"
+            src="{% static 'img/nexolotl-logo.png' %}"
+            alt=""
+        >
+        <span class="nx-logo__word">NEXOLOTL</span>
+    </a>
 
-  <div class="nx-nav__actions">
-    {% if user.is_authenticated %}
-      {% url 'create_post' as new_post_url %}
-      {% if new_post_url %}<a class="nx-btn" href="{{ new_post_url }}">+ New Post</a>{% endif %}
+    <div class="nx-nav__links">
+        <a href="{% url 'post_feed' %}">
+            Home
+        </a>
 
-      <a href="{% url 'profile' username=user.username %}" aria-label="Your profile">
-        {% if user.profile.avatar %}
-          <img class="nx-avatar nx-avatar--sm" src="{{ user.profile.avatar.url }}" alt="">
-        {% else %}
-          <div class="nx-avatar nx-avatar--sm"></div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' username=user.username %}">
+                Profile
+            </a>
         {% endif %}
-      </a>
-      <a href="{% url 'logout' %}">Log out</a>
-    {% else %}
-      <a class="nx-btn nx-btn--ghost" href="{% url 'login' %}">Log in</a>
-      <a class="nx-btn" href="{% url 'register' %}">Sign up</a>
-    {% endif %}
-  </div>
-</header>
+    </div>
+
+    <div class="nx-nav__actions">
+        {% if user.is_authenticated %}
+
+            {% url 'create_post' as new_post_url %}
+            {% if new_post_url %}
+                <a href="{{ new_post_url }}" class="nx-btn">
+                    + New Post
+                </a>
+            {% endif %}
+
+            <a
+                href="{% url 'profile' username=user.username %}"
+                class="nx-nav__profile"
+                aria-label="Your profile"
+            >
+                {% if user.profile.avatar %}
+                    <img
+                        src="{{ user.profile.avatar.url }}"
+                        alt="{{ user.username }}"
+                        class="nx-avatar nx-avatar--sm"
+                    >
+                {% else %}
+                    <span class="nx-avatar-placeholder">
+                        {{ user.username|first|upper }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a
+                href="{% url 'logout' %}"
+                class="nx-btn nx-btn--ghost"
+            >
+                Log out
+            </a>
+
+        {% else %}
+
+            <a href="{% url 'login' %}" class="nx-btn">
+                Log in
+            </a>
+
+            <a href="{% url 'register' %}" class="nx-btn nx-btn--ghost">
+                Sign up
+            </a>
+
+        {% endif %}
+    </div>
+</nav>

@@ -1,707 +1,824 @@
+{% load static %}
+
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>{{ current_user.username }}'s Friends</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>{{ current_user.username }}'s Friends</title>
-
-<style>
-
-    body {
-        font-family: Arial, sans-serif;
-        background: #f2f2f2;
-        margin: 0;
-        padding: 30px;
-    }
-
-    .container {
-        max-width: 800px;
-        margin: auto;
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-    }
-
-    h1 {
-        text-align: center;
-    }
-
-    h2 {
-        border-bottom: 2px solid #ddd;
-        padding-bottom: 10px;
-        margin-top: 30px;
-    }
-
-
-    /* FRIEND LIST */
-
-    .friend-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-    }
-
-    .friend {
-        background: #f7f7f7;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-    }
-
-
-    /* TOP FRIEND */
-
-    .top-friend {
-        background: #fff4c2;
-        border: 2px solid #f1c40f;
-    }
-
-    .top-friend-label {
-        font-weight: bold;
-        color: #b8860b;
-    }
-
-
-    /* TOP FRIEND SELECTION */
-
-    .selection {
-        margin-top: 30px;
-    }
-
-    .checkbox {
-        margin: 10px 0;
-        padding: 10px;
-        background: #f7f7f7;
-        border-radius: 6px;
-    }
-
-
-    /* GENERAL BUTTON */
-
-    button {
-        margin-top: 10px;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 6px;
-        background: #333;
-        color: white;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #555;
-    }
-
-
-    /* CLOSE FRIEND BUTTON */
-
-    .close-button {
-        background: #e5b93f;
-    }
-
-    .close-button:hover {
-        background: #c9a12e;
-    }
-
-
-    /* REMOVE FRIEND BUTTON */
-
-    .remove-button {
-        background: #c94c4c;
-    }
-
-    .remove-button:hover {
-        background: #a83b3b;
-    }
-
-
-    /* ADD FRIEND BUTTON */
-
-    .add-button {
-        background: #4c9a5f;
-    }
-
-    .add-button:hover {
-        background: #397a48;
-    }
-
-
-    /* FRIEND ACTIONS */
-
-    .friend-actions {
-        margin-top: 10px;
-    }
-
-    .friend-actions a {
-        text-decoration: none;
-    }
-
-
-    /* FRIEND NAME LINK */
-
-    .friend-name {
-        color: #333;
-        text-decoration: none;
-    }
-
-    .friend-name:hover {
-        text-decoration: underline;
-    }
-
-
-    /* ADD FRIEND */
-
-    .add-friend {
-        margin: 10px 0;
-        padding: 12px;
-        background: #f7f7f7;
-        border-radius: 8px;
-    }
-
-
-    /* FRIEND REQUESTS */
-
-    .friend-requests {
-        margin-top: 30px;
-        padding: 20px;
-        background: #f8f8f8;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-    }
-
-    .friend-request {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px;
-        margin-top: 10px;
-        background: white;
-        border-radius: 8px;
-    }
-
-    .friend-request strong {
-        margin-right: auto;
-    }
-
-    .friend-request a {
-        text-decoration: none;
-    }
-
-    .accept-button {
-        background: #4c9a5f;
-    }
-
-    .accept-button:hover {
-        background: #397a48;
-    }
-
-    .decline-button {
-        background: #c94c4c;
-    }
-
-    .decline-button:hover {
-        background: #a83b3b;
-    }
-
-</style>
-
+    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nexolotl.css' %}">
 </head>
 
 <body>
 
-<div class="container">
+    <!-- NAVBAR -->
+    <nav class="nx-nav">
 
-<h1>{{ current_user.username }}'s Friends</h1>
+        <a href="{% url 'post_feed' %}" class="nx-logo">
 
-<div style="text-align: center; margin-bottom: 20px;">
+            <span class="nx-logo__word">
+                NEXOLOTL
+            </span>
 
-    <a href="{% url 'profile' username=request.user.username %}">
-        <button type="button">
-             My Profile
-        </button>
-    </a>
+        </a>
 
-</div>
+        <div class="nx-nav__actions">
 
-
-<!-- FRIEND REQUESTS -->
-
-<div class="friend-requests">
-
-    <h2> Friend Requests</h2>
-
-    {% for friend_request in incoming_requests %}
-
-        <div class="friend-request">
-
-            <strong>
-
-                <a
-                    href="{% url 'profile' username=friend_request.sender.username %}"
-                >
-
-                     {{ friend_request.sender.username }}
-
-                </a>
-
-            </strong>
-
-
-            <!-- ACCEPT -->
-
-            <form 
-            method="POST" 
-            action="{% url 'accept_friend_request' friend_request.id %}">
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="accept-button"
-                >
-                    Accept
-                </button>
-            </form>
-
-
-            <!-- DECLINE -->
-
-            <form 
-            method="POST" 
-            action="{% url 'decline_friend_request' friend_request.id %}">
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="decline-button"
-                >
-                    Decline
-                </button>
-            </form>
-
+            <a href="{% url 'profile' username=request.user.username %}">
+                {% if request.user.profile.avatar %}
+                    <img
+                        src="{{ request.user.profile.avatar.url }}"
+                        alt="{{ request.user.username }}"
+                        class="nx-avatar nx-avatar--sm"
+                    >
+                {% else %}
+                    <div class="nx-friend-avatar nx-friend-avatar--sm">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                {% endif %}
+            </a>
 
         </div>
 
-    {% empty %}
-
-        <p>
-            You don't have any pending friend requests.
-        </p>
-
-    {% endfor %}
-
-</div>
+    </nav>
 
 
-<!-- SENT FRIEND REQUESTS -->
+    <!-- MAIN CONTENT -->
+    <main class="nx-container nx-friends-page">
 
-<div class="friend-requests">
+        <!-- PAGE HEADER -->
+        <section class="nx-card nx-friends-header">
 
-    <h2> Sent Friend Requests</h2>
+            <div>
+                <p class="nx-friends-eyebrow">YOUR SOCIAL CIRCLE</p>
 
-    {% for friend_request in sent_requests %}
+                <h1 class="nx-friends-title">
+                    {{ current_user.username }}'s Friends
+                </h1>
 
-    <div class="friend-request">
-
-        <strong>
+                <p class="nx-muted">
+                    Manage your friends, close friends, and top friends.
+                </p>
+            </div>
 
             <a
-                href="{% url 'profile' username=friend_request.receiver.username %}"
-                class="friend-name"
+                href="{% url 'profile' username=request.user.username %}"
+                class="nx-btn nx-btn--ghost"
             >
-
-                 {{ friend_request.receiver.username }}
-
+                My Profile
             </a>
 
-        </strong>
-
-        <span>
-            Request Sent
-        </span>
-        
-        <form 
-            method="POST" 
-            action="{% url 'cancel_friend_request' friend_request.id %}"
-        >
-            {% csrf_token %}
-            <button
-                type="submit"
-                class="decline-button"
-            >
-                Cancel Request
-            </button>
-        </form>
-
-    </div>
-
-    {% empty %}
-
-    <p>
-        You haven't sent any friend requests.
-    </p>
-
-    {% endfor %}
-
-</div>
+        </section>
 
 
-<!-- FRIENDS -->
+        <!-- FRIEND REQUESTS -->
+        {% if incoming_requests %}
+        <section class="nx-card nx-friends-section">
 
-<h2> Friends</h2>
+            <div class="nx-section-heading">
 
-<div class="friend-list">
+                <div>
+                    <p class="nx-friends-eyebrow">NEW CONNECTIONS</p>
 
-    {% for friendship in friends %}
+                    <h2 class="nx-section__title">
+                        Friend Requests
+                    </h2>
+                </div>
 
-        <div class="friend">
+                <span class="nx-friends-badge">
+                    {{ incoming_requests|length }}
+                </span>
 
-            <strong>
+            </div>
+
+
+            <div class="nx-request-grid">
+
+                {% for request in incoming_requests %}
+
+                <article class="nx-request-card">
+
+                    <a
+                        href="{% url 'profile' username=request.user.username %}"
+                        class="nx-friend-identity"
+                    >
+
+                        {% if request.user.profile.avatar %}
+                            <img
+                                src="{{ request.user.profile.avatar.url }}"
+                                alt="{{ request.user.username }}"
+                                class="nx-avatar nx-avatar--sm"
+                            >
+                        {% else %}
+                            <div class="nx-friend-avatar nx-friend-avatar--sm">
+                                {{ request.user.username|first|upper }}
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            <strong>
+                                {{ request.user.username }}
+                            </strong>
+
+                            <span class="nx-handle">
+                                Wants to be your friend
+                            </span>
+                        </div>
+
+                    </a>
+
+
+                    <div class="nx-action-row">
+
+                        <form
+                            method="post"
+                            action="{% url 'accept_friend_request' request.user.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="nx-btn nx-btn--primary"
+                            >
+                                Accept
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="post"
+                            action="{% url 'decline_friend_request' request.user.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="nx-btn nx-btn--danger"
+                            >
+                                Decline
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+        {% endif %}
+
+
+
+        <!-- SENT REQUESTS -->
+        {% if sent_requests %}
+        <section class="nx-card nx-friends-section">
+
+            <div class="nx-section-heading">
+
+                <div>
+                    <p class="nx-friends-eyebrow">WAITING</p>
+
+                    <h2 class="nx-section__title">
+                        Sent Requests
+                    </h2>
+                </div>
+
+                <span class="nx-friends-badge">
+                    {{ sent_requests|length }}
+                </span>
+
+            </div>
+
+
+            <div class="nx-request-grid">
+
+                {% for request in sent_requests %}
+
+                <article class="nx-request-card">
+
+                    <a
+                        href="{% url 'profile' username=request.friend.username %}"
+                        class="nx-friend-identity"
+                    >
+
+                        {% if request.friend.profile.avatar %}
+                            <img
+                                src="{{ request.friend.profile.avatar.url }}"
+                                alt="{{ request.friend.username }}"
+                                class="nx-avatar nx-avatar--sm"
+                            >
+                        {% else %}
+                            <div class="nx-friend-avatar nx-friend-avatar--sm">
+                                {{ request.friend.username|first|upper }}
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            <strong>
+                                {{ request.friend.username }}
+                            </strong>
+
+                            <span class="nx-handle">
+                                Friend request pending
+                            </span>
+                        </div>
+
+                    </a>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'cancel_friend_request' request.friend.id %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="nx-btn nx-btn--danger"
+                        >
+                            Cancel Request
+                        </button>
+
+                    </form>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+        {% endif %}
+
+
+
+        <!-- FRIENDS -->
+        <section class="nx-card nx-friends-section">
+
+            <div class="nx-section-heading">
+
+                <div>
+                    <p class="nx-friends-eyebrow">YOUR CIRCLE</p>
+
+                    <h2 class="nx-section__title">
+                        Friends
+                    </h2>
+                </div>
+
+                <span class="nx-friends-badge">
+                    {{ friendships|length }}
+                </span>
+
+            </div>
+
+
+            {% if friendships %}
+
+            <div class="nx-friend-grid">
+
+                {% for friendship in friendships %}
+
+                <article class="nx-friend-card">
+
+                    <a
+                        href="{% url 'profile' username=friendship.friend.username %}"
+                        class="nx-friend-profile"
+                    >
+
+                        {% if friendship.friend.profile.avatar %}
+                            <img
+                                src="{{ friendship.friend.profile.avatar.url }}"
+                                alt="{{ friendship.friend.username }}"
+                                class="nx-avatar nx-avatar--xl"
+                            >
+                        {% else %}
+                            <div class="nx-friend-avatar nx-friend-avatar--xl">
+                                {{ friendship.friend.username|first|upper }}
+                            </div>
+                        {% endif %}
+
+                        <h3>
+                            {{ friendship.friend.username }}
+                        </h3>
+
+                        <span class="nx-handle">
+                            View Profile
+                        </span>
+
+                    </a>
+
+
+                    <div class="nx-friend-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'toggle_close_friend' friendship.friend.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button type="submit" class="nx-btn">
+
+                                {% if friendship.is_close_friend %}
+                                    Remove Close Friend
+                                {% else %}
+                                    Add Close Friend
+                                {% endif %}
+
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="post"
+                            action="{% url 'remove_friend' friendship.friend.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="nx-btn nx-btn--danger"
+                            >
+                                Remove Friend
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="nx-empty-state">
+
+                <div class="nx-empty-icon">
+                    ♡
+                </div>
+
+                <h3>
+                    No friends yet
+                </h3>
+
+                <p class="nx-muted">
+                    Find people below and start building your circle.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- CLOSE FRIENDS -->
+        <section class="nx-card nx-friends-section">
+
+            <div class="nx-section-heading">
+
+                <div>
+                    <p class="nx-friends-eyebrow">INNER CIRCLE</p>
+
+                    <h2 class="nx-section__title">
+                        Close Friends
+                    </h2>
+                </div>
+
+                <span class="nx-friends-badge">
+                    {{ close_friends|length }}
+                </span>
+
+            </div>
+
+
+            {% if close_friends %}
+
+            <div class="nx-mini-friend-grid">
+
+                {% for friendship in close_friends %}
 
                 <a
                     href="{% url 'profile' username=friendship.friend.username %}"
-                    class="friend-name"
+                    class="nx-mini-friend"
                 >
 
-                     {{ friendship.friend.username }}
+                    {% if friendship.friend.profile.avatar %}
+                        <img
+                            src="{{ friendship.friend.profile.avatar.url }}"
+                            alt="{{ friendship.friend.username }}"
+                            class="nx-avatar nx-avatar--sm"
+                        >
+                    {% else %}
+                        <div class="nx-friend-avatar nx-friend-avatar--sm">
+                            {{ friendship.friend.username|first|upper }}
+                        </div>
+                    {% endif %}
+
+                    <span>
+                        {{ friendship.friend.username }}
+                    </span>
 
                 </a>
 
-            </strong>
+                {% endfor %}
 
-            <div class="friend-actions">
+            </div>
+
+            {% else %}
+
+            <div class="nx-empty-state nx-empty-state--small">
+
+                <p class="nx-muted">
+                    You haven't added anyone to Close Friends yet.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
 
 
-                <!-- CLOSE FRIEND BUTTON -->
 
-                {% if friendship.is_close_friend %}
+        <!-- TOP FRIENDS -->
+        <section class="nx-card nx-friends-section">
 
-                <form
-                    method="POST"
-                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
+            <div class="nx-section-heading">
+
+                <div>
+                    <p class="nx-friends-eyebrow">FAVORITES</p>
+
+                    <h2 class="nx-section__title">
+                        Top Friends
+                    </h2>
+                </div>
+
+                <span class="nx-friends-badge">
+                    {{ top_friends|length }}/5
+                </span>
+
+            </div>
+
+
+            {% if top_friends %}
+
+            <div class="nx-top-friends-grid">
+
+                {% for friendship in top_friends %}
+
+                <a
+                    href="{% url 'profile' username=friendship.friend.username %}"
+                    class="nx-top-friend"
                 >
-                    {% csrf_token %}
+
+                    <div class="nx-top-friend-number">
+                        {{ forloop.counter }}
+                    </div>
+
+
+                    {% if friendship.friend.profile.avatar %}
+                        <img
+                            src="{{ friendship.friend.profile.avatar.url }}"
+                            alt="{{ friendship.friend.username }}"
+                            class="nx-avatar nx-avatar--sm"
+                        >
+                    {% else %}
+                        <div class="nx-friend-avatar nx-friend-avatar--sm">
+                            {{ friendship.friend.username|first|upper }}
+                        </div>
+                    {% endif %}
+
+
+                    <div>
+
+                        <strong>
+                            {{ friendship.friend.username }}
+                        </strong>
+
+                        <span class="nx-handle">
+                            Top Friend
+                        </span>
+
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="nx-empty-state nx-empty-state--small">
+
+                <p class="nx-muted">
+                    You haven't selected any Top Friends yet.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- TOP FRIEND SELECTION -->
+        <section class="nx-card nx-friends-section">
+
+            <div class="nx-section-heading">
+
+                <div>
+                    <p class="nx-friends-eyebrow">CUSTOMIZE</p>
+
+                    <h2 class="nx-section__title">
+                        Manage Top Friends
+                    </h2>
+
+                    <p class="nx-muted">
+                        Select up to 5 friends to appear in your Top Friends list.
+                    </p>
+                </div>
+
+                <span
+                    class="nx-top-friend-counter"
+                    id="topFriendCounter"
+                >
+                    0/5
+                </span>
+
+            </div>
+
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                {% if friendships %}
+
+                <div class="nx-selection-grid">
+
+                    {% for friendship in friendships %}
+
+                    <label class="nx-selection-card">
+
+                        <div class="nx-selection-main">
+
+                            <input
+                                type="checkbox"
+                                name="top_friends"
+                                value="{{ friendship.friend.id }}"
+                                class="top-friend-checkbox"
+                                {% if friendship.is_top_friend %}
+                                    checked
+                                {% endif %}
+                            >
+
+
+                            {% if friendship.friend.profile.avatar %}
+                                <img
+                                    src="{{ friendship.friend.profile.avatar.url }}"
+                                    alt="{{ friendship.friend.username }}"
+                                    class="nx-avatar nx-avatar--sm"
+                                >
+                            {% else %}
+                                <div class="nx-friend-avatar nx-friend-avatar--sm">
+                                    {{ friendship.friend.username|first|upper }}
+                                </div>
+                            {% endif %}
+
+
+                            <div>
+
+                                <strong>
+                                    {{ friendship.friend.username }}
+                                </strong>
+
+                                <span class="nx-handle">
+                                    {% if friendship.is_top_friend %}
+                                        Currently selected
+                                    {% else %}
+                                        Select as Top Friend
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <p
+                    id="topFriendLimitMessage"
+                    class="nx-top-friend-limit"
+                    hidden
+                >
+                    You can select a maximum of 5 Top Friends.
+                </p>
+
+
+                <div class="nx-form-actions">
 
                     <button
                         type="submit"
-                        class="close-button"
+                        class="nx-btn nx-btn--primary"
                     >
-                        Remove from Close Friends
+                        Save Top Friends
                     </button>
-                </form>
+
+                </div>
 
 
                 {% else %}
 
-                <form
-                    method="POST"
-                    action="{% url 'toggle_close_friend' friendship.friend.id %}"
-                >
-                    {% csrf_token %}
+                <div class="nx-empty-state nx-empty-state--small">
 
-                    <button
-                        type="submit"
-                        class="close-button"
-                    >
-                        Add to Close Friends
-                    </button>
-                </form>
+                    <p class="nx-muted">
+                        Add some friends first before selecting Top Friends.
+                    </p>
+
+                </div>
 
                 {% endif %}
 
-
-                <!-- REMOVE FRIEND BUTTON -->
-
-                <form
-                    method="POST"
-                    action="{% url 'remove_friend' friendship.friend.id %}"
-                >
-                    {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="remove-button"
-                    >
-                        Remove Friend
-                    </button>
-                </form>
-
-            </div>
-
-        </div>
-
-    {% empty %}
-
-        <p>
-            You don't have any friends yet.
-        </p>
-
-    {% endfor %}
-
-</div>
-
-
-<!-- CLOSE FRIENDS -->
-
-<h2> Close Friends</h2>
-
-<div class="friend-list">
-
-    {% for friendship in close_friends %}
-
-        <div class="friend">
-
-            <a
-                href="{% url 'profile' username=friendship.friend.username %}"
-                class="friend-name"
-            >
-
-                 {{ friendship.friend.username }}
-
-            </a>
-
-            <br>
-
-            <form
-                method="POST"
-                action="{% url 'toggle_close_friend' friendship.friend.id %}"
-            >
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="close-button"
-                >
-                    Remove from Close Friends
-                </button>
             </form>
 
-
-        </div>
-
-    {% empty %}
-
-        <p>
-            You don't have any close friends yet.
-        </p>
-
-    {% endfor %}
-
-</div>
+        </section>
 
 
-<!-- TOP FRIENDS -->
 
-<h2> Top Friends</h2>
+        <!-- ADD FRIENDS -->
+        <section class="nx-card nx-friends-section">
 
-<div class="friend-list">
+            <div class="nx-section-heading">
 
-    {% for friendship in top_friends %}
+                <div>
+                    <p class="nx-friends-eyebrow">DISCOVER</p>
 
-        <div class="friend top-friend">
+                    <h2 class="nx-section__title">
+                        Add Friends
+                    </h2>
 
-            <div>
-
-                <a
-                    href="{% url 'profile' username=friendship.friend.username %}"
-                    class="friend-name"
-                >
-
-                     {{ friendship.friend.username }}
-
-                </a>
+                    <p class="nx-muted">
+                        Find people you may want to connect with.
+                    </p>
+                </div>
 
             </div>
 
-            <div class="top-friend-label">
-                 Top Friend
-            </div>
 
-        </div>
+            {% if available_users %}
 
-    {% empty %}
+            <div class="nx-friend-grid">
 
-        <p>
-            You haven't selected any Top Friends yet.
-        </p>
+                {% for user in available_users %}
 
-    {% endfor %}
+                <article class="nx-friend-card nx-add-friend-card">
 
-</div>
+                    <a
+                        href="{% url 'profile' username=user.username %}"
+                        class="nx-friend-profile"
+                    >
 
-
-<!-- SELECT TOP FRIENDS -->
-
-<div class="selection">
-
-    <h2> Select Your Top Friends</h2>
-
-    <p>
-        You can select up to <strong>5 Top Friends.</strong>
-    </p>
-
-    <form method="POST" id="topFriendsForm">
-
-        {% csrf_token %}
-
-
-        {% for friendship in friends %}
-
-            <div class="checkbox">
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        name="top_friends"
-                        value="{{ friendship.friend.id }}"
-                        class="top-friend-checkbox"
-
-                        {% if friendship.is_top_friend %}
-                            checked
+                        {% if user.profile.avatar %}
+                            <img
+                                src="{{ user.profile.avatar.url }}"
+                                alt="{{ user.username }}"
+                                class="nx-avatar nx-avatar--xl"
+                            >
+                        {% else %}
+                            <div class="nx-friend-avatar nx-friend-avatar--xl">
+                                {{ user.username|first|upper }}
+                            </div>
                         {% endif %}
+
+
+                        <h3>
+                            {{ user.username }}
+                        </h3>
+
+                        <span class="nx-handle">
+                            View Profile
+                        </span>
+
+                    </a>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'send_friend_request' user.id %}"
                     >
+                        {% csrf_token %}
 
-                     {{ friendship.friend.username }}
+                        <button
+                            type="submit"
+                            class="nx-btn nx-btn--primary nx-btn--full"
+                        >
+                            Add Friend
+                        </button>
 
-                </label>
+                    </form>
+
+                </article>
+
+                {% endfor %}
 
             </div>
 
-        {% empty %}
+            {% else %}
 
-            <p>
-                You need to have friends before you can select Top Friends.
-            </p>
+            <div class="nx-empty-state">
 
-        {% endfor %}
+                <div class="nx-empty-icon">
+                    ✓
+                </div>
 
+                <h3>
+                    You're all caught up
+                </h3>
 
-        {% if friends %}
+                <p class="nx-muted">
+                    There are currently no new people available to add.
+                </p>
 
-            <button type="submit">
-                Save Top Friends
-            </button>
+            </div>
 
-        {% endif %}
+            {% endif %}
 
-    </form>
+        </section>
 
-
-    <p
-        id="limitMessage"
-        style="display: none; color: #b8860b;">
-
-        You can only select 5 Top Friends.
-
-    </p>
-
-</div>
+    </main>
 
 
-    <!-- ADD FRIENDS -->
 
-    <hr>
+    <!-- TOP FRIEND LIMIT SCRIPT -->
+    <script>
 
-    <h2> Add Friends</h2>
+        document.addEventListener("DOMContentLoaded", function () {
 
-    {% for user in available_users %}
+            const checkboxes = document.querySelectorAll(".top-friend-checkbox");
+            const counter = document.getElementById("topFriendCounter");
+            const limitMessage = document.getElementById("topFriendLimitMessage");
 
-        <div class="add-friend">
+            function updateTopFriendLimit() {
 
-            <strong>
-                 {{ user.username }}
-            </strong>
+                const checked = document.querySelectorAll(
+                    ".top-friend-checkbox:checked"
+                ).length;
 
-            <form
-                method="POST"
-                action="{% url 'send_friend_request' user.id %}"
-            >
-                {% csrf_token %}
-
-                <button
-                    type="submit"
-                    class="add-button"
-                >
-                    Add Friend
-                </button>
-            </form>
-
-        </div>
-
-    {% empty %}
-
-        <p>
-            No users available to add.
-        </p>
-
-    {% endfor %}
-
-</div>
-
-
-<!-- TOP FRIEND LIMIT SCRIPT -->
-
-<script>
-
-    const checkboxes =
-        document.querySelectorAll(".top-friend-checkbox");
-
-    const limitMessage =
-        document.getElementById("limitMessage");
-
-
-    function updateTopFriendLimit() {
-
-        const selected =
-            document.querySelectorAll(
-                ".top-friend-checkbox:checked"
-            ).length;
-
-
-        if (selected >= 5) {
-
-            checkboxes.forEach(function(box) {
-
-                if (!box.checked) {
-                    box.disabled = true;
+                if (counter) {
+                    counter.textContent = checked + "/5";
                 }
 
+                if (limitMessage) {
+                    limitMessage.hidden = checked < 5;
+                }
+
+                checkboxes.forEach(function (checkbox) {
+
+                    if (!checkbox.checked) {
+                        checkbox.disabled = checked >= 5;
+                    }
+
+                });
+
+            }
+
+
+            checkboxes.forEach(function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateTopFriendLimit
+                );
+
             });
 
-            limitMessage.style.display = "block";
 
-        } else {
+            updateTopFriendLimit();
 
-            checkboxes.forEach(function(box) {
+        });
 
-                box.disabled = false;
-
-            });
-
-            limitMessage.style.display = "none";
-
-        }
-
-    }
-
-
-    checkboxes.forEach(function(checkbox) {
-
-        checkbox.addEventListener(
-            "change",
-            updateTopFriendLimit
-        );
-
-    });
-
-
-    updateTopFriendLimit();
-
-</script>
+    </script>
 
 </body>
-
 </html>
