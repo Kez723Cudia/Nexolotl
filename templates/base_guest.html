@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Nexolotl{% endblock %}</title>
+
+    {% block extra_head %}{% endblock %}
+
+    <style>
+        :root {
+            --guest-cream: #DED1C6;
+            --guest-rose: #A77693;
+            --guest-blue: #174871;
+            --guest-navy: #0F2D4D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .guest-layout {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 60% 40%;
+        }
+
+        .guest-brand {
+            position: relative;
+            overflow: hidden;
+
+            background: linear-gradient(
+                135deg,
+                var(--guest-cream) 0%,
+                var(--guest-rose) 35%,
+                var(--guest-blue) 70%,
+                var(--guest-navy) 100%
+            );
+
+            color: white;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 3rem;
+        }
+
+        .guest-brand::before {
+            content: "";
+
+            position: absolute;
+
+            width: 700px;
+            height: 700px;
+
+            top: -220px;
+            left: -230px;
+
+            background: rgba(255,255,255,0.08);
+
+            border-radius: 80px;
+
+            transform: rotate(45deg);
+
+            backdrop-filter: blur(10px);
+
+            border: 1px solid rgba(255,255,255,0.15);
+
+            box-shadow: 
+                0px 30px 80px rgba(15,45,77,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+
+        .guest-brand::after {
+            content: "";
+
+            position: absolute;
+
+            width: 350px;
+            height: 350px;
+
+            bottom: -120px;
+            right: -120px;
+
+            background: rgba(255,255,255,0.05);
+
+            border-radius: 60px;
+
+            transform: rotate(45deg);
+        }
+
+        .guest-brand-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 550px;
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .brand-tagline {
+            font-size: 1rem;
+            margin-bottom: 4rem;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .brand-slogan {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .nex-highlight {
+            color: var(--guest-cream);
+        }
+
+        .guest-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+        }
+
+        .guest-form-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-card {
+            background: white;
+
+            border-radius: 24px;
+
+            padding: 3rem;
+
+            width: 100%;
+
+            box-shadow:
+                0 20px 60px rgba(15,45,77,0.10);
+
+            border: 1px solid rgba(15,45,77,0.05);
+        }
+
+
+        .auth-header {
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            margin-bottom: .5rem;
+
+            font-weight: 800;
+
+            color: var(--guest-navy);
+        }
+
+
+        .auth-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: .5rem;
+
+            font-weight: 600;
+
+            color: var(--guest-navy);
+        }
+
+        .form-group input {
+            width: 100%;
+
+            padding: 1rem;
+
+            border: 1px solid #ddd;
+
+            border-radius: 12px;
+
+            font-size: 1rem;
+
+            transition: .2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+
+            border-color: var(--guest-rose);
+
+            box-shadow:
+                0 0 0 4px rgba(167,118,147,.15);
+        }
+
+        .auth-btn {
+            width: 100%;
+
+            border: none;
+
+            border-radius: 12px;
+
+            padding: 1rem;
+
+            font-size: 1rem;
+
+            font-weight: 700;
+
+            color: white;
+
+
+            background: linear-gradient(
+                135deg,
+                #0F2D4D,
+                #174871,
+                #A77693,
+                #DED1C6
+            );
+
+            transition: all .3s ease;
+        }
+
+        .auth-btn:hover {
+            background: white;
+            border: 1px solid rgba(15,45,77,.15);
+            transform: translateY(-2px);
+            box-shadow:
+            0 12px 30px rgba(15,45,77,.20);
+        }
+        
+        .auth-btn span {
+            transition: all .3s ease;
+        }
+
+        .auth-btn:hover span {
+            background: linear-gradient(
+                135deg,
+                #DED1C6,
+                #A77693,
+                #174871,
+                #0F2D4D
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-footer a {
+            font-weight: 700;
+
+            text-decoration: none;
+
+            background: linear-gradient(
+            135deg,
+            #0F2D4D,
+            #174871,
+            #A77693,
+            #DED1C6
+            );
+        
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 900px) {
+            .guest-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .guest-brand {
+                min-height: 300px;
+            }
+
+            .brand-title {
+                font-size: 2.25rem;
+            }
+
+            .brand-slogan {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="guest-layout">
+
+        <section class="guest-brand">
+            <div class="guest-brand-content">
+
+                <h1 class="brand-title">
+                    NEXOLOTL
+                </h1>
+
+                <p class="brand-tagline">
+                    Go Full Throttle
+                </p>
+
+                <div class="brand-slogan">
+                    Create your space.<br>
+                    Share your world.<br>
+                    Build your <span class="nex-highlight">NEX</span>t connections.
+                </div>
+
+            </div>
+        </section>
+
+        <section class="guest-form">
+            <div class="guest-form-container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

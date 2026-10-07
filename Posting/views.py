@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from django.http import Http404
 
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 
 from user_controls.models import Block, SeeLess
 from friends.models import Friendship
@@ -33,14 +33,6 @@ def are_friends(user1, user2):
 
 
 def can_view_post(viewer, post):
-    """
-    Determine whether a user can view a post based on:
-    - Account privacy
-    - Post visibility
-    - Friendship and close-friend status
-    - Block settings
-    """
-
     author = post.author
 
     # The author can always view their own post.
@@ -98,7 +90,7 @@ def can_view_post(viewer, post):
 @login_required
 def post_feed_view(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
 
         if form.is_valid():
             post = form.save(commit=False)
@@ -154,43 +146,19 @@ def post_feed_view(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-
     if not can_view_post(request.user, post):
         raise Http404("This post is not available.")
-
-    return render(
-        request,
-        'post_detail.html',
-        {'post': post}
-    )
-
-
-@login_required
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-
+    if request.method == "POST":
+        form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-
-            messages.success(
-                request,
-                "Your post was published successfully!"
-            )
-
-            return redirect('post_feed')
-
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect("post_detail", pk=post.pk)
     else:
-        form = PostForm()
-
-    return render(
-        request,
-        'create_post.html',
-        {'form': form}
-    )
-
+        form = CommentForm()
+    return render(request, "post_detail.html", {"post": post, "form": form, "comments": post.comments.select_related("author")})
 
 class PostListView(ListView):
     model = Post
