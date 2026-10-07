@@ -1,0 +1,19 @@
+{% with items=profile.interest_items.all %}
+  {% if items %}
+    <section class="nx-card">
+      <h2 class="pf-title">Interests</h2>
+      <ul class="in-list">
+        {% for item in items %}
+          <li class="in-chip" style="background-color: {{ item.color }}; color: {{ item.text_color }};">
+            <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>{{ item.label }}
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% elif is_own_profile %}
+    <section class="nx-card">
+      <h2 class="pf-title">Interests</h2>
+      <p class="pf-empty">No interests yet. <a href="{% url 'profile_edit' %}">Add some</a></p>
+    </section>
+  {% endif %}
+{% endwith %}

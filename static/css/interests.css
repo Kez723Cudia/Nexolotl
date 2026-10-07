@@ -1,0 +1,20 @@
+/* Interests widget (prefix in-). Loaded by profile.html and profile_edit.html */
+.in-list { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; }
+.in-chip { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.9rem; border-radius: 999px; font-weight: 500; line-height: 1.2; }
+.in-chip__emoji { font-size: 1.15em; }
+.in-chip form { display: inline-flex; margin: 0; }
+.in-chip .in-chip__remove { padding: 0 0.35rem; border: 0; background: transparent; color: inherit; font-size: 1.1rem; line-height: 1; opacity: 0.7; cursor: pointer; }
+.in-chip .in-chip__remove:hover { opacity: 1; filter: none; }
+
+.in-meta { margin: 0.5rem 0 1rem; font-size: 0.9rem; color: var(--nx-ink-soft); }
+.in-row { display: grid; grid-template-columns: 90px 1fr 80px; gap: 0.75rem; align-items: start; }
+.in-field label { display: block; margin-bottom: 0.35rem; font-weight: 500; }
+.in-form input[type="color"] { width: 100%; height: 2.9rem; padding: 0.2rem; background: #fff; border: 2px solid rgba(91, 74, 158, 0.3); border-radius: var(--nx-radius-sm); cursor: pointer; }
+.in-swatches, .in-quick { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0 1rem; }
+.in-swatches .in-swatch { width: 28px; height: 28px; padding: 0; border-radius: 50%; border: 2px solid rgba(59, 47, 107, 0.35); cursor: pointer; }
+.in-swatches, .in-quick { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0 1rem; }
+.in-quick { max-height: 7.5rem; overflow-y: auto; }
+.in-preview-wrap { margin: 0.25rem 0 1rem; }
+.in-subtitle { margin-bottom: 0.25rem; font-size: 1.25rem; }
+
+@media (max-width: 520px) { .in-row { grid-template-columns: 1fr 1fr; } }

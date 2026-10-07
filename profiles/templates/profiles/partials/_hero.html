@@ -1,0 +1,61 @@
+<section class="pf-hero">
+  <div class="pf-hero__text">
+    <span class="pf-eyebrow">PROFILE</span>
+    <h1>{{ profile.user.username }}</h1>
+    {% if profile.bio %}<p class="pf-bio">{{ profile.bio }}</p>{% endif %}
+    {# Interests widget replaces this line later #}
+    {% if profile.interests %}<p class="pf-meta">Interests: {{ profile.interests }}</p>{% endif %}
+
+    <div class="pf-actions">
+      {% if is_own_profile %}
+        <a class="pf-btn" href="{% url 'profile_edit' %}">Edit Profile</a>
+        <a class="pf-btn pf-btn--ghost" href="{% url 'friend_list_privacy_edit' %}">Friend List Privacy Settings</a>
+
+      {% elif is_friend %}
+        <p class="pf-status">You are friends with {{ profile.user.username }}.</p>
+        <form method="post" action="{% url 'remove_friend' profile.user.id %}">
+          {% csrf_token %}
+          <button type="submit" class="pf-btn pf-btn--ghost">Remove Friend</button>
+        </form>
+
+      {% elif sent_friend_request %}
+        <p class="pf-status">Friend request sent to {{ profile.user.username }}.</p>
+        <form method="post" action="{% url 'cancel_friend_request' sent_friend_request.id %}">
+          {% csrf_token %}
+          <button type="submit" class="pf-btn pf-btn--ghost">Cancel Friend Request</button>
+        </form>
+
+      {% elif received_friend_request %}
+        <p class="pf-status">{{ profile.user.username }} sent you a friend request.</p>
+        <form method="post" action="{% url 'accept_friend_request' received_friend_request.id %}">
+          {% csrf_token %}
+          <button type="submit" class="pf-btn">Accept Friend Request</button>
+        </form>
+        <form method="post" action="{% url 'decline_friend_request' received_friend_request.id %}">
+          {% csrf_token %}
+          <button type="submit" class="pf-btn pf-btn--ghost">Decline Friend Request</button>
+        </form>
+
+      {% else %}
+        <form method="post" action="{% url 'send_friend_request' profile.user.id %}">
+          {% csrf_token %}
+          <button type="submit" class="pf-btn">Add Friend</button>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if not is_own_profile %}
+      <div class="pf-more">
+        {% with target_user=profile.user %}
+          {% include "user_controls/user_actions.html" %}
+        {% endwith %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if profile.avatar %}
+    <img class="pf-avatar" src="{{ profile.avatar.url }}" alt="Avatar">
+  {% else %}
+    <div class="pf-avatar pf-avatar--empty"><em>No avatar set</em></div>
+  {% endif %}
+</section>

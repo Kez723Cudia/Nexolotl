@@ -1,0 +1,54 @@
+/* Profile page (prefix pf-). Uses the tokens from tokens.css */
+
+/* Hero: Layla-style banner, text left, avatar right, in Nexolotl colours */
+.pf-hero { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem; padding: 2.25rem 2.5rem; overflow: hidden; border-radius: var(--nx-radius); box-shadow: var(--nx-shadow); color: var(--nx-card); background: linear-gradient(120deg, var(--nx-navy) 0%, #3e2d78 55%, var(--nx-bg-soft) 100%); }
+.pf-hero::before { content: ""; position: absolute; right: -60px; top: -80px; width: 360px; height: 360px; border-radius: 50%; background: rgba(255, 216, 74, 0.12); }
+.pf-hero > * { position: relative; }
+.pf-eyebrow { font-family: var(--nx-pixel); color: var(--nx-accent); letter-spacing: 0.06em; }
+.pf-hero h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.1; margin: 0.2rem 0 0.6rem; }
+.pf-bio { max-width: 52ch; }
+.pf-meta { margin-top: 0.5rem; color: var(--nx-accent); }
+.pf-avatar { width: clamp(120px, 22vw, 200px); aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 5px solid var(--nx-accent); background: var(--nx-navy); box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar--empty { display: grid; place-items: center; padding: 1rem; text-align: center; font-size: 0.85rem; }
+
+.pf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.25rem; }
+.pf-actions form { margin: 0; }
+.pf-status { flex-basis: 100%; margin: 0; }
+.pf-btn { font: inherit; font-weight: 500; display: inline-block; padding: 0.55rem 1.2rem; border-radius: 999px; border: 2px solid var(--nx-accent); background: var(--nx-accent); color: var(--nx-navy); cursor: pointer; }
+.pf-btn--ghost { background: transparent; color: var(--nx-card); border-color: var(--nx-card); }
+.pf-btn:hover { filter: brightness(1.08); }
+.pf-more { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(253, 248, 227, 0.25); color: var(--nx-card); }
+.pf-more a { text-decoration: underline; }
+.pf-more .user-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.pf-more .user-actions h3 { font-size: 0.95rem; margin-right: 0.5rem; color: var(--nx-accent); }
+.pf-more .user-actions form { margin: 0; }
+.pf-more .nx-btn { padding: 0.35rem 0.9rem; font-size: 0.9rem; background: transparent; color: var(--nx-card); border-color: rgba(253, 248, 227, 0.55); }
+.pf-more .nx-btn:hover { background: rgba(253, 248, 227, 0.12); filter: none; }
+
+/* Friend lists: three cards, like Layla's Artwork / Recent Search / side cards */
+.pf-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--nx-gap); align-items: start; }
+.pf-title { font-size: 1.25rem; margin-bottom: 0.9rem; }
+.pf-empty { color: var(--nx-ink-soft); }
+.pf-grid ul { list-style: none; padding: 0; }
+
+.pf-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; }
+.pf-tile { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 18px; background: var(--nx-bg-soft); }
+.pf-tile img { width: 100%; height: 100%; object-fit: cover; }
+.pf-tile span { position: absolute; inset: auto 0 0 0; padding: 1.2rem 0.5rem 0.4rem; font-size: 0.85rem; text-align: center; color: var(--nx-card); background: linear-gradient(transparent, rgba(36, 20, 65, 0.85)); }
+
+.pf-tiles .pf-empty { grid-column: 1 / -1; }
+
+.pf-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pf-pill { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-card); }
+.pf-pill:hover, .pf-row:hover { filter: brightness(1.1); }
+
+.pf-rows { display: grid; gap: 0.6rem; }
+.pf-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.75rem; border-radius: var(--nx-radius-sm); background: rgba(91, 74, 158, 0.1); }
+.pf-row img, .pf-row i { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--nx-accent); background: var(--nx-bg-soft); }
+
+@media (max-width: 900px) { .pf-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) {
+  .pf-hero { grid-template-columns: 1fr; padding: 1.5rem; }
+  .pf-hero > .pf-avatar { order: -1; justify-self: center; }
+  .pf-grid { grid-template-columns: 1fr; }
+}
