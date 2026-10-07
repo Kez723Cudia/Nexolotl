@@ -3,21 +3,263 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap');
 
 :root {
-    --nx-navy: #241441;
-    --nx-bg: #5b4a9e;
-    --nx-bg-soft: #6f5fb8;
-    --nx-card: #fdf8e3;
-    --nx-ink: #3b2f6b;
-    --nx-ink-soft: #6f64a0;
-    --nx-accent: #ffd84a;
-    --nx-orange: #ff9f45;
+  --nx-navy: #fdf0ec;
+  --nx-bg: #aee1f9;
+  --nx-bg-soft: #aee1f9;
+  --nx-card: #fdf0ec;
+  --nx-card-ink: var(--nx-ink);
+  --nx-on-brand: #111111;
+  --nx-button-ink: #111111;
+  --nx-logo-accent: #111111;
+  --nx-settings-heading: #111111;
+  --nx-nav-border: #111111;
+  --nx-nav-active: var(--nx-bg);
+  --nx-nav-active-ink: var(--nx-card-ink);
+  --nx-ink: #111111;
+  --nx-ink-soft: #414141;
+  --nx-accent: #aee1f9;
+  --nx-orange: #fdf0ec;
+  --nx-hero-mid: #aee1f9;
+  --nx-hero-end: #fdf0ec;
+  --nx-input-bg: #fffaf8;
+  --nx-row-bg: rgba(174, 225, 249, 0.42);
+  --nx-divider: rgba(17, 17, 17, 0.82);
+  color-scheme: light;
 
-    --nx-radius: 22px;
-    --nx-radius-sm: 14px;
-    --nx-shadow: 0 6px 0 rgba(36, 20, 65, 0.25);
-    --nx-gap: 1.25rem;
-    --nx-nav-h: 68px;
+  --nx-radius: 22px;
+  --nx-radius-sm: 14px;
+  --nx-shadow: 0 5px 0 rgba(17, 17, 17, 0.18);
+  --nx-gap: 1.25rem;
+  --nx-nav-h: 68px;
 
-    --nx-font: "Lexend", "Segoe UI", system-ui, sans-serif;
-    --nx-pixel: "Silkscreen", "Courier New", monospace;
+  --nx-font: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --nx-pixel: "Silkscreen", "Courier New", monospace;
+}
+
+html[data-theme="dark"] {
+  --nx-navy: #11101a;
+  --nx-bg: #242330;
+  --nx-bg-soft: #494655;
+  --nx-card: #302e3d;
+  --nx-on-brand: #f3efff;
+  --nx-ink: #f3efff;
+  --nx-ink-soft: #c1b9d6;
+  --nx-accent: #c3a8ff;
+  --nx-orange: #ffb978;
+  --nx-hero-mid: #353047;
+  --nx-hero-end: #494655;
+  --nx-input-bg: #242330;
+  --nx-row-bg: rgba(195, 168, 255, 0.12);
+  --nx-divider: rgba(243, 239, 255, 0.18);
+  color-scheme: dark;
+}
+
+html[data-theme="ocean"] {
+  --nx-navy: #073b4c;
+  --nx-bg: #118ab2;
+  --nx-bg-soft: #36a7c6;
+  --nx-card: #e7f7f8;
+  --nx-on-brand: #e7f7f8;
+  --nx-ink: #073b4c;
+  --nx-ink-soft: #397585;
+  --nx-accent: #ffd166;
+  --nx-orange: #f78c6b;
+  --nx-hero-mid: #087e8b;
+  --nx-hero-end: #36a7c6;
+  --nx-row-bg: rgba(17, 138, 178, 0.1);
+  --nx-divider: rgba(7, 59, 76, 0.18);
+}
+
+html[data-theme="forest"] {
+  --nx-navy: #183a2b;
+  --nx-bg: #527a54;
+  --nx-bg-soft: #72966c;
+  --nx-card: #f0f5e8;
+  --nx-on-brand: #f0f5e8;
+  --nx-ink: #254332;
+  --nx-ink-soft: #5d7964;
+  --nx-accent: #e4c86a;
+  --nx-orange: #d98b55;
+  --nx-hero-mid: #315c42;
+  --nx-hero-end: #72966c;
+  --nx-row-bg: rgba(82, 122, 84, 0.12);
+  --nx-divider: rgba(37, 67, 50, 0.18);
+}
+
+html[data-theme="sunset"] {
+  --nx-navy: #542b3c;
+  --nx-bg: #c66b62;
+  --nx-bg-soft: #d7886e;
+  --nx-card: #fff2df;
+  --nx-on-brand: #fff2df;
+  --nx-ink: #603d49;
+  --nx-ink-soft: #91656a;
+  --nx-accent: #ffd27d;
+  --nx-orange: #f09a61;
+  --nx-hero-mid: #9d4f5f;
+  --nx-hero-end: #d7886e;
+  --nx-row-bg: rgba(198, 107, 98, 0.12);
+  --nx-divider: rgba(96, 61, 73, 0.18);
+}
+
+html[data-theme="sakura"] {
+  --nx-navy: #5c3346;
+  --nx-bg: #fee9f5;
+  --nx-bg-soft: #d88eaf;
+  --nx-card: #fff9fc;
+  --nx-on-brand: #fff9fc;
+  --nx-ink: #513344;
+  --nx-ink-soft: #806173;
+  --nx-accent: #ffc5dd;
+  --nx-button-ink: #513344;
+  --nx-settings-heading: #9c5877;
+  --nx-orange: #e99b8e;
+  --nx-hero-mid: #9c5877;
+  --nx-hero-end: #d88eaf;
+  --nx-input-bg: #fff;
+  --nx-row-bg: rgba(216, 142, 175, 0.16);
+  --nx-divider: rgba(92, 51, 70, 0.18);
+}
+
+html[data-theme="sage"] {
+  --nx-navy: #2b1d0e;
+  --nx-bg: #e6e2d4;
+  --nx-bg-soft: #a4b59a;
+  --nx-card: #a4b59a;
+  --nx-card-ink: #2b1d0e;
+  --nx-on-brand: #e6e2d4;
+  --nx-ink: #2b1d0e;
+  --nx-ink-soft: #51483a;
+  --nx-accent: #2b1d0e;
+  --nx-logo-accent: #a4b59a;
+  --nx-button-ink: #2b1d0e;
+  --nx-hero-mid: #2b1d0e;
+  --nx-hero-end: #a4b59a;
+  --nx-input-bg: #e2e2e2;
+  --nx-row-bg: rgba(43, 29, 14, 0.1);
+  --nx-divider: rgba(43, 29, 14, 0.22);
+}
+
+html[data-theme="slate"] {
+  --nx-navy: #000000;
+  --nx-bg: #d7dada;
+  --nx-bg-soft: #8c9595;
+  --nx-card: #afb5b5;
+  --nx-card-ink: #000000;
+  --nx-on-brand: #d7dada;
+  --nx-ink: #000000;
+  --nx-ink-soft: #596161;
+  --nx-accent: #958c8c;
+  --nx-logo-accent: #8c9595;
+  --nx-button-ink: #000000;
+  --nx-settings-heading: #596161;
+  --nx-hero-mid: #958c8c;
+  --nx-hero-end: #8c9595;
+  --nx-input-bg: #d7dada;
+  --nx-row-bg: rgba(0, 0, 0, 0.08);
+  --nx-divider: rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="sky"] {
+  --nx-navy: #03045e;
+  --nx-bg: #caf0f8;
+  --nx-bg-soft: #0077b6;
+  --nx-card: #90e0ef;
+  --nx-card-ink: #03045e;
+  --nx-on-brand: #caf0f8;
+  --nx-ink: #03045e;
+  --nx-ink-soft: #0077b6;
+  --nx-accent: #00b4d8;
+  --nx-logo-accent: #00b4d8;
+  --nx-button-ink: #ffffff;
+  --nx-settings-heading: #0077b6;
+  --nx-hero-mid: #0077b6;
+  --nx-hero-end: #00b4d8;
+  --nx-input-bg: #caf0f8;
+  --nx-row-bg: rgba(0, 119, 182, 0.1);
+  --nx-divider: rgba(3, 4, 94, 0.2);
+}
+
+html[data-theme="neon"] {
+  --nx-navy: #071d1a;
+  --nx-bg: #000000;
+  --nx-bg-soft: #8338ec;
+  --nx-card: #8338ec;
+  --nx-card-ink: #ffffff;
+  --nx-on-brand: #ff006e;
+  --nx-ink: #ff006e;
+  --nx-ink-soft: #00f5d4;
+  --nx-accent: #00f5d4;
+  --nx-logo-accent: #ffd60a;
+  --nx-button-ink: #ffffff;
+  --nx-hero-mid: #8338ec;
+  --nx-hero-end: #00f5d4;
+  --nx-input-bg: #000000;
+  --nx-row-bg: rgba(0, 245, 212, 0.12);
+  --nx-divider: rgba(0, 245, 212, 0.55);
+  --nx-nav-border: #00f5d4;
+  color-scheme: dark;
+}
+
+html[data-theme="electric"] {
+  --nx-navy: #1b1023;
+  --nx-bg: #000000;
+  --nx-bg-soft: #8a14ff;
+  --nx-card: #ffe2ff;
+  --nx-card-ink: #8a14ff;
+  --nx-on-brand: #ffff00;
+  --nx-ink: #ffff00;
+  --nx-ink-soft: #8a14ff;
+  --nx-accent: #8a14ff;
+  --nx-logo-accent: #ffff00;
+  --nx-button-ink: #ffffff;
+  --nx-hero-mid: #8a14ff;
+  --nx-hero-end: #ffe2ff;
+  --nx-input-bg: #ffffff;
+  --nx-row-bg: rgba(138, 20, 255, 0.1);
+  --nx-divider: rgba(138, 20, 255, 0.4);
+  --nx-nav-border: #8a14ff;
+  --nx-nav-active: #ffff00;
+  --nx-nav-active-ink: #1b1023;
+  color-scheme: dark;
+}
+
+html[data-theme="abyss"] {
+  --nx-navy: #021e2b;
+  --nx-bg: #042f42;
+  --nx-bg-soft: #1536ca;
+  --nx-card: #4d0e12;
+  --nx-card-ink: #a5bcd6;
+  --nx-on-brand: #a5bcd6;
+  --nx-ink: #3de0fc;
+  --nx-ink-soft: #a5bcd6;
+  --nx-accent: #3de0fc;
+  --nx-logo-accent: #3de0fc;
+  --nx-button-ink: #ffffff;
+  --nx-hero-mid: #1536ca;
+  --nx-hero-end: #4d0e12;
+  --nx-input-bg: #042f42;
+  --nx-row-bg: rgba(61, 224, 252, 0.12);
+  --nx-divider: rgba(165, 188, 214, 0.35);
+  color-scheme: dark;
+}
+
+html[data-theme="harbor"] {
+  --nx-navy: #2b3339;
+  --nx-bg: #3c454c;
+  --nx-bg-soft: #415d77;
+  --nx-card: #415d77;
+  --nx-card-ink: #f8f8f2;
+  --nx-on-brand: #f8f8f2;
+  --nx-ink: #f8f8f2;
+  --nx-ink-soft: #a1c1c2;
+  --nx-accent: #618b90;
+  --nx-logo-accent: #618b90;
+  --nx-button-ink: #f8f8f2;
+  --nx-hero-mid: #415d77;
+  --nx-hero-end: #618b90;
+  --nx-input-bg: #3c454c;
+  --nx-row-bg: rgba(97, 139, 144, 0.18);
+  --nx-divider: rgba(248, 248, 242, 0.24);
+  color-scheme: dark;
 }

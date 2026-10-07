@@ -1,43 +1,149 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Nexolotl - Home</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+{% block title %}Home · Nexolotl{% endblock %}
 
-    <h2>Create a Post</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Post</button>
-    </form>
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/feed.css' %}?v=1">
+{% endblock %}
 
-    <hr>
+{% block content %}
+    <div class="feed-content">
 
-    <h2>Recent Posts</h2>
-    {% for post in posts %}
-        <div>
-            <p>
-                <strong>{{ post.author.username }}</strong> 
-                - <small>{{ post.created_at|date:"M d, Y H:i" }}</small>
-            </p>
-            <p>{{ post.content }}</p>
 
-            {% if post.post_type == 'flash' %}
-                <p><small>Expires in: {{ post.expires_at|timeuntil }}</small></p>
-            {% endif %}
+        {% if messages %}
+            <ul class="feed-messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-            <a href="{% url 'post_detail' post.pk %}">View Details</a>
-        </div>
-    {% empty %}
-        <p>No posts yet. Be the first to post!</p>
-    {% endfor %}
+        <section class="feed-list">
+            {% for post in posts %}
+                <article class="feed-post">
 
-</body>
-</html>
+                    {% if post.author.profile.avatar %}
+                        <img class="feed-avatar" src="{{ post.author.profile.avatar.url }}" alt="">
+                    {% else %}
+                        <div class="feed-avatar" aria-hidden="true">{{ post.author.username|slice:":1" }}</div>
+                    {% endif %}
+
+                    <div class="feed-card">
+                        <div class="feed-head">
+                            <span class="feed-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                            <span class="feed-handle">@{{ post.author.username }}</span>
+                                {% if post.visibility == 'private' %}
+                                <span class="feed-badge" title="Only you can see this post">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>
+                                    Private
+                                </span>
+                                    {% elif post.visibility == 'close_friends' %}
+                                        <span class="feed-badge close-friends" title="Visible to close friends only">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z"/></svg>
+                                            Close friends
+                                        </span>
+                                    {% endif %}
+                            <a class="feed-menu" href="{% url 'post_detail' post.pk %}" aria-label="View post details and comments">
+                                <i></i><i></i><i></i>
+                            </a>
+                        </div>
+
+                        <p class="feed-body">{{ post.content|linebreaksbr }}</p>
+
+                        {% if post.image %}
+                            <img class="post-image" src="{{ post.image.url }}" alt="">
+                        {% endif %}
+
+                        {% if post.post_type == 'flash' %}
+                            <p class="feed-expires">Expires in {{ post.expires_at|timeuntil }}</p>
+                        {% endif %}
+
+                        <div class="feed-foot">
+                            <div class="feed-actions">
+                                <button class="feed-icon feed-like" type="button" aria-label="Like" aria-pressed="false">
+                                    <svg viewBox="0 0 24 24"><path d="M12 20.5S3 14.8 3 8.9A4.9 4.9 0 0 1 12 6.4a4.9 4.9 0 0 1 9 2.5c0 5.9-9 11.6-9 11.6z"/></svg>
+                                </button>
+                                <a class="feed-icon" href="{% url 'post_detail' post.pk %}" aria-label="View details and comments">
+                                    <svg viewBox="0 0 24 24"><path transform="translate(24 0) scale(-1 1)" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                    <span>{{ post.comments.count }}</span>
+                                </a>
+                            </div>
+                            <div class="feed-stamp">
+                                <span>{{ post.created_at|date:"M j, Y" }}</span>
+                                <span>{{ post.created_at|date:"g:i A" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+            {% empty %}
+                <p class="feed-empty">No posts yet. Be the first to post!</p>
+            {% endfor %}
+        </section>
+
+        <dialog class="feed-dialog" id="postDialog">
+            <h2>Create a post</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <img class="feed-preview" id="imgPreview" alt="Selected image preview" hidden>
+                <div class="feed-dialog-actions">
+                    <button class="feed-cancel" id="cancelPost" type="button">Cancel</button>
+                    <button class="feed-submit" type="submit">Post</button>
+                </div>
+            </form>
+        </dialog>
+
+        <script>
+            const dlg = document.getElementById("postDialog");
+
+            const openPostLink = document.querySelector(".nx-appbar__new-post");
+            const openComposer = () => {
+                dlg.showModal();
+                const first = dlg.querySelector("textarea, input:not([type=hidden]), select");
+                if (first) first.focus();
+            };
+
+            if (openPostLink) {
+                openPostLink.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    openComposer();
+                });
+            }
+
+            const currentUrl = new URL(window.location.href);
+            if (currentUrl.searchParams.get("compose") === "1") {
+                openComposer();
+                currentUrl.searchParams.delete("compose");
+                window.history.replaceState(null, "", currentUrl);
+            }
+
+            document.getElementById("cancelPost").addEventListener("click", () => dlg.close());
+
+            // Image upload: only allow images and show a preview of the chosen file
+            const fileInput = dlg.querySelector('input[type="file"]');
+            const preview = document.getElementById("imgPreview");
+            if (fileInput) {
+                fileInput.accept = "image/*";
+                fileInput.addEventListener("change", () => {
+                    const file = fileInput.files[0];
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.hidden = false;
+                    } else {
+                        preview.hidden = true;
+                    }
+                });
+            }
+
+            // Heart is visual only for now (not saved to the database)
+            document.querySelectorAll(".feed-like").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const on = btn.classList.toggle("liked");
+                    btn.setAttribute("aria-pressed", on);
+                });
+            });
+        </script>
+    </div>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse 
 from friends.models import Friendship 
 from testimonials.models import testimonial 
-from .models import Profile 
+from .models import Interest, Profile
 
 User = get_user_model() 
 
@@ -35,6 +35,22 @@ class ProfileTestimonialSecurityTests(TestCase):
                 recipient=self.user, 
             ).exists() 
         ) 
+
+    def test_profile_renders_interests_as_styled_chips(self):
+        Interest.objects.create(
+            profile=self.user.profile,
+            emoji="🎨",
+            label="Art",
+            color="#6f5fb8",
+        )
+
+        response = self.client.get(
+            reverse("profile", kwargs={"username": self.user.username})
+        )
+
+        self.assertContains(response, 'class="in-chip"')
+        self.assertContains(response, "🎨")
+        self.assertContains(response, "Art")
 
 class FriendListPrivacyTests(TestCase): 
     def setUp(self): 
@@ -202,10 +218,7 @@ class FriendListPrivacyTests(TestCase):
         )
 
         self.assertRedirects(response, 
-        reverse(
-            "profile",
-            kwargs={"username": self.viewer.username},
-            ),
+        reverse("account_settings"),
         )
 
         self.viewer.profile.refresh_from_db()

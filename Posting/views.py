@@ -2,17 +2,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.views.generic import ListView
 from django.http import Http404
 
-from .models import Post
-from .forms import PostForm, CommentForm
+from .models import Post, Album, AlbumPhoto
+from .forms import PostForm, CommentForm, AlbumPhotoForm
 
 from user_controls.models import Block, SeeLess
 from friends.models import Friendship
+from profiles.models import Profile
+
+from django.db.models import Q
+from django.views.decorators.http import require_POST
 
 
 User = get_user_model()
+SEARCH_RESULT_LIMIT = 20
 
 
 def are_friends(user1, user2):
@@ -160,6 +166,78 @@ def post_detail(request, pk):
         form = CommentForm()
     return render(request, "post_detail.html", {"post": post, "form": form, "comments": post.comments.select_related("author")})
 
+
+@login_required
+def search_view(request):
+    query = request.GET.get("q", "").strip()[:100]
+    search_type = request.GET.get("type", "all")
+    if search_type not in {"all", "profiles", "posts"}:
+        search_type = "all"
+    profiles = []
+    posts = []
+
+    if query:
+        blocked_user_ids = set(
+            Block.objects.filter(
+                Q(user=request.user) | Q(blocked_user=request.user)
+            ).values_list("user_id", "blocked_user_id")
+        )
+        blocked_user_ids = {
+            user_id
+            for pair in blocked_user_ids
+            for user_id in pair
+            if user_id != request.user.id
+        }
+        see_less_user_ids = SeeLess.objects.filter(
+            user=request.user,
+        ).values_list("target_user_id", flat=True)
+
+        if search_type in {"all", "profiles"}:
+            profile_matches = Profile.objects.select_related("user").filter(
+                Q(user__username__icontains=query)
+                | Q(user__first_name__icontains=query)
+                | Q(user__last_name__icontains=query)
+            ).exclude(user_id__in=blocked_user_ids)
+
+            for profile in profile_matches:
+                if len(profiles) >= SEARCH_RESULT_LIMIT:
+                    break
+                if profile.is_private and profile.user_id != request.user.id:
+                    if not are_friends(request.user, profile.user):
+                        continue
+                profiles.append(profile)
+
+        if search_type in {"all", "posts"}:
+            post_matches = Post.objects.select_related(
+                "author",
+                "author__profile",
+            ).filter(
+                Q(content__icontains=query)
+                | Q(author__username__icontains=query)
+            ).exclude(
+                author_id__in=blocked_user_ids,
+            ).exclude(
+                author_id__in=see_less_user_ids,
+            ).order_by("-created_at")
+
+            for post in post_matches:
+                if len(posts) >= SEARCH_RESULT_LIMIT:
+                    break
+                if can_view_post(request.user, post):
+                    posts.append(post)
+
+    return render(
+        request,
+        "search_results.html",
+        {
+            "query": query,
+            "search_type": search_type,
+            "profiles": profiles,
+            "posts": posts,
+        },
+    )
+
+
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'
@@ -194,3 +272,68 @@ class PostListView(ListView):
                 visible_posts.append(post)
 
         return visible_posts
+
+@login_required
+def album_home(request):
+    """Navbar button: go to the user's own album (created on first visit)."""
+    album, _ = Album.objects.get_or_create(owner=request.user)
+    return redirect("album_detail", pk=album.pk)
+ 
+@login_required
+def album_detail(request, pk):
+    album = get_object_or_404(Album, pk=pk)
+    if not album.can_access(request.user):
+        raise Http404
+ 
+    if request.method == "POST":
+        form = AlbumPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            photo = form.save(commit=False)
+            photo.album, photo.uploader = album, request.user
+            photo.save()
+            messages.success(request, "Photo added to the album.")
+            return redirect("album_detail", pk=pk)
+    else:
+        form = AlbumPhotoForm()
+ 
+    albums = Album.objects.filter(Q(owner=request.user) | Q(members=request.user)).distinct()
+    return render(request, "album.html", {
+        "album": album,
+        "albums": albums,
+        "photos": album.photos.select_related("uploader"),
+        "form": form,
+    })
+ 
+@login_required
+def album_join(request, code):
+    album = get_object_or_404(Album, invite_code=code)
+    if album.can_access(request.user):
+        return redirect("album_detail", pk=album.pk)
+
+    if request.method == "POST":
+        if request.POST.get("action") == "accept":
+            album.members.add(request.user)
+            messages.success(request, "You joined the album.")
+            return redirect("album_detail", pk=album.pk)
+        return redirect("post_feed") 
+
+    return render(request, "album_invite.html", {
+        "album": album,
+        "member_count": album.members.count() + 1, \
+    })
+
+@login_required
+@require_POST
+def photo_delete(request, pk):
+    photo = get_object_or_404(AlbumPhoto, pk=pk)
+    if request.user in (photo.uploader, photo.album.owner):
+        photo.delete()
+    return redirect("album_detail", pk=photo.album_id)
+
+@login_required
+@require_POST
+def member_remove(request, pk, user_id):
+    album = get_object_or_404(Album, pk=pk, owner=request.user)  
+    album.members.remove(user_id)
+    return redirect("album_detail", pk=pk)
+ 

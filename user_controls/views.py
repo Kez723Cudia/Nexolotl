@@ -128,6 +128,18 @@ def toggle_block(request, user_id):
 
 @login_required
 @require_POST
+def unblock_user(request, user_id):
+    block = get_object_or_404(
+        Block,
+        user=request.user,
+        blocked_user_id=user_id,
+    )
+    block.delete()
+    return redirect("account_settings")
+
+
+@login_required
+@require_POST
 def toggle_restriction(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
 

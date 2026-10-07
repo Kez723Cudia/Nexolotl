@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search{% if query %}: {{ query }}{% endif %} · Nexolotl{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/search.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="search-page">
+    <header class="search-header">
+      <span class="search-eyebrow">DISCOVER</span>
+      {% if query %}
+        <p>Results for “{{ query }}”</p>
+      {% else %}
+        <p>Search for people or posts.</p>
+      {% endif %}
+    </header>
+
+    {% if query %}
+      <nav class="search-tabs" aria-label="Search result type">
+        <a
+          href="{% url 'search' %}?q={{ query|urlencode }}&amp;type=all"
+          {% if search_type == "all" %}aria-current="page"{% endif %}
+        >All</a>
+        <a
+          href="{% url 'search' %}?q={{ query|urlencode }}&amp;type=profiles"
+          {% if search_type == "profiles" %}aria-current="page"{% endif %}
+        >Profiles</a>
+        <a
+          href="{% url 'search' %}?q={{ query|urlencode }}&amp;type=posts"
+          {% if search_type == "posts" %}aria-current="page"{% endif %}
+        >Posts</a>
+      </nav>
+    {% endif %}
+
+    {% if query %}
+      {% if search_type != "posts" %}
+        <section class="nx-card search-card">
+          <h2>Profiles</h2>
+          {% if profiles %}
+            <ul class="search-profiles">
+              {% for profile in profiles %}
+                <li>
+                  <a href="{% url 'profile' username=profile.user.username %}">
+                    {% if profile.avatar %}
+                      <img src="{{ profile.avatar.url }}" alt="">
+                    {% else %}
+                      <span class="search-avatar">{{ profile.user.username|first|upper }}</span>
+                    {% endif %}
+                    <span>
+                      <strong>{{ profile.user.username }}</strong>
+                      {% if profile.user.get_full_name %}
+                        <small>{{ profile.user.get_full_name }}</small>
+                      {% endif %}
+                    </span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="search-empty">No matching profiles found.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      {% if search_type != "profiles" %}
+        <section class="nx-card search-card">
+          <h2>Posts</h2>
+          {% if posts %}
+            <ul class="search-posts">
+              {% for post in posts %}
+                <li>
+                  <a href="{% url 'post_detail' post.pk %}">
+                    <span class="search-post-author">{{ post.author.username }}</span>
+                    <span class="search-post-content">
+                      {% if post.content %}{{ post.content|truncatechars:220 }}{% else %}Image post{% endif %}
+                    </span>
+                    <small>{{ post.created_at|date:"M d, Y H:i" }}</small>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="search-empty">No matching posts found.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+    {% endif %}
+  </section>
+{% endblock %}

@@ -36,3 +36,31 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match.")
 
         return cleaned_data
+
+
+class ProfileViewingSettingsForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["theme"]
+        labels = {
+            "theme": "Website theme",
+        }
+        help_texts = {
+            "theme": "Choose the color theme used throughout Nexolotl.",
+        }
+
+
+class PrivateProfileViewingForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["private_profile_views"]
+        labels = {
+            "private_profile_views": "Browse profiles privately",
+        }
+        help_texts = {
+            "private_profile_views": (
+                "When enabled, other users will not see your name in their "
+                "profile visitors list, and your own profile-view analytics "
+                "will be hidden."
+            ),
+        }

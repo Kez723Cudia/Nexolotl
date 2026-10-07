@@ -1,5 +1,32 @@
-<section class="pf-hero">
+<section class="pf-hero{% if profile.banner %} pf-hero--banner{% endif %}">
+  {% if profile.banner %}
+    <div class="pf-hero__banner" aria-hidden="true">
+      <img src="{{ profile.banner.url }}" alt="">
+    </div>
+  {% endif %}
   <div class="pf-hero__text">
+    {% if show_streaks_badges %}
+      <div class="pf-achievement-badges" aria-label="Earned badges">
+        {% if badges %}
+          <ul class="pf-badges">
+            {% for badge in badges %}
+              <li class="pf-badge" data-badge="{{ badge.badge }}">
+                <span class="pf-badge__icon" aria-hidden="true">
+                  {% if badge.badge == "first_post" %}✍️
+                  {% elif badge.badge == "conversation_starter" %}💬
+                  {% elif badge.badge == "connector" %}🤝
+                  {% elif badge.badge == "profile_stylist" %}🎨
+                  {% endif %}
+                </span>
+                <span class="pf-badge__name">{{ badge.get_badge_display }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <span class="pf-badge-empty">Your first badge is waiting ✨</span>
+        {% endif %}
+      </div>
+    {% endif %}
     <span class="pf-eyebrow">PROFILE</span>
     <h1>{{ profile.user.username }}</h1>
     {% if profile.bio %}<p class="pf-bio">{{ profile.bio }}</p>{% endif %}
@@ -9,7 +36,7 @@
     <div class="pf-actions">
       {% if is_own_profile %}
         <a class="pf-btn" href="{% url 'profile_edit' %}">Edit Profile</a>
-        <a class="pf-btn pf-btn--ghost" href="{% url 'friend_list_privacy_edit' %}">Friend List Privacy Settings</a>
+        <a class="pf-btn pf-btn--ghost" href="{% url 'account_settings' %}">Settings</a>
 
       {% elif is_friend %}
         <p class="pf-status">You are friends with {{ profile.user.username }}.</p>
@@ -53,9 +80,20 @@
     {% endif %}
   </div>
 
-  {% if profile.avatar %}
-    <img class="pf-avatar" src="{{ profile.avatar.url }}" alt="Avatar">
-  {% else %}
-    <div class="pf-avatar pf-avatar--empty"><em>No avatar set</em></div>
-  {% endif %}
+  <div class="pf-avatar-frame pf-avatar-frame--{{ profile.avatar_frame }}">
+    {% if profile.avatar %}
+      <img class="pf-avatar" src="{{ profile.avatar.url }}" alt="Avatar">
+    {% else %}
+      <div class="pf-avatar pf-avatar--empty"><em>No avatar set</em></div>
+    {% endif %}
+    <div class="pf-profile-stickers" aria-label="Profile stickers">
+      {% for sticker in profile_stickers %}
+        <span
+          class="pf-profile-sticker"
+          style="left: {{ sticker.x }}%; top: {{ sticker.y }}%;"
+          aria-hidden="true"
+        >{{ sticker.emoji }}</span>
+      {% endfor %}
+    </div>
+  </div>
 </section>

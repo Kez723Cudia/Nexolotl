@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings · Nexolotl{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/settings.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+  <section class="fm-page settings-page">
+    <header class="settings-header">
+      <span class="settings-eyebrow">YOUR ACCOUNT</span>
+      <h1 class="fm-title">Account Settings</h1>
+      <p>Personalize Nexolotl and manage your privacy.</p>
+    </header>
+
+    <form id="settings-form" class="settings-form" method="post">
+      {% csrf_token %}
+      <section class="nx-card settings-card">
+        <div class="fm-form">
+          <p>Pick a theme to change the colors throughout the site.</p>
+          {{ form.as_p }}
+        </div>
+      </section>
+
+      <section class="nx-card settings-card">
+        <h2 class="settings-section-title">Friend List Privacy</h2>
+        <p>Choose who can view each of your friend lists, and whether your profile visits are private.</p>
+        <div class="settings-subsection">
+          <h3 class="settings-subsection-title">Friend Lists</h3>
+          <div class="fm-form">
+            {{ friend_privacy_form.as_p }}
+          </div>
+        </div>
+        <div class="settings-subsection">
+          <h3 class="settings-subsection-title">Profile Visits</h3>
+          <div class="fm-form">
+            {{ private_profile_form.as_p }}
+          </div>
+        </div>
+        <div class="settings-subsection">
+          <h3 class="settings-subsection-title">Profile Activity</h3>
+          <div class="fm-form">
+            {{ display_settings_form.as_p }}
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <section class="nx-card settings-card">
+      <h2 class="settings-section-title">Blocked Accounts</h2>
+      {% if blocked_users %}
+        <ul class="settings-list">
+          {% for block in blocked_users %}
+            <li>
+              <a href="{% url 'profile' username=block.blocked_user.username %}">{{ block.blocked_user.username }}</a>
+              <form method="post" action="{% url 'unblock_user' block.blocked_user.id %}">
+                {% csrf_token %}
+                <button type="submit">Unblock</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>You have not blocked anyone.</p>
+      {% endif %}
+    </section>
+
+    <div class="fm-actions settings-page-actions">
+      <button type="submit" form="settings-form">Save Settings</button>
+      <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Back to profile</a>
+    </div>
+  </section>
+{% endblock %}

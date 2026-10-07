@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Comment 
+from .models import Post, Comment, AlbumPhoto
 
 
 class PostForm(forms.ModelForm):
@@ -52,3 +52,9 @@ class CommentForm(forms.ModelForm):
         if not cleaned.get("content") and not cleaned.get("image"):
             raise forms.ValidationError("Write something or add a picture.")
         return cleaned
+    
+class AlbumPhotoForm(forms.ModelForm):
+    class Meta:
+        model = AlbumPhoto
+        fields = ["image"]
+        labels = {"image": "Choose a photo"}

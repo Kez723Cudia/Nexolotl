@@ -13,4 +13,6 @@ venv/
 .vscode/
 .idea/
 
+# Local environment secrets
+.env
 media/

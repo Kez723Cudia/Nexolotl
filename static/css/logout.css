@@ -1,0 +1,83 @@
+.nx-profile-menu__items button,
+.feed-account-menu__items button {
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nx-profile-menu__items button:hover,
+.feed-account-menu__items button:hover {
+  background: var(--nx-row-bg);
+}
+
+.nx-logout-dialog {
+  width: min(420px, calc(100% - 2rem));
+  margin: auto;
+  padding: 1.75rem;
+  border: 2px solid var(--nx-ink);
+  border-radius: var(--nx-radius);
+  background: var(--nx-card);
+  color: var(--nx-card-ink);
+  box-shadow: var(--nx-shadow);
+}
+
+.nx-logout-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.nx-logout-dialog h2 {
+  margin-bottom: 0.5rem;
+  color: var(--nx-card-ink);
+}
+
+.nx-logout-dialog p {
+  margin-bottom: 1.25rem;
+  color: var(--nx-ink-soft);
+}
+
+.nx-logout-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.nx-logout-dialog__actions button {
+  padding: 0.5rem 0.9rem;
+  border: 2px solid var(--nx-ink);
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nx-logout-dialog__cancel {
+  background: var(--nx-card);
+  color: var(--nx-card-ink);
+}
+
+.nx-logout-dialog__confirm {
+  background: var(--nx-bg-soft);
+  color: var(--nx-button-ink);
+}
+
+.nx-logout-dialog__actions button:hover {
+  filter: brightness(1.08);
+}
+
+.nx-logout-dialog__actions button:focus-visible {
+  outline: 3px solid var(--nx-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 420px) {
+  .nx-logout-dialog__actions {
+    flex-direction: column-reverse;
+  }
+}

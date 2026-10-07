@@ -1,28 +1,81 @@
 /* Profile page (prefix pf-). Uses the tokens from tokens.css */
 
 /* Hero: Layla-style banner, text left, avatar right, in Nexolotl colours */
-.pf-hero { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem; padding: 2.25rem 2.5rem; overflow: hidden; border-radius: var(--nx-radius); box-shadow: var(--nx-shadow); color: var(--nx-card); background: linear-gradient(120deg, var(--nx-navy) 0%, #3e2d78 55%, var(--nx-bg-soft) 100%); }
+.pf-hero { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1.5rem; padding: 2.25rem 2.5rem; overflow: hidden; border-radius: var(--nx-radius); box-shadow: var(--nx-shadow); color: var(--nx-on-brand); background: linear-gradient(120deg, var(--nx-navy) 0%, var(--nx-hero-mid) 55%, var(--nx-hero-end) 100%); }
 .pf-hero::before { content: ""; position: absolute; right: -60px; top: -80px; width: 360px; height: 360px; border-radius: 50%; background: rgba(255, 216, 74, 0.12); }
 .pf-hero > * { position: relative; }
+.pf-hero > .pf-hero__banner { position: absolute; z-index: 0; inset: 0; overflow: hidden; }
+.pf-hero__banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pf-hero__banner::after { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, rgba(30, 16, 58, 0.9), rgba(30, 16, 58, 0.62) 55%, rgba(30, 16, 58, 0.34)); }
+.pf-hero--banner > :not(.pf-hero__banner) { z-index: 1; }
+.pf-hero--banner h1 { -webkit-text-stroke: 1px var(--nx-card); paint-order: stroke fill; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.85); }
 .pf-eyebrow { font-family: var(--nx-pixel); color: var(--nx-accent); letter-spacing: 0.06em; }
 .pf-hero h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.1; margin: 0.2rem 0 0.6rem; }
 .pf-bio { max-width: 52ch; }
 .pf-meta { margin-top: 0.5rem; color: var(--nx-accent); }
-.pf-avatar { width: clamp(120px, 22vw, 200px); aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 5px solid var(--nx-accent); background: var(--nx-navy); box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame { position: relative; isolation: isolate; display: grid; place-items: center; width: clamp(120px, 22vw, 200px); aspect-ratio: 1; padding: 7px; border: 2px solid rgba(255, 255, 255, 0.82); border-radius: 50%; background: var(--nx-accent); box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame::before { position: absolute; z-index: -1; inset: -8px; border: 2px solid var(--nx-accent); border-radius: inherit; content: ""; }
+.pf-avatar-frame::after { position: absolute; inset: -15px; border: 1px dashed rgba(255, 255, 255, 0.72); border-radius: inherit; content: ""; pointer-events: none; }
+.pf-avatar { display: block; width: 100%; height: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 3px solid rgba(36, 20, 65, 0.42); background: var(--nx-navy); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45); }
 .pf-avatar--empty { display: grid; place-items: center; padding: 1rem; text-align: center; font-size: 0.85rem; }
+.pf-avatar-frame--gold { padding: 9px; border: 3px solid #fff0ae; background: linear-gradient(135deg, #fff4c7, #d99a28 38%, #fff0a6 58%, #a96e13); box-shadow: 0 0 0 3px rgba(255, 216, 74, 0.42), 0 8px 0 rgba(0, 0, 0, 0.25), 0 0 28px rgba(255, 216, 74, 0.28); }
+.pf-avatar-frame--gold::before { inset: -9px; border: 2px solid #ffedaa; }
+.pf-avatar-frame--gold::after { inset: -16px; border: 1px solid rgba(255, 233, 157, 0.85); }
+.pf-avatar-frame--neon { padding: 8px; border: 2px solid #e6fbff; background: linear-gradient(135deg, #5affee, #6566ff 52%, #fa5bea); box-shadow: 0 0 0 3px rgba(108, 245, 255, 0.32), 0 0 22px rgba(108, 245, 255, 0.5), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--neon::before { inset: -10px; border: 2px solid #8af9ff; box-shadow: 0 0 14px rgba(97, 237, 255, 0.55); }
+.pf-avatar-frame--neon::after { inset: -16px; border: 1px dashed rgba(255, 115, 244, 0.9); }
+.pf-avatar-frame--floral { padding: 9px; border: 3px solid #fff4e8; background: conic-gradient(from 0deg, #f7b4c8, #ffe0a8, #a9dfbd, #c9b8f6, #f7b4c8); box-shadow: 0 0 0 3px rgba(255, 236, 222, 0.32), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--floral::before { inset: -10px; border: 2px dotted #ffe0a8; }
+.pf-avatar-frame--floral::after { inset: -16px; border: 1px solid rgba(255, 232, 224, 0.85); }
+.pf-avatar-frame--pixel { padding: 9px; border: 4px solid #fff0a6; border-radius: 22%; background: repeating-linear-gradient(45deg, #ffd84a 0 8px, #ff9f45 8px 16px); box-shadow: 0 0 0 3px #3b2f6b, 0 8px 0 rgba(0, 0, 0, 0.25); image-rendering: pixelated; }
+.pf-avatar-frame--pixel::before { inset: -11px; border: 3px dashed #ffd84a; border-radius: 22%; }
+.pf-avatar-frame--pixel::after { inset: -17px; border: 2px solid rgba(253, 248, 227, 0.82); border-radius: 22%; }
+.pf-avatar-frame--starburst { padding: 10px; border: 3px solid #fff3a3; background: conic-gradient(from 8deg, #ff3cac, #ffe84a 12%, #8b5cff 24%, #3cf6df 36%, #ff3cac 48%, #ffe84a 60%, #8b5cff 72%, #3cf6df 84%, #ff3cac); box-shadow: 0 0 0 3px #6e2b9b, 0 0 30px rgba(255, 60, 172, 0.55), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--starburst::before { inset: -17px; border: 0; border-radius: 0; background: linear-gradient(135deg, #fff35c, #ff3cac 48%, #42e8ff); clip-path: polygon(50% 0%, 60% 19%, 79% 6%, 78% 29%, 100% 27%, 86% 46%, 100% 59%, 77% 64%, 84% 87%, 63% 77%, 50% 100%, 39% 78%, 17% 92%, 23% 68%, 0% 61%, 16% 45%, 2% 27%, 26% 29%, 23% 5%, 42% 19%); }
+.pf-avatar-frame--starburst::after { inset: -10px; border: 2px dotted #fff9c9; border-radius: 50%; }
+.pf-avatar-frame--crystal { padding: 10px; border: 3px solid #edc8ff; background: conic-gradient(from 40deg, #34f5ff, #a142ff, #ff59ca, #ffe36e, #34f5ff); box-shadow: 0 0 0 3px #41206f, 0 0 28px rgba(161, 66, 255, 0.5), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--crystal::before { inset: -16px; border: 0; border-radius: 0; background: linear-gradient(145deg, rgba(52, 245, 255, 0.95), rgba(161, 66, 255, 0.9) 48%, rgba(255, 89, 202, 0.95)); clip-path: polygon(50% 0%, 67% 10%, 88% 8%, 91% 28%, 100% 50%, 89% 69%, 91% 90%, 68% 89%, 50% 100%, 31% 90%, 9% 92%, 11% 69%, 0% 50%, 11% 31%, 8% 10%, 31% 11%); }
+.pf-avatar-frame--crystal::after { inset: -7px; border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 42%; transform: rotate(22deg) scale(1.08); }
+.pf-avatar-frame--glitch { padding: 9px; border: 2px solid #e8fffb; background: repeating-linear-gradient(135deg, #08f7fe 0 8px, #fe53bb 8px 16px, #f5d300 16px 24px); box-shadow: -7px 0 0 rgba(8, 247, 254, 0.75), 7px 0 0 rgba(254, 83, 187, 0.75), 0 0 24px rgba(254, 83, 187, 0.55), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--glitch::before { inset: -13px; border: 3px dashed #08f7fe; border-radius: 48% 35% 52% 42%; transform: rotate(-18deg); }
+.pf-avatar-frame--glitch::after { inset: -8px; border: 3px solid #fe53bb; border-radius: 36% 52% 39% 55%; transform: rotate(14deg); }
+.pf-avatar-frame--liquid { padding: 11px; border: 3px solid #e7ff8f; border-radius: 38% 62% 48% 52% / 57% 39% 61% 43%; background: conic-gradient(from 20deg, #b5ff38, #00e5a8, #b34dff, #ff4fd8, #b5ff38); box-shadow: 0 0 0 3px #40326f, 0 0 28px rgba(0, 229, 168, 0.45), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--liquid::before { inset: -14px; border: 2px solid #b5ff38; border-radius: 57% 43% 36% 64% / 43% 59% 41% 57%; transform: rotate(-18deg); }
+.pf-avatar-frame--liquid::after { inset: -9px; border: 2px dotted #f2ff9a; border-radius: 45% 55% 61% 39% / 61% 42% 58% 39%; transform: rotate(23deg); }
+.pf-avatar-frame--orbit { padding: 9px; border: 3px solid #c8f7ff; background: conic-gradient(from 210deg, #20105e, #5331ca, #04d9c4, #ff4fc3, #20105e); box-shadow: 0 0 0 3px rgba(4, 217, 196, 0.48), 0 0 29px rgba(83, 49, 202, 0.55), 0 8px 0 rgba(0, 0, 0, 0.25); }
+.pf-avatar-frame--orbit::before { inset: -15px -22px; border: 3px solid #ff64dc; border-radius: 50%; transform: rotate(-28deg); box-shadow: 0 0 12px rgba(255, 100, 220, 0.72); }
+.pf-avatar-frame--orbit::after { inset: -21px -9px; border: 2px dashed #6bfff0; border-radius: 50%; transform: rotate(34deg); }
+.pf-avatar-frame--none { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.pf-avatar-frame--none::before, .pf-avatar-frame--none::after { content: none; }
+.pf-avatar-frame--none .pf-avatar { border: 0; box-shadow: none; }
+.pf-achievement-badges { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 0.9rem; }
+.pf-badges { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+.pf-badge { position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 0.65rem; min-height: 3.3rem; overflow: hidden; padding: 0.42rem 1rem 0.42rem 0.48rem; border: 1px solid transparent; border-radius: 1.1rem; background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.07)) padding-box, linear-gradient(135deg, var(--nx-accent), rgba(255, 255, 255, 0.35), var(--nx-accent)) border-box; color: var(--nx-on-brand); box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25); transition: transform 180ms ease, box-shadow 180ms ease; }
+.pf-badge::before { position: absolute; z-index: -1; top: -80%; left: -45%; width: 36%; height: 260%; transform: rotate(28deg); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); content: ""; transition: left 420ms ease; }
+.pf-badge:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 9px 22px rgba(0, 0, 0, 0.27), inset 0 1px 0 rgba(255, 255, 255, 0.32); }
+.pf-badge:hover::before { left: 115%; }
+.pf-badge__icon { position: relative; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; border: 2px solid rgba(255, 255, 255, 0.72); border-radius: 50%; background: radial-gradient(circle at 32% 25%, #fff8d6 0, var(--nx-accent) 45%, #c58c32 100%); color: var(--nx-navy); font-size: 1.08rem; line-height: 1; box-shadow: 0 0 0 3px rgba(255, 216, 74, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.68), 0 3px 7px rgba(0, 0, 0, 0.25); }
+.pf-badge__icon::before { position: absolute; z-index: -1; bottom: -0.48rem; left: 50%; width: 0.85rem; height: 0.72rem; transform: translateX(-50%); background: linear-gradient(90deg, var(--nx-accent), #fff2b0, var(--nx-accent)); clip-path: polygon(0 0, 100% 0, 78% 100%, 50% 76%, 22% 100%); content: ""; }
+.pf-badge__icon::after { position: absolute; top: -0.32rem; right: -0.32rem; color: #fff4bf; font-size: 0.75rem; text-shadow: 0 1px 3px rgba(36, 20, 65, 0.65); content: "✦"; }
+.pf-badge__name { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.015em; line-height: 1.2; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3); }
+.pf-badge-empty { color: var(--nx-on-brand); font-size: 0.8rem; opacity: 0.88; }
+@media (prefers-reduced-motion: reduce) {
+  .pf-badge, .pf-badge::before { transition: none; }
+  .pf-badge:hover { transform: none; }
+}
 
 .pf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.25rem; }
 .pf-actions form { margin: 0; }
 .pf-status { flex-basis: 100%; margin: 0; }
-.pf-btn { font: inherit; font-weight: 500; display: inline-block; padding: 0.55rem 1.2rem; border-radius: 999px; border: 2px solid var(--nx-accent); background: var(--nx-accent); color: var(--nx-navy); cursor: pointer; }
-.pf-btn--ghost { background: transparent; color: var(--nx-card); border-color: var(--nx-card); }
+.pf-btn { font: inherit; font-weight: 700; display: inline-block; padding: 0.55rem 1.2rem; border-radius: 999px; border: 2px solid var(--nx-ink); background: var(--nx-bg-soft); color: var(--nx-ink); cursor: pointer; }
+.pf-btn--ghost { background: var(--nx-card); color: var(--nx-ink); border-color: var(--nx-ink); }
 .pf-btn:hover { filter: brightness(1.08); }
-.pf-more { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(253, 248, 227, 0.25); color: var(--nx-card); }
+.pf-more { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(253, 248, 227, 0.25); color: var(--nx-on-brand); }
 .pf-more a { text-decoration: underline; }
 .pf-more .user-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .pf-more .user-actions h3 { font-size: 0.95rem; margin-right: 0.5rem; color: var(--nx-accent); }
 .pf-more .user-actions form { margin: 0; }
-.pf-more .nx-btn { padding: 0.35rem 0.9rem; font-size: 0.9rem; background: transparent; color: var(--nx-card); border-color: rgba(253, 248, 227, 0.55); }
+.pf-more .nx-btn { padding: 0.35rem 0.9rem; font-size: 0.9rem; background: transparent; color: var(--nx-on-brand); border-color: rgba(253, 248, 227, 0.55); }
 .pf-more .nx-btn:hover { background: rgba(253, 248, 227, 0.12); filter: none; }
 
 /* Friend lists: three cards, like Layla's Artwork / Recent Search / side cards */
@@ -34,21 +87,44 @@
 .pf-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; }
 .pf-tile { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 18px; background: var(--nx-bg-soft); }
 .pf-tile img { width: 100%; height: 100%; object-fit: cover; }
-.pf-tile span { position: absolute; inset: auto 0 0 0; padding: 1.2rem 0.5rem 0.4rem; font-size: 0.85rem; text-align: center; color: var(--nx-card); background: linear-gradient(transparent, rgba(36, 20, 65, 0.85)); }
+.pf-tile span { position: absolute; inset: auto 0 0 0; padding: 1.2rem 0.5rem 0.4rem; font-size: 0.85rem; text-align: center; color: var(--nx-on-brand); background: linear-gradient(transparent, rgba(36, 20, 65, 0.85)); }
 
 .pf-tiles .pf-empty { grid-column: 1 / -1; }
 
 .pf-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.pf-pill { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-card); }
+.pf-pill { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--nx-bg-soft); color: var(--nx-button-ink); }
 .pf-pill:hover, .pf-row:hover { filter: brightness(1.1); }
 
+.pf-streaks { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 0; padding: 0; list-style: none; }
+.pf-streaks li { display: flex; align-items: center; gap: 0.55rem; min-height: 2.75rem; padding: 0.5rem 0.8rem; border: 1px solid var(--nx-divider); border-radius: var(--nx-radius-sm); background: var(--nx-row-bg); }
+.pf-streaks li strong { color: var(--nx-ink); font-size: 1.25rem; }
+.pf-streaks li span { display: grid; color: var(--nx-card-ink); }
+.pf-streak-note { color: var(--nx-ink-soft); font-size: 0.8rem; }
+.vw-stat { display: flex; align-items: baseline; gap: 0.35rem; }
+
 .pf-rows { display: grid; gap: 0.6rem; }
-.pf-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.75rem; border-radius: var(--nx-radius-sm); background: rgba(91, 74, 158, 0.1); }
+.pf-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.75rem; border-radius: var(--nx-radius-sm); background: var(--nx-row-bg); }
 .pf-row img, .pf-row i { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--nx-accent); background: var(--nx-bg-soft); }
+.pf-profile-stickers { position: absolute; z-index: 5; inset: 0; overflow: visible; pointer-events: none; }
+.pf-profile-sticker { position: absolute; display: grid; width: 2.35rem; aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%) rotate(-9deg); border: 2px solid rgba(255, 255, 255, 0.9); border-radius: 38% 62% 55% 45%; background: linear-gradient(145deg, var(--nx-accent), var(--nx-bg-soft)); color: var(--nx-ink); font-size: 1.25rem; line-height: 1; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.35)); }
+.pf-sticker-card { display: grid; gap: 0.8rem; }
+.pf-sticker-stage { position: relative; width: min(100%, 280px); aspect-ratio: 1; margin: 0 auto; border: 2px dashed var(--nx-ink-soft); border-radius: 1.25rem; background: radial-gradient(circle, var(--nx-row-bg), transparent 72%); }
+.pf-sticker-preview-frame { position: absolute; top: 50%; left: 50%; z-index: 1; width: 72%; height: auto; transform: translate(-50%, -50%); }
+.pf-sticker-stage .pf-sticker { position: absolute; z-index: 3; display: grid; width: 2.5rem; aspect-ratio: 1; padding: 0; place-items: center; transform: translate(-50%, -50%); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: 38% 62% 55% 45%; background: linear-gradient(145deg, var(--nx-accent), var(--nx-bg-soft)); color: var(--nx-ink); font-size: 1.35rem; line-height: 1; cursor: grab; touch-action: none; user-select: none; }
+.pf-sticker-stage .pf-sticker:active { cursor: grabbing; }
+.pf-sticker-stage .pf-sticker:focus-visible, .pf-sticker-choice:focus-visible, .pf-sticker-clear:focus-visible { outline: 3px solid var(--nx-accent); outline-offset: 3px; }
+.pf-sticker-palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.pf-sticker-choice, .pf-sticker-clear { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.5rem; padding: 0.35rem 0.7rem; border: 1px solid var(--nx-divider); border-radius: 999px; background: var(--nx-row-bg); color: var(--nx-ink); font: inherit; cursor: pointer; }
+.pf-sticker-choice[aria-pressed="true"] { border-color: var(--nx-accent); background: var(--nx-accent); color: var(--nx-navy); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2); }
+.pf-sticker-clear { border-color: #b42318; color: #b42318; }
+.pf-sticker-card > .helptext { min-height: 1.25em; text-align: center; }
+.pf-banner-card { display: grid; gap: 0.8rem; }
+.pf-banner-preview { display: block; width: 100%; max-height: 220px; aspect-ratio: 3 / 1; object-fit: cover; border: 2px solid var(--nx-divider); border-radius: var(--nx-radius-sm); background: var(--nx-row-bg); }
+.pf-banner-preview[hidden] { display: none; }
 
 @media (max-width: 900px) { .pf-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 640px) {
   .pf-hero { grid-template-columns: 1fr; padding: 1.5rem; }
-  .pf-hero > .pf-avatar { order: -1; justify-self: center; }
+  .pf-hero > .pf-avatar-frame { order: -1; justify-self: center; }
   .pf-grid { grid-template-columns: 1fr; }
 }

@@ -1,0 +1,305 @@
+.feed-content { width: 100%; }
+
+    .feed-messages {
+        list-style: none;
+        display: grid;
+        gap: 0.6rem;
+        margin-bottom: var(--nx-gap, 1.25rem);
+    }
+
+    .feed-messages li {
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-card-ink);
+        border: 2px solid var(--nx-card-ink);
+        border-radius: 999px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 700;
+    }
+
+    .feed-messages li.error { background: #ffb4a8; }
+
+    /* Posts */
+    .feed-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .feed-post {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .feed-avatar {
+        flex: none;
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        border: 3px solid var(--nx-card-ink);
+        object-fit: cover;
+        background: var(--nx-bg-soft);
+        color: var(--nx-button-ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font: 700 2rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        text-transform: uppercase;
+        margin-top: -6px;
+    }
+
+    .feed-card {
+        flex: 1;
+        min-width: 0;
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-card-ink);
+        border-radius: calc(var(--nx-radius, 22px) * 1.5);
+        box-shadow: var(--nx-shadow, 0 5px 0 rgba(0, 0, 0, 0.18));
+        padding: 1.25rem 2rem 1rem;
+    }
+
+    .feed-head {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+    }
+
+    .feed-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .feed-handle {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--nx-card-ink);
+    }
+
+    .feed-menu {
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        gap: 4px;
+        padding: 6px;
+        background: none;
+        border: 0;
+        color: var(--nx-card-ink);
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .feed-menu i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--nx-card-ink);
+        display: block;
+    }
+
+    .feed-body {
+        color: var(--nx-card-ink);
+        font-size: 1.05rem;
+        line-height: 1.55;
+        margin: 0.4rem 0 0.5rem 0.5rem;
+        overflow-wrap: anywhere;
+    }
+
+    .post-image {
+        display: block;
+        max-width: 100%;
+        max-height: 420px;
+        border-radius: var(--nx-radius, 22px);
+        margin: 4px 0 10px 0.5rem;
+        object-fit: cover;
+    }
+
+    .feed-expires {
+        margin: 0 0 0.5rem 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--nx-ink-soft);
+    }
+
+    .feed-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem 0 0.5rem;
+    }
+
+    .feed-actions { display: flex; gap: 0.5rem; }
+
+    .feed-icon {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px;
+        background: none;
+        border: 0;
+        color: var(--nx-card-ink);
+        font: 500 0.9rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .feed-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .feed-icon.liked svg { fill: var(--nx-bg-soft); stroke: var(--nx-card-ink); }
+
+    .feed-stamp {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--nx-card-ink);
+        text-transform: uppercase;
+    }
+
+    .feed-empty {
+        text-align: center;
+        color: var(--nx-card-ink);
+        font-size: 1.2rem;
+        padding: 3rem 0;
+    }
+
+    /* Visibility badges */
+    .feed-badge {
+        display: inline-flex;
+        align-items: center;
+        align-self: center;
+        gap: 4px;
+        padding: 1px 10px;
+        border: 1.5px solid var(--nx-card-ink);
+        border-radius: 999px;
+        background: var(--nx-bg-soft);
+        color: var(--nx-card-ink);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .feed-badge svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .feed-badge.close-friends { background: var(--nx-card); }
+
+    /* New post dialog */
+    .feed-dialog {
+        margin: auto;
+        border: 0;
+        border-radius: calc(var(--nx-radius, 22px) * 1.4);
+        background: var(--nx-card);
+        color: var(--nx-card-ink);
+        width: min(640px, calc(100% - 2rem));
+        padding: 1.75rem 2rem;
+    }
+
+    .feed-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+    .feed-dialog h2 { font-size: 1.4rem; margin-bottom: 0.9rem; }
+
+    .feed-dialog form p {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .feed-dialog label { font-weight: 700; font-size: 0.95rem; }
+
+    .feed-dialog textarea,
+    .feed-dialog input[type="text"],
+    .feed-dialog select {
+        width: 100%;
+        border: 2px solid var(--nx-card-ink);
+        border-radius: var(--nx-radius-sm, 14px);
+        background: var(--nx-input-bg);
+        padding: 0.7rem 1rem;
+        font: 400 1rem/1.5 var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        color: var(--nx-card-ink);
+    }
+
+    .feed-dialog textarea { height: 150px; resize: vertical; }
+
+    .feed-dialog input[type="file"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px dashed var(--nx-card-ink);
+        border-radius: var(--nx-radius-sm, 14px);
+        background: var(--nx-input-bg);
+        color: var(--nx-card-ink);
+        font: 500 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+    }
+
+    .feed-dialog input[type="file"]::file-selector-button {
+        margin-right: 0.75rem;
+        padding: 0.4rem 1.1rem;
+        border: 2px solid var(--nx-card-ink);
+        border-radius: 999px;
+        background: var(--nx-card, #FDF0EC);
+        color: var(--nx-card-ink);
+        font: 700 0.95rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+
+    .feed-preview {
+        display: block;
+        max-width: 100%;
+        max-height: 220px;
+        margin: 0 0 0.9rem;
+        border-radius: var(--nx-radius-sm, 14px);
+        object-fit: cover;
+    }
+
+    .feed-preview[hidden] { display: none; }
+    .feed-dialog .errorlist { list-style: none; color: #b3261e; font-weight: 700; font-size: 0.9rem; }
+    .feed-dialog .helptext { color: var(--nx-card-ink); font-size: 0.85rem; }
+
+    .feed-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .feed-dialog-actions button {
+        border: 2px solid transparent;
+        border-radius: 999px;
+        padding: 0.5rem 1.6rem;
+        font: 700 1rem var(--nx-font, "Lexend", "Segoe UI", system-ui, sans-serif);
+        cursor: pointer;
+    }
+
+    .feed-cancel { background: transparent; color: var(--nx-card-ink); }
+
+    .feed-submit {
+        background: var(--nx-bg-soft);
+        color: var(--nx-button-ink);
+        border-color: var(--nx-divider) !important;
+    }
+
+    /* Keyboard focus */
+    .feed-icon:focus-visible,
+    .feed-dialog button:focus-visible,
+    .feed-dialog textarea:focus-visible,
+    .feed-dialog select:focus-visible,
+    .feed-dialog input:focus-visible {
+        outline: 3px solid var(--nx-accent);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 720px) {
+        .feed-post { flex-direction: column; gap: 0.5rem; }
+        .feed-avatar { width: 64px; height: 64px; font-size: 1.5rem; margin: 0 0 -24px 0.5rem; position: relative; z-index: 1; }
+        .feed-card { padding: 1.75rem 1.25rem 0.9rem; border-radius: calc(var(--nx-radius, 22px) * 1.2); }
+        .feed-body, .post-image, .feed-expires { margin-left: 0; }
+        .feed-foot { padding: 0; }
+        .feed-stamp { gap: 0.75rem; font-size: 0.75rem; }
+    }

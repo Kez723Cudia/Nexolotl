@@ -1,0 +1,24 @@
+<dialog class="nx-logout-dialog" id="logout-confirm-dialog" aria-labelledby="logout-confirm-title">
+  <h2 id="logout-confirm-title">Log out?</h2>
+  <p>Are you sure you want to log out?</p>
+  <form method="post" action="{% url 'logout' %}" class="nx-logout-dialog__actions">
+    {% csrf_token %}
+    <button type="button" class="nx-logout-dialog__cancel" data-close-logout-dialog>Stay logged in</button>
+    <button type="submit" class="nx-logout-dialog__confirm">Yes, log out</button>
+  </form>
+</dialog>
+
+<script>
+  (() => {
+    const dialog = document.getElementById("logout-confirm-dialog");
+    if (!dialog) return;
+
+    document.querySelectorAll("[data-open-logout-dialog]").forEach((button) => {
+      button.addEventListener("click", () => dialog.showModal());
+    });
+
+    dialog.querySelector("[data-close-logout-dialog]").addEventListener("click", () => {
+      dialog.close();
+    });
+  })();
+</script>

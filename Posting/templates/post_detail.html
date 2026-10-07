@@ -1,57 +1,139 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Post Details</title>
-</head>
+{% extends 'base.html' %}
+{% load static %}
 
-<style>
-    .post-image, .comment-image { 
-        max-width: 100%; 
-        max-height: 420px; 
-        border-radius: 20px; 
-        margin: 4px 0 10px 12px; 
-        object-fit: cover; }
-</style>
-<body>
+{% block title %}Post Details · Nexolotl{% endblock %}
 
-    <a href="{% url 'post_feed' %}">Back to Feed</a>
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/post_detail.css' %}?v=1">
+{% endblock %}
 
-    <div>
-        <h3>Posted by: {{ post.author.username }}</h3>
-        <p><small>Published on {{ post.created_at|date:"F d, Y at h:i A" }}</small></p>
-        <hr>
-        <p>{{ post.content|linebreaksbr }}</p>
-        {% if post.image %}
-                <img class="post-image" src="{{ post.image.url }}" alt="">
+{% block content %}
+  <div class="post-detail-page">
+
+        <a class="detail-back" href="{% url 'post_feed' %}">&larr; Back to Feed</a>
+
+        {% if messages %}
+            <ul class="feed-messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
-    </div>
 
-    <hr>
+        <!-- The post -->
+        <article class="feed-post">
+            <a class="detail-profile-link detail-avatar-link" href="{% url 'profile' username=post.author.username %}" aria-label="View profile for {{ post.author.username }}">
+                {% if post.author.profile.avatar %}
+                    <img class="feed-avatar" src="{{ post.author.profile.avatar.url }}" alt="">
+                {% else %}
+                    <span class="feed-avatar" aria-hidden="true">{{ post.author.username|slice:":1" }}</span>
+                {% endif %}
+            </a>
 
-    <h3>Comments ({{ comments|length }})</h3>
+            <div class="feed-card">
+                <div class="feed-head">
+                    <a class="feed-name detail-profile-link" href="{% url 'profile' username=post.author.username %}">{{ post.author.get_full_name|default:post.author.username }}</a>
+                    <span class="feed-handle">@{{ post.author.username }}</span>
+                        {% if post.visibility == 'private' %}
+                            <span class="feed-badge" title="Only you can see this post">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>
+                                Private
+                            </span>
+                        {% elif post.visibility == 'close_friends' %}
+                            <span class="feed-badge close-friends" title="Visible to close friends only">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z"/></svg>
+                                Close friends
+                            </span>
+                        {% endif %}
+                </div>
 
-    {% for comment in comments %}
-        <div>
-            <p>
-                <strong>{{ comment.author.username }}</strong>
-                - <small>{{ comment.created_at|date:"M d, Y h:i A" }}</small>
-            </p>
-            <p>{{ comment.content|linebreaksbr }}</p>
-            {% if comment.image %}
-                <img class="comment-image" src="{{ comment.image.url }}" alt="">
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No comments yet. Be the first to comment!</p>
-    {% endfor %}
+                {% if post.content %}
+                    <p class="feed-body">{{ post.content|linebreaksbr }}</p>
+                {% endif %}
 
-    <h4>Add a comment</h4>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Comment</button>
-    </form>
+                {% if post.image %}
+                    <img class="post-image" src="{{ post.image.url }}" alt="">
+                {% endif %}
 
+                {% if post.post_type == 'flash' %}
+                    <p class="feed-expires">Expires in {{ post.expires_at|timeuntil }}</p>
+                {% endif %}
 
-</body>
-</html>
+                <div class="feed-stamp">
+                    <span>{{ post.created_at|date:"M j, Y" }}</span>
+                    <span>{{ post.created_at|date:"g:i A" }}</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- Comments -->
+        <h2 class="detail-heading">Comments ({{ comments|length }})</h2>
+
+        <section class="detail-comments">
+            {% for comment in comments %}
+                <article class="detail-comment">
+                    <a class="detail-profile-link detail-avatar-link" href="{% url 'profile' username=comment.author.username %}" aria-label="View profile for {{ comment.author.username }}">
+                        {% if comment.author.profile.avatar %}
+                            <img class="feed-avatar comment-avatar" src="{{ comment.author.profile.avatar.url }}" alt="">
+                        {% else %}
+                            <span class="feed-avatar comment-avatar" aria-hidden="true">{{ comment.author.username|slice:":1" }}</span>
+                        {% endif %}
+                    </a>
+
+                    <div class="feed-card">
+                        <div class="feed-head">
+                            <a class="feed-name detail-profile-link" href="{% url 'profile' username=comment.author.username %}">{{ comment.author.get_full_name|default:comment.author.username }}</a>
+                            <span class="feed-handle">@{{ comment.author.username }}</span>
+                        </div>
+
+                        {% if comment.content %}
+                            <p class="feed-body">{{ comment.content|linebreaksbr }}</p>
+                        {% endif %}
+
+                        {% if comment.image %}
+                            <img class="comment-image" src="{{ comment.image.url }}" alt="">
+                        {% endif %}
+
+                        <div class="feed-stamp">
+                            <span>{{ comment.created_at|date:"M j, Y" }}</span>
+                            <span>{{ comment.created_at|date:"g:i A" }}</span>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="feed-empty">No comments yet. Be the first to comment!</p>
+            {% endfor %}
+        </section>
+
+        <!-- Add a comment -->
+        <section class="detail-form">
+            <h2>Add a comment</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <img class="detail-preview" id="commentPreview" alt="Selected image preview" hidden>
+                <div class="detail-form-actions">
+                    <button type="submit">Comment</button>
+                </div>
+            </form>
+        </section>
+
+  </div>
+
+  <script>
+    const fileInput = document.querySelector('.detail-form input[type="file"]');
+    const preview = document.getElementById("commentPreview");
+    if (fileInput) {
+      fileInput.accept = "image/*";
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (file) {
+          preview.src = URL.createObjectURL(file);
+          preview.hidden = false;
+        } else {
+          preview.hidden = true;
+        }
+      });
+    }
+  </script>
+{% endblock %}
