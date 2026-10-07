@@ -54,21 +54,47 @@
     .feed-new-post:hover { filter: brightness(0.95); }
 
     .feed-dock {
-        position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
-        width: min(460px, 100%); height: 80px;
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: min(340px, 100%);
+        height: 56px;
         background: var(--nx-card, #FDF0EC);
-        border-radius: 40px 40px 0 0; z-index: 20;
-        display: flex; align-items: center; justify-content: space-around; padding: 0 1rem;
+        border-radius: 28px 28px 0 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 0.75rem;
     }
+
     .feed-dock a {
-        width: 108px; height: 58px; border-radius: 29px;
-        display: flex; align-items: center; justify-content: center;
+        width: 80px;
+        height: 42px;
+        border-radius: 21px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: var(--nx-text, #000000);
     }
-    .feed-dock a.active { background: var(--nx-bg, #AEE1F9); }
-    .feed-dock svg { width: 34px; height: 34px; fill: currentColor; }
-    .feed-dock svg.line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
+    .feed-dock a.active { background: var(--nx-bg, #AEE1F9); }
+
+    .feed-dock svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .feed-dock svg.line {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    
     .feed-messages { list-style: none; display: grid; gap: 0.6rem; margin-bottom: 1.25rem; }
     .feed-messages li {
         background: var(--nx-card, #FDF0EC); border: 2px solid var(--nx-text, #000000);
