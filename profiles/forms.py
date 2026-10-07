@@ -4,16 +4,12 @@ from .models import Profile, Interest
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio', 'interests', 'is_private']
+        fields = ['avatar', 'bio', 'is_private']
 
         widgets = {
             'bio': forms.Textarea(attrs={
                 'rows': 4,
                 'placeholder': 'Write something about yourself...'
-            }),
-            'interests': forms.Textarea(attrs={
-                'rows': 3,
-                'placeholder': 'Share your interests...'
             }),
             'is_private': forms.CheckboxInput(),
         }
