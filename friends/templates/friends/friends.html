@@ -102,25 +102,25 @@
                 <article class="nx-request-card">
 
                     <a
-                        href="{% url 'profile' username=request.user.username %}"
+                        href="{% url 'profile' username=request.sender.username %}"
                         class="nx-friend-identity"
                     >
 
-                        {% if request.user.profile.avatar %}
+                        {% if request.sender.profile.avatar %}
                             <img
-                                src="{{ request.user.profile.avatar.url }}"
-                                alt="{{ request.user.username }}"
+                                src="{{ request.sender.profile.avatar.url }}"
+                                alt="{{ request.sender.username }}"
                                 class="nx-avatar nx-avatar--sm"
                             >
                         {% else %}
                             <div class="nx-friend-avatar nx-friend-avatar--sm">
-                                {{ request.user.username|first|upper }}
+                                {{ request.sender.username|first|upper }}
                             </div>
                         {% endif %}
 
                         <div>
                             <strong>
-                                {{ request.user.username }}
+                                {{ request.sender.username }}
                             </strong>
 
                             <span class="nx-handle">
@@ -135,7 +135,7 @@
 
                         <form
                             method="post"
-                            action="{% url 'accept_friend_request' request.user.id %}"
+                            action="{% url 'accept_friend_request' request.id %}"
                         >
                             {% csrf_token %}
 
@@ -151,7 +151,7 @@
 
                         <form
                             method="post"
-                            action="{% url 'decline_friend_request' request.user.id %}"
+                            action="{% url 'decline_friend_request' request.id %}"
                         >
                             {% csrf_token %}
 
@@ -205,25 +205,25 @@
                 <article class="nx-request-card">
 
                     <a
-                        href="{% url 'profile' username=request.friend.username %}"
+                        href="{% url 'profile' username=request.receiver.username %}"
                         class="nx-friend-identity"
                     >
 
-                        {% if request.friend.profile.avatar %}
+                        {% if request.receiver.profile.avatar %}
                             <img
-                                src="{{ request.friend.profile.avatar.url }}"
-                                alt="{{ request.friend.username }}"
+                                src="{{ request.receiver.profile.avatar.url }}"
+                                alt="{{ request.receiver.username }}"
                                 class="nx-avatar nx-avatar--sm"
                             >
                         {% else %}
                             <div class="nx-friend-avatar nx-friend-avatar--sm">
-                                {{ request.friend.username|first|upper }}
+                                {{ request.receiver.username|first|upper }}
                             </div>
                         {% endif %}
 
                         <div>
                             <strong>
-                                {{ request.friend.username }}
+                                {{ request.receiver.username }}
                             </strong>
 
                             <span class="nx-handle">
@@ -236,7 +236,7 @@
 
                     <form
                         method="post"
-                        action="{% url 'cancel_friend_request' request.friend.id %}"
+                        action="{% url 'cancel_friend_request' request.id %}"
                     >
                         {% csrf_token %}
 
@@ -666,7 +666,7 @@
 
 
 
-        <!-- ADD FRIENDS -->
+        <!-- PEOPLE YOU MAY KNOW -->
         <section class="nx-card nx-friends-section">
 
             <div class="nx-section-heading">
@@ -675,11 +675,11 @@
                     <p class="nx-friends-eyebrow">DISCOVER</p>
 
                     <h2 class="nx-section__title">
-                        Add Friends
+                        People You May Know
                     </h2>
 
                     <p class="nx-muted">
-                        Find people you may want to connect with.
+                        Discover people you may know and send them a friend request.
                     </p>
                 </div>
 
