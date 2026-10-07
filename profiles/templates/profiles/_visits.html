@@ -1,0 +1,39 @@
+{% if is_own_profile %}
+  <section class="nx-card vw-card">
+    <h2 class="pf-title">Profile views</h2>
+
+    {% if visit_stats %}
+      <div class="vw-stats">
+        <div class="vw-stat"><strong>{{ visit_stats.total }}</strong><span>Total views</span></div>
+        <div class="vw-stat"><strong>{{ visit_stats.unique }}</strong><span>Unique visitors</span></div>
+      </div>
+
+      {% if visit_stats.recent %}
+        <h3 class="vw-subtitle">Recent visitors</h3>
+        <ul class="pf-rows">
+          {% for visit in visit_stats.recent %}
+            <li>
+              {% if visit.viewer %}
+                <a class="pf-row" href="{% url 'profile' username=visit.viewer.username %}">
+                  {% if visit.viewer.profile.avatar %}<img src="{{ visit.viewer.profile.avatar.url }}" alt="">{% else %}<i></i>{% endif %}
+                  <span>{{ visit.viewer.username }}</span>
+                  <span class="vw-time">{{ visit.viewed_at|timesince }} ago</span>
+                </a>
+              {% else %}
+                <div class="pf-row">
+                  <i></i>
+                  <span>Someone</span>
+                  <span class="vw-time">{{ visit.viewed_at|timesince }} ago</span>
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="pf-empty">No visitors yet.</p>
+      {% endif %}
+    {% else %}
+      <p class="pf-empty">Profile views are hidden while your own visits are private.</p>
+    {% endif %}
+  </section>
+{% endif %}

@@ -4,26 +4,128 @@
 {% block title %}Edit Profile · Nexolotl{% endblock %}
 
 {% block extra_head %}
-  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}?v=4">
   <link rel="stylesheet" href="{% static 'css/interests.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=6">
 {% endblock %}
 
 {% block content %}
   <section class="fm-page">
     <h1 class="fm-title">Edit Profile</h1>
 
-    <div class="nx-card">
-      <form class="fm-form" method="POST" enctype="multipart/form-data">
+    <form id="profile-edit-form" class="fm-form pf-edit-form" method="POST" enctype="multipart/form-data">
+      <div class="nx-card">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        {% for field in form %}
+          {% if field.name != "avatar_frame" and field.name != "sticker_layout" and field.name != "banner" %}
+            <p>
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.help_text %}
+                <small class="helptext">{{ field.help_text }}</small>
+              {% endif %}
+              {{ field.errors }}
+            </p>
+          {% endif %}
+        {% endfor %}
+      </div>
 
-        <div class="fm-actions">
-          <button type="submit">Save Changes</button>
-          <a class="fm-link" href="{% url 'profile' username=request.user.username %}">Cancel</a>
+      <div class="nx-card pf-banner-card">
+        <h2 class="pf-frame-card__title">Profile Banner</h2>
+        <p class="pf-frame-card__description">
+          Upload an image to personalize the top of your profile.
+        </p>
+        {% if profile.banner %}
+          <img
+            class="pf-banner-preview"
+            data-banner-preview
+            src="{{ profile.banner.url }}"
+            alt="Current profile banner preview"
+          >
+        {% else %}
+          <img
+            class="pf-banner-preview"
+            data-banner-preview
+            alt="Selected profile banner preview"
+            hidden
+          >
+        {% endif %}
+        <div class="pf-frame-field">
+          <label for="{{ form.banner.id_for_label }}">{{ form.banner.label }}</label>
+          {{ form.banner }}
+          {% if form.banner.help_text %}
+            <small class="helptext">{{ form.banner.help_text }}</small>
+          {% endif %}
+          {{ form.banner.errors }}
         </div>
-      </form>
-    </div>
+      </div>
+
+      <div class="nx-card pf-frame-card">
+        <h2 class="pf-frame-card__title">Profile Frame</h2>
+        <p class="pf-frame-card__description">
+          Give your avatar a little extra personality. The selected frame
+          appears around your profile photo.
+        </p>
+        <div class="pf-frame-field">
+          <label for="{{ form.avatar_frame.id_for_label }}">
+            {{ form.avatar_frame.label }}
+          </label>
+          {{ form.avatar_frame }}
+          {% if form.avatar_frame.help_text %}
+            <small class="helptext">{{ form.avatar_frame.help_text }}</small>
+          {% endif %}
+          {{ form.avatar_frame.errors }}
+        </div>
+      </div>
+
+      <div class="nx-card pf-sticker-card" data-sticker-editor>
+        <h2 class="pf-frame-card__title">Profile Stickers</h2>
+        <p class="pf-frame-card__description">
+          Add stickers from the available set, then drag them around your avatar.
+          You can also focus a sticker and move it with the arrow keys.
+        </p>
+        {{ form.sticker_layout }}
+        {{ form.sticker_layout.errors }}
+        <div class="pf-sticker-stage" data-sticker-stage role="group" aria-label="Drag stickers to position them around your avatar">
+          <div class="pf-avatar-frame pf-avatar-frame--{{ profile.avatar_frame }} pf-sticker-preview-frame">
+            {% if profile.avatar %}
+              <img class="pf-avatar" src="{{ profile.avatar.url }}" alt="Avatar preview">
+            {% else %}
+              <div class="pf-avatar pf-avatar--empty"><em>No avatar set</em></div>
+            {% endif %}
+          </div>
+          {% for sticker in profile_stickers %}
+            <button
+              class="pf-sticker pf-sticker--editor"
+              type="button"
+              data-sticker="{{ sticker.name }}"
+              style="left: {{ sticker.x }}%; top: {{ sticker.y }}%;"
+              aria-label="{{ sticker.name }} sticker. Use arrow keys to move."
+            >{{ sticker.emoji }}</button>
+          {% endfor %}
+        </div>
+        <div class="pf-sticker-palette" role="group" aria-label="Choose profile stickers">
+          {% for choice in sticker_choices %}
+            <button
+              class="pf-sticker-choice"
+              type="button"
+              data-add-sticker="{{ choice.name }}"
+              data-sticker-emoji="{{ choice.emoji }}"
+              aria-pressed="false"
+            >
+              <span aria-hidden="true">{{ choice.emoji }}</span>
+              <span>{{ choice.label }}</span>
+            </button>
+          {% endfor %}
+          <button class="pf-sticker-clear" type="button" data-clear-stickers>
+            Clear all
+          </button>
+        </div>
+        <p class="helptext" data-sticker-status aria-live="polite"></p>
+      </div>
+
+    </form>
   </section>
 
   <section class="fm-page" id="interests">
@@ -34,8 +136,9 @@
       {% if interests %}
         <ul class="in-list">
           {% for item in interests %}
-            <li class="in-chip" style="background-color: {{ item.color }}; color: {{ item.text_color }};">
-              <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>{{ item.label }}
+            <li class="in-chip" style="--in-chip-color: {{ item.color }}; --in-chip-ink: {{ item.text_color }};">
+              <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>
+              <span class="in-chip__label">{{ item.label }}</span>
               <form method="POST" action="{% url 'interest_delete' item.id %}">
                 {% csrf_token %}
                 <button type="submit" class="in-chip__remove" aria-label="Remove {{ item.label }}">×</button>
@@ -97,7 +200,180 @@
     </div>
   </section>
 
+  <div class="fm-actions pf-edit-actions">
+    <button type="submit" form="profile-edit-form">Save Changes</button>
+    <a class="fm-link pf-cancel-button" href="{% url 'profile' username=request.user.username %}">Cancel</a>
+  </div>
+
   <script>
+    (function () {
+      var input = document.getElementById("id_banner");
+      var preview = document.querySelector("[data-banner-preview]");
+      if (!input || !preview) return;
+      var previewUrl = null;
+      input.addEventListener("change", function () {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        if (!input.files || !input.files[0]) {
+          previewUrl = null;
+          preview.hidden = !preview.getAttribute("src");
+          if (preview.hidden) preview.removeAttribute("src");
+          return;
+        }
+        previewUrl = URL.createObjectURL(input.files[0]);
+        preview.src = previewUrl;
+        preview.hidden = false;
+      });
+    })();
+
+    (function () {
+      var editor = document.querySelector("[data-sticker-editor]");
+      var hidden = document.getElementById("id_sticker_layout");
+      var stage = document.querySelector("[data-sticker-stage]");
+      if (!editor || !hidden || !stage) return;
+
+      var emojis = {};
+      var defaultPositions = {};
+      editor.querySelectorAll("[data-add-sticker]").forEach(function (choice, index) {
+        var key = choice.dataset.addSticker;
+        emojis[key] = choice.dataset.stickerEmoji;
+        var positions = [
+          { x: 15, y: 20 },
+          { x: 85, y: 20 },
+          { x: 15, y: 80 },
+          { x: 85, y: 80 },
+          { x: 50, y: 5 }
+        ];
+        defaultPositions[key] = positions[index] || {
+          x: 15 + (index * 13) % 70,
+          y: 15 + (index * 29) % 70
+        };
+      });
+      var layout;
+      var status = editor.querySelector("[data-sticker-status]");
+
+      function readLayout() {
+        try {
+          var parsed = JSON.parse(hidden.value || "{}");
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+          return Object.fromEntries(
+            Object.entries(parsed).filter(function (entry) {
+              var position = entry[1];
+              return emojis[entry[0]]
+                && position
+                && Number.isFinite(position.x)
+                && Number.isFinite(position.y)
+                && position.x >= 0 && position.x <= 100
+                && position.y >= 0 && position.y <= 100;
+            })
+          );
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveLayout() {
+        hidden.value = JSON.stringify(layout);
+        editor.querySelectorAll("[data-add-sticker]").forEach(function (choice) {
+          choice.setAttribute(
+            "aria-pressed",
+            Object.prototype.hasOwnProperty.call(layout, choice.dataset.addSticker)
+          );
+        });
+        status.textContent = Object.keys(layout).length
+          + " of " + Object.keys(emojis).length + " stickers placed.";
+        stage.querySelectorAll(".pf-sticker").forEach(function (sticker) {
+          if (!Object.prototype.hasOwnProperty.call(layout, sticker.dataset.sticker)) {
+            sticker.remove();
+          }
+        });
+        Object.keys(layout).forEach(function (name) {
+          var sticker = stage.querySelector('[data-sticker="' + name + '"]');
+          if (!sticker) {
+            sticker = document.createElement("button");
+            sticker.type = "button";
+            sticker.className = "pf-sticker pf-sticker--editor";
+            sticker.dataset.sticker = name;
+            sticker.textContent = emojis[name];
+            sticker.setAttribute(
+              "aria-label",
+              editor.querySelector('[data-add-sticker="' + name + '"]').textContent.trim()
+                + " sticker. Use arrow keys to move."
+            );
+            enableMovement(sticker);
+            stage.appendChild(sticker);
+          }
+          place(sticker, layout[name]);
+        });
+      }
+
+      function place(sticker, position) {
+        sticker.style.left = position.x + "%";
+        sticker.style.top = position.y + "%";
+      }
+
+      function move(name, x, y) {
+        layout[name] = {
+          x: Math.round(Math.max(3, Math.min(97, x)) * 10) / 10,
+          y: Math.round(Math.max(3, Math.min(97, y)) * 10) / 10
+        };
+        saveLayout();
+      }
+
+      function enableMovement(sticker) {
+        sticker.addEventListener("pointerdown", function (event) {
+          event.preventDefault();
+          sticker.setPointerCapture(event.pointerId);
+          function onMove(moveEvent) {
+            var bounds = stage.getBoundingClientRect();
+            move(sticker.dataset.sticker,
+              ((moveEvent.clientX - bounds.left) / bounds.width) * 100,
+              ((moveEvent.clientY - bounds.top) / bounds.height) * 100
+            );
+          }
+          function onUp() {
+            sticker.removeEventListener("pointermove", onMove);
+            sticker.removeEventListener("pointerup", onUp);
+            sticker.removeEventListener("pointercancel", onUp);
+          }
+          sticker.addEventListener("pointermove", onMove);
+          sticker.addEventListener("pointerup", onUp);
+          sticker.addEventListener("pointercancel", onUp);
+        });
+        sticker.addEventListener("keydown", function (event) {
+          var step = event.shiftKey ? 5 : 1;
+          var position = layout[sticker.dataset.sticker];
+          var x = position.x;
+          var y = position.y;
+          if (event.key === "ArrowLeft") x -= step;
+          else if (event.key === "ArrowRight") x += step;
+          else if (event.key === "ArrowUp") y -= step;
+          else if (event.key === "ArrowDown") y += step;
+          else return;
+          event.preventDefault();
+          move(sticker.dataset.sticker, x, y);
+        });
+      }
+
+      layout = readLayout();
+      editor.querySelectorAll("[data-add-sticker]").forEach(function (choice) {
+        choice.addEventListener("click", function () {
+          var name = choice.dataset.addSticker;
+          if (Object.prototype.hasOwnProperty.call(layout, name)) {
+            delete layout[name];
+          } else {
+            layout[name] = defaultPositions[name];
+          }
+          saveLayout();
+        });
+      });
+      editor.querySelector("[data-clear-stickers]").addEventListener("click", function () {
+        layout = {};
+        saveLayout();
+      });
+      stage.querySelectorAll(".pf-sticker").forEach(enableMovement);
+      saveLayout();
+    })();
+
     (function () {
       var form = document.getElementById("interest-form");
       if (!form) return;
@@ -115,8 +391,8 @@
       function update() {
         previewEmoji.textContent = emoji.value || "✨";
         previewLabel.textContent = label.value || "Your interest";
-        preview.style.backgroundColor = color.value;
-        preview.style.color = textColor(color.value);
+        preview.style.setProperty("--in-chip-color", color.value);
+        preview.style.setProperty("--in-chip-ink", textColor(color.value));
       }
       form.addEventListener("input", update);
       form.querySelectorAll("[data-color]").forEach(function (b) {

@@ -1,13 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.crypto import salted_hmac
 from django.views.decorators.http import require_POST
 from friends.models import FriendRequest, Friendship
 from testimonials.forms import testimonialForm
 from testimonials.models import testimonial
 from user_controls.models import Block
 from .forms import FriendListPrivacyForm, InterestForm, ProfileForm
-from .models import Interest, Profile
+from .models import (
+    DailyStreak,
+    Interest,
+    Profile,
+    ProfileBadge,
+    ProfileVisit,
+    Sticker,
+)
+from .streaks import award_badge, visible_streak_count
 
 
 def are_friends(user1, user2):
@@ -94,6 +103,48 @@ def profile_view(request, username):
                 "This account is private. "
                 "You must be friends to view this profile."
             )
+
+    if request.method == "GET" and not is_own_profile:
+        ProfileVisit.objects.create(
+            profile=user_profile,
+            viewer=(
+                None
+                if request.user.private_profile_views
+                else request.user
+            ),
+            visitor_key=salted_hmac(
+                "profile-visit",
+                f"{user_profile.pk}:{request.user.pk}",
+            ).hexdigest(),
+        )
+
+    visit_stats = None
+    if is_own_profile and not request.user.private_profile_views:
+        visits = ProfileVisit.objects.filter(profile=user_profile)
+        visit_stats = {
+            "total": visits.count(),
+            "unique": visits.values("visitor_key").distinct().count(),
+            "recent": visits.select_related(
+                "viewer",
+                "viewer__profile",
+            )[:10],
+        }
+
+    show_streaks_badges = (
+        is_own_profile or user_profile.show_streaks_badges
+    )
+    streak_counts = {}
+    badges = ProfileBadge.objects.none()
+    if show_streaks_badges:
+        streaks = {
+            streak.activity: streak
+            for streak in DailyStreak.objects.filter(user=profile_user)
+        }
+        streak_counts = {
+            activity: visible_streak_count(streaks.get(activity))
+            for activity in DailyStreak.ActivityChoices.values
+        }
+        badges = user_profile.badges.all()
 
     viewer_relationship = None
 
@@ -209,6 +260,7 @@ def profile_view(request, username):
             "testimonials": testimonials,
             "form": form,
             "username": username,
+            "profile_stickers": user_profile.get_sticker_display_list(),
             "is_own_profile": is_own_profile,
             "is_friend": is_friend,
             "sent_friend_request": sent_friend_request,
@@ -219,12 +271,22 @@ def profile_view(request, username):
             "friends": friends,
             "close_friends": close_friends,
             "top_friends": top_friends,
+            "visit_stats": visit_stats,
+            "show_streaks_badges": show_streaks_badges,
+            "streak_counts": streak_counts,
+            "badges": badges,
         },
     )
 
 
 def _edit_context(profile, form=None, interest_form=None):
     return {
+        "profile": profile,
+        "profile_stickers": profile.get_sticker_display_list(),
+        "sticker_choices": [
+            {"name": sticker.key, "label": sticker.name, "emoji": sticker.emoji}
+            for sticker in Sticker.objects.filter(is_active=True)
+        ],
         "form": form if form is not None else ProfileForm(instance=profile),
         "interest_form": interest_form if interest_form is not None else InterestForm(profile=profile),
         "interests": profile.interest_items.all(),
@@ -249,7 +311,13 @@ def profile_edit(request):
         )
 
         if form.is_valid():
+            avatar_changed = "avatar" in form.changed_data
             form.save()
+            if avatar_changed:
+                award_badge(
+                    request.user,
+                    ProfileBadge.BadgeChoices.PROFILE_STYLIST,
+                )
 
             return redirect(
                 "profile",
@@ -313,29 +381,11 @@ def friend_list_privacy_edit(request):
         Profile,
         user=request.user,
     )
-
     if request.method == "POST":
         form = FriendListPrivacyForm(
             request.POST,
             instance=user_profile,
         )
-
         if form.is_valid():
             form.save()
-
-            return redirect(
-                "profile",
-                username=request.user.username,
-            )
-    else:
-        form = FriendListPrivacyForm(
-            instance=user_profile,
-        )
-
-    return render(
-        request,
-        "profiles/friend_list_privacy_edit.html",
-        {
-            "form": form,
-        },
-    )
+    return redirect("account_settings")

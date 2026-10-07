@@ -1,0 +1,150 @@
+.settings-page {
+  max-width: 760px;
+  gap: 1.5rem;
+}
+
+.settings-form {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.settings-header {
+  padding: 0.5rem 0.25rem 0.25rem;
+  color: var(--nx-on-brand);
+}
+
+.settings-header .fm-title {
+  color: var(--nx-settings-heading);
+  margin: 0.2rem 0 0.45rem;
+}
+
+.settings-eyebrow {
+  color: var(--nx-accent);
+  font-family: var(--nx-pixel);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.settings-header p,
+.settings-card > p {
+  color: var(--nx-ink-soft);
+}
+
+.settings-header p {
+  color: var(--nx-on-brand);
+}
+
+.settings-card {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--nx-divider);
+  box-shadow: 0 8px 22px rgba(36, 20, 65, 0.14);
+}
+
+.settings-card .fm-form p {
+  margin-bottom: 1.25rem;
+}
+
+.settings-card .fm-form p > label:first-child {
+  color: var(--nx-card-ink);
+  line-height: 1.45;
+}
+
+.settings-card .fm-form .helptext {
+  max-width: 62ch;
+  line-height: 1.5;
+}
+
+.settings-card .settings-section-title {
+  color: var(--nx-card-ink);
+  margin-bottom: 0.35rem;
+}
+
+.settings-card > p {
+  margin-bottom: 1.25rem;
+}
+
+.settings-card .settings-subsection + .settings-subsection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+}
+
+.settings-subsection-title {
+  color: var(--nx-card-ink);
+  margin-bottom: 0.9rem;
+}
+
+.settings-card .fm-actions {
+  margin-top: 1rem;
+}
+
+.settings-page-actions {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.settings-page-actions button {
+  display: inline-block;
+  padding: 0.5rem 1.1rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--nx-bg-soft);
+  color: var(--nx-button-ink);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-page-actions button:hover {
+  filter: brightness(1.12);
+}
+
+.settings-page-actions .fm-link {
+  display: inline-block;
+  padding: 0.5rem 1.1rem;
+  border: 2px solid var(--nx-accent);
+  border-radius: 999px;
+  color: var(--nx-accent);
+}
+
+.settings-page-actions .fm-link:hover {
+  background: var(--nx-row-bg);
+}
+
+.settings-card .settings-list {
+  gap: 0.25rem;
+}
+
+.settings-list li {
+  padding: 0.85rem 0.25rem;
+}
+
+.settings-list li > a {
+  font-weight: 500;
+}
+
+.settings-list li > a:hover {
+  color: var(--nx-bg-soft);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.settings-list button {
+  padding: 0.4rem 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .settings-page {
+    gap: 1.1rem;
+  }
+
+  .settings-card {
+    padding: 1.1rem;
+  }
+
+  .settings-list li {
+    align-items: flex-start;
+  }
+}

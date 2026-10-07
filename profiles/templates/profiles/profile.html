@@ -4,14 +4,18 @@
 {% block title %}{{ profile.user.username }} on Nexolotl{% endblock %}
 
 {% block extra_head %}
-  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-  <link rel="stylesheet" href="{% static 'css/interests.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=6">
+  <link rel="stylesheet" href="{% static 'css/interests.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
   {% include 'profiles/partials/_hero.html' %}
 
+  {% include 'profiles/partials/_streaks_badges.html' %}
+
   {% include 'profiles/partials/_interests.html' %}
+
+  {% include 'profiles/_visits.html' %}
 
   {# Future profile sections: add a partial and include it here #}
 

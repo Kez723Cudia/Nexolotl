@@ -1,0 +1,10 @@
+{% if show_streaks_badges %}
+  <section class="nx-card pf-streak-card" aria-label="Daily streaks">
+    <h2 class="pf-title">Daily Streaks</h2>
+    <ul class="pf-streaks">
+      <li><strong>{{ streak_counts.login }}</strong><span>Login days</span></li>
+      <li><strong>{{ streak_counts.post }}</strong><span>Posting days</span></li>
+    </ul>
+    <p class="pf-streak-note">Days change at midnight GMT+8.</p>
+  </section>
+{% endif %}

@@ -1,7 +1,16 @@
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import RegisterForm
+from profiles.forms import FriendListPrivacyForm, ProfileDisplaySettingsForm
+from profiles.models import Profile, ProfileVisit
+from .forms import (
+    PrivateProfileViewingForm,
+    ProfileViewingSettingsForm,
+    RegisterForm,
+)
 from .models import User
+from user_controls.models import Block
 
 def register_view(request):
     if request.method == "POST":
@@ -47,3 +56,63 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
+
+@login_required
+def account_settings(request):
+    user_profile = Profile.objects.get(user=request.user)
+    blocked_users = Block.objects.filter(
+        user=request.user,
+    ).select_related("blocked_user")
+
+    if request.method == "POST":
+        was_private = request.user.private_profile_views
+        settings_form = ProfileViewingSettingsForm(
+            request.POST,
+            instance=request.user,
+        )
+        friend_privacy_form = FriendListPrivacyForm(
+            request.POST,
+            instance=user_profile,
+        )
+        display_settings_form = ProfileDisplaySettingsForm(
+            request.POST,
+            instance=user_profile,
+        )
+        private_profile_form = PrivateProfileViewingForm(
+            request.POST,
+            instance=request.user,
+        )
+
+        if (
+            settings_form.is_valid()
+            and friend_privacy_form.is_valid()
+            and display_settings_form.is_valid()
+            and private_profile_form.is_valid()
+        ):
+            with transaction.atomic():
+                settings_form.save()
+                friend_privacy_form.save()
+                display_settings_form.save()
+                user = private_profile_form.save()
+                if user.private_profile_views and not was_private:
+                    ProfileVisit.objects.filter(viewer=user).update(viewer=None)
+            return redirect("account_settings")
+    else:
+        settings_form = ProfileViewingSettingsForm(instance=request.user)
+        friend_privacy_form = FriendListPrivacyForm(instance=user_profile)
+        display_settings_form = ProfileDisplaySettingsForm(
+            instance=user_profile,
+        )
+        private_profile_form = PrivateProfileViewingForm(instance=request.user)
+
+    return render(
+        request,
+        "accounts/settings.html",
+        {
+            "form": settings_form,
+            "friend_privacy_form": friend_privacy_form,
+            "display_settings_form": display_settings_form,
+            "private_profile_form": private_profile_form,
+            "blocked_users": blocked_users,
+        },
+    )

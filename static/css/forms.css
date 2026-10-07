@@ -1,12 +1,25 @@
 /* Shared form styles (prefix fm-). Link this file from any page that has a form. */
-.fm-page { width: 100%; max-width: 640px; margin: 0 auto; }
-.fm-title { color: var(--nx-card); font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; margin-bottom: 1rem; }
+.fm-page { display: grid; gap: 1.75rem; width: 100%; max-width: 640px; margin: 0 auto; }
+.fm-title { color: var(--nx-on-brand); font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; margin-bottom: 1rem; }
 
 .fm-form p { margin-bottom: 1.1rem; }
 .fm-form p > label:first-child { display: block; margin-bottom: 0.35rem; font-weight: 500; }
-.fm-form :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select, textarea) { width: 100%; padding: 0.65rem 0.85rem; font: inherit; color: var(--nx-ink); background: #fff; border: 2px solid rgba(91, 74, 158, 0.3); border-radius: var(--nx-radius-sm); }
+.fm-form :is(input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], select, textarea) { width: 100%; padding: 0.65rem 0.85rem; font: inherit; color: var(--nx-card-ink); background: var(--nx-input-bg); border: 2px solid var(--nx-ink-soft); border-radius: var(--nx-radius-sm); }
 .fm-form textarea { min-height: 7rem; resize: vertical; }
 .fm-form :is(input, select, textarea):focus-visible { outline: 3px solid var(--nx-accent); outline-offset: 1px; border-color: var(--nx-bg-soft); }
+.pf-frame-field { margin: 0 0 1.25rem; padding: 1rem 1.1rem; border: 1px solid var(--nx-divider); border-left: 4px solid var(--nx-accent); border-radius: var(--nx-radius-sm); background: var(--nx-row-bg); }
+.pf-frame-field > label { display: block; margin-bottom: 0.45rem; color: var(--nx-ink); font-size: 1.05rem; font-weight: 700; }
+.fm-form .pf-frame-field select { width: 100%; max-width: 32rem; min-height: 2.9rem; padding: 0.65rem 2.4rem 0.65rem 0.85rem; border: 2px solid var(--nx-ink-soft); border-radius: var(--nx-radius-sm); background-color: var(--nx-input-bg); color: var(--nx-card-ink); font: inherit; font-weight: 600; }
+.pf-frame-field .helptext { display: block; margin-top: 0.45rem; color: var(--nx-ink-soft); font-size: 0.85rem; }
+.pf-edit-form { display: grid; gap: 1rem; }
+.pf-frame-card__title { margin-bottom: 0.35rem; color: var(--nx-card-ink); font-size: 1.2rem; }
+.pf-frame-card__description { margin-bottom: 1rem; color: var(--nx-ink-soft); }
+.pf-edit-actions { width: 100%; max-width: 640px; justify-content: flex-end; margin: 0 auto 1rem; }
+.pf-edit-actions button { display: inline-block; padding: 0.5rem 1.1rem; border: 2px solid var(--nx-accent); border-radius: 999px; background: var(--nx-accent); color: var(--nx-navy); font: inherit; font-weight: 700; cursor: pointer; }
+.pf-edit-actions button:hover { filter: brightness(1.08); }
+.fm-form .pf-edit-actions .fm-link,
+.pf-edit-actions .pf-cancel-button { padding: 0.5rem 1.1rem; border: 2px solid #b42318; border-radius: 999px; background: #b42318; color: #fff; font-weight: 700; text-decoration: none; }
+.pf-edit-actions .pf-cancel-button:hover { border-color: #8f1d14; background: #8f1d14; color: #fff; }
 .fm-form input[type="checkbox"] { accent-color: var(--nx-bg); margin-right: 0.35rem; }
 .fm-form input[type="file"] { max-width: 100%; font: inherit; }
 .fm-form input[type="file"]::file-selector-button { margin-right: 0.75rem; padding: 0.4rem 1rem; font: inherit; font-weight: 500; color: var(--nx-accent); background: var(--nx-bg-soft); border: 0; border-radius: 999px; cursor: pointer; }
@@ -16,4 +29,10 @@
 
 .fm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 0.5rem; }
 .fm-form .fm-link { display: inline-block; padding: 0.5rem 1.1rem; border: 2px solid var(--nx-ink); border-radius: 999px; color: var(--nx-ink); text-decoration: none; }
-.fm-form .fm-link:hover { background: rgba(59, 47, 107, 0.08); }
+.fm-form .fm-link:hover { background: var(--nx-row-bg); }
+.settings-section-title { color: var(--nx-ink); font-size: 1.25rem; margin-bottom: 0.75rem; }
+.settings-subsection + .settings-subsection { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--nx-divider); }
+.settings-subsection-title { color: var(--nx-ink); font-size: 1.05rem; margin-bottom: 0.75rem; }
+.settings-list { display: grid; gap: 0.75rem; list-style: none; padding: 0; }
+.settings-list li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--nx-ink-soft); }
+.settings-list form { margin: 0; }

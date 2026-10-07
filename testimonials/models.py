@@ -13,7 +13,7 @@ class testimonial(models.Model):
         related_name='received_testimonials'
     )
     content = models.TextField()
-    is_approved = models.BooleanField(default=True)  # Set to False if you want approval moderation
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

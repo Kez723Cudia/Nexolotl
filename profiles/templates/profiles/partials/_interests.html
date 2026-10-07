@@ -4,8 +4,9 @@
       <h2 class="pf-title">Interests</h2>
       <ul class="in-list">
         {% for item in items %}
-          <li class="in-chip" style="background-color: {{ item.color }}; color: {{ item.text_color }};">
-            <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>{{ item.label }}
+          <li class="in-chip" style="--in-chip-color: {{ item.color }}; --in-chip-ink: {{ item.text_color }};">
+            <span class="in-chip__emoji" aria-hidden="true">{{ item.emoji }}</span>
+            <span class="in-chip__label">{{ item.label }}</span>
           </li>
         {% endfor %}
       </ul>
