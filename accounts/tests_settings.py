@@ -36,6 +36,18 @@ class AccountSettingsTests(TestCase):
         self.assertContains(response, "css/tokens.css?v=4")
         self.assertContains(response, "css/nexolotl.css?v=3")
 
+    def test_logout_requires_confirmation_before_logging_out(self):
+        response = self.client.get(reverse("logout"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Are you sure you want to log out?")
+        self.assertIn("_auth_user_id", self.client.session)
+
+        response = self.client.post(reverse("logout"))
+
+        self.assertRedirects(response, reverse("login"))
+        self.assertNotIn("_auth_user_id", self.client.session)
+
     def test_settings_saves_theme_and_private_view_preference(self):
         response = self.client.post(
             reverse("account_settings"),

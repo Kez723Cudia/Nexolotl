@@ -13,6 +13,8 @@
   --nx-logo-accent: #111111;
   --nx-settings-heading: #111111;
   --nx-nav-border: #111111;
+  --nx-nav-active: var(--nx-bg);
+  --nx-nav-active-ink: var(--nx-card-ink);
   --nx-ink: #111111;
   --nx-ink-soft: #414141;
   --nx-accent: #aee1f9;
@@ -217,6 +219,8 @@ html[data-theme="electric"] {
   --nx-row-bg: rgba(138, 20, 255, 0.1);
   --nx-divider: rgba(138, 20, 255, 0.4);
   --nx-nav-border: #8a14ff;
+  --nx-nav-active: #ffff00;
+  --nx-nav-active-ink: #1b1023;
   color-scheme: dark;
 }
 

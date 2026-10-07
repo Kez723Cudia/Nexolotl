@@ -3,6 +3,12 @@
   gap: 1.5rem;
 }
 
+html[data-theme="electric"] .settings-page {
+  --nx-card-ink: #30103f;
+  --nx-ink-soft: #493653;
+  --nx-settings-heading: #ffff00;
+}
+
 .settings-form {
   display: grid;
   gap: 1.5rem;
@@ -24,11 +30,19 @@
   margin: 0.45rem 0 0.8rem;
 }
 
+html[data-theme="electric"] .settings-header .fm-title {
+  text-shadow: 2px 2px 0 #1b1023, -1px -1px 0 #1b1023;
+}
+
 .settings-eyebrow {
   color: var(--nx-accent);
   font-family: var(--nx-pixel);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
+}
+
+html[data-theme="electric"] .settings-eyebrow {
+  color: #ffff00;
 }
 
 .settings-header p,
@@ -88,6 +102,10 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.25rem 0;
+}
+
+.settings-page-actions form {
+  margin: 0;
 }
 
 .settings-page-actions button {

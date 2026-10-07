@@ -25,7 +25,7 @@
           <a href="{% url 'profile' username=user.username %}">Your profile</a>
           <a href="{% url 'friends' %}">Friends</a>
           <a href="{% url 'account_settings' %}">Settings</a>
-          <a href="{% url 'logout' %}">Log out</a>
+          <button type="button" data-open-logout-dialog>Log out</button>
         </div>
       </details>
     {% else %}
@@ -56,4 +56,5 @@
       <span class="sr-only">Settings</span>
     </a>
   </nav>
+  {% include "partials/_logout_confirm_dialog.html" %}
 {% endif %}

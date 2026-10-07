@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log Out · Nexolotl{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/settings.css' %}?v=6">
+{% endblock %}
+
+{% block content %}
+  <section class="fm-page settings-page logout-confirm-page">
+    <header class="settings-header">
+      <span class="settings-eyebrow">YOUR ACCOUNT</span>
+      <h1 class="fm-title">Log Out</h1>
+      <p>Are you sure you want to log out?</p>
+    </header>
+
+    <section class="nx-card settings-card logout-confirm-card">
+      <p>You can sign back in whenever you’re ready.</p>
+      <div class="fm-actions settings-page-actions">
+        <a class="fm-link" href="{% url 'post_feed' %}">Stay logged in</a>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit">Yes, log out</button>
+        </form>
+      </div>
+    </section>
+  </section>
+{% endblock %}

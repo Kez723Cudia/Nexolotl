@@ -82,6 +82,62 @@ class BaseTestCase(TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Shared feed layout
+# ---------------------------------------------------------------------------
+class SharedTemplateIntegrationTests(BaseTestCase):
+    def test_feed_uses_shared_base_shell_and_feed_styles(self):
+        post = make_post(self.alice, "post options link")
+        self.client.force_login(self.alice)
+
+        response = self.client.get(reverse("post_feed"))
+        html = response.content.decode()
+
+        self.assertTemplateUsed(response, "base.html")
+        self.assertEqual(html.count('<header class="nx-appbar">'), 1)
+        self.assertEqual(html.count('<nav class="nx-dock"'), 1)
+        self.assertEqual(html.count('id="logout-confirm-dialog"'), 1)
+        self.assertIn("css/feed.css?v=1", html)
+        self.assertIn("nx-appbar__new-post", html)
+        self.assertIn('id="postDialog"', html)
+        self.assertContains(
+            response,
+            f'class="feed-menu" href="{self.detail_url(post)}"',
+        )
+
+    def test_post_detail_uses_shared_base_shell_and_theme_styles(self):
+        post = make_post(self.alice, "post detail content")
+        self.client.force_login(self.alice)
+
+        response = self.client.get(self.detail_url(post))
+        html = response.content.decode()
+
+        self.assertTemplateUsed(response, "base.html")
+        self.assertEqual(html.count('<header class="nx-appbar">'), 1)
+        self.assertEqual(html.count('<nav class="nx-dock"'), 1)
+        self.assertEqual(html.count('id="logout-confirm-dialog"'), 1)
+        self.assertIn("css/post_detail.css?v=1", html)
+        self.assertIn("post detail content", html)
+        self.assertIn('id="commentPreview"', html)
+
+    def test_post_and_comment_authors_link_to_profiles(self):
+        post = make_post(self.alice, "profile links")
+        Comment.objects.create(post=post, author=self.bob, content="comment by bob")
+        self.client.force_login(self.alice)
+
+        response = self.client.get(self.detail_url(post))
+        self.assertContains(
+            response,
+            f'href="{reverse("profile", kwargs={"username": "alice"})}"',
+        )
+        self.assertContains(
+            response,
+            f'href="{reverse("profile", kwargs={"username": "bob"})}"',
+        )
+        self.assertContains(response, 'aria-label="View profile for alice"')
+        self.assertContains(response, 'aria-label="View profile for bob"')
+
+
+# ---------------------------------------------------------------------------
 # Comment creation
 # ---------------------------------------------------------------------------
 class CommentCreationTests(BaseTestCase):

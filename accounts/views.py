@@ -52,9 +52,13 @@ def login_view(request):
     return render(request, "accounts/login.html")
 
 
+@login_required
 def logout_view(request):
-    logout(request)
-    return redirect("login")
+    if request.method == "POST":
+        logout(request)
+        return redirect("login")
+
+    return render(request, "accounts/logout_confirm.html")
 
 
 @login_required
