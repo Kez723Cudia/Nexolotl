@@ -23,15 +23,17 @@
             {% for post in posts %}
                 <article class="feed-post">
 
-                    {% if post.author.profile.avatar %}
-                        <img class="feed-avatar" src="{{ post.author.profile.avatar.url }}" alt="">
-                    {% else %}
-                        <div class="feed-avatar" aria-hidden="true">{{ post.author.username|slice:":1" }}</div>
-                    {% endif %}
+                    <a href="{% url 'profile' post.author.username %}">
+                        {% if post.author.profile.avatar %}
+                            <img class="feed-avatar" src="{{ post.author.profile.avatar.url }}" alt="">
+                        {% else %}
+                            <div class="feed-avatar" aria-hidden="true">{{ post.author.username|slice:":1" }}</div>
+                        {% endif %}
+                    </a>
 
                     <div class="feed-card">
                         <div class="feed-head">
-                            <span class="feed-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                            <a href="{% url 'profile' post.author.username %}"><span class="feed-name">{{ post.author.get_full_name|default:post.author.username }}</span></a>
                             <span class="feed-handle">@{{ post.author.username }}</span>
                                 {% if post.visibility == 'private' %}
                                 <span class="feed-badge" title="Only you can see this post">
